@@ -29,6 +29,59 @@
   border-image: linear-gradient(to right, #C8A86B, #FDF2A9, #AA771C) 1;
 }
 
+/* French Chateau Luxury Styling (Phong cách Cung Điện Pháp Versailles) */
+.french-card-bg {
+  background: radial-gradient(circle at 50% 0%, #FFFDF9 0%, #FAF5ED 50%, #F5EFE4 100%);
+  position: relative;
+}
+
+/* Subtle French Royal Damask Texture Watermark */
+.french-damask-pattern {
+  background-image: radial-gradient(#C8A86B 0.75px, transparent 0.75px), radial-gradient(#C8A86B 0.75px, #FAF5ED 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  background-repeat: repeat;
+}
+
+/* French Versailles Sculpted Gilded Moulding (Chỉ phào nẹp hoa văn dát vàng) */
+.french-gilded-border {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#FAF5ED, #FAF5ED) padding-box,
+    linear-gradient(135deg, #C5A059 0%, #FDF3C7 25%, #B4833E 50%, #F5E2B3 75%, #8C6527 100%) border-box;
+  box-shadow:
+    0 10px 30px -5px rgba(180, 130, 50, 0.15),
+    0 0 0 1px rgba(251, 245, 183, 0.4) inset,
+    0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* French Triple Concentric Filigree Frame */
+.french-triple-frame {
+  box-shadow:
+    0 0 0 2px #C8A86B,
+    0 0 0 5px #FAF6F0,
+    0 0 0 7px rgba(200, 168, 107, 0.5),
+    0 16px 40px -10px rgba(114, 38, 43, 0.12);
+}
+
+/* Gilded Picture Frame Molding (Khung tranh dát vàng kiểu Pháp) */
+.french-picture-frame {
+  background: linear-gradient(145deg, #D4AF37 0%, #FFF2B2 30%, #AA771C 60%, #E6C260 85%, #7D5616 100%);
+  padding: 8px;
+  border-radius: 36px;
+  box-shadow:
+    0 15px 35px -5px rgba(114, 38, 43, 0.2),
+    0 5px 15px rgba(170, 119, 28, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* French Vintage Rose Velvet Tag */
+.french-velvet-ribbon {
+  background: linear-gradient(135deg, #8E343A 0%, #72262B 50%, #4D161A 100%);
+  box-shadow: 0 4px 12px rgba(114, 38, 43, 0.35);
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

@@ -4,6 +4,10 @@ import { GalleryPhoto, GalleryCategory } from '../../types/wedding.ts'
 import { initialGalleryPhotos } from '../../data/weddingData.ts'
 import { ScrollReveal } from '../ui/ScrollReveal.tsx'
 import { GalleryLightboxModal } from '../ui/GalleryLightboxModal.tsx'
+import {
+  FrenchCrestPediment,
+  FrenchFlourishDivider,
+} from '../ui/FrenchOrnaments.tsx'
 
 interface GallerySectionProps {
   photos?: GalleryPhoto[]
@@ -56,20 +60,21 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-burgundy/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section Header */}
+        {/* Section Header with French Pediment */}
         <ScrollReveal direction="up" delay={0}>
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-paper border border-gold/40 text-gold-dark text-xs uppercase tracking-[0.25em] font-medium mb-3 shadow-xs">
+            <FrenchCrestPediment className="mb-2" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold/20 via-paper to-gold/20 border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-bold mb-3 shadow-xs font-display">
               <ImageIcon className="w-3.5 h-3.5" />
-              <span>Khoảnh Khắc Tình Yêu</span>
+              <span>Galerie de Mariage • Album Ảnh</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-semibold tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-bold tracking-tight">
               Album Ảnh Cưới
             </h2>
-            <p className="mt-2 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-light">
+            <p className="mt-2 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-serif italic">
               Lưu giữ từng ánh mắt nụ cười và dấu mốc tình yêu vĩnh cửu của chúng mình
             </p>
-            <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-4" />
+            <FrenchFlourishDivider className="max-w-xs mx-auto" />
           </div>
         </ScrollReveal>
 
@@ -120,7 +125,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 onClick={() => openLightbox(index)}
                 className={`relative w-full ${getAspectClass(
                   photo.aspectRatio
-                )} rounded-2xl overflow-hidden bg-paper border border-gold/30 shadow-md group-hover:shadow-xl group-hover:border-gold transition-all duration-500`}
+                )} rounded-2xl overflow-hidden bg-paper border-2 border-gold/45 shadow-md group-hover:shadow-2xl group-hover:border-gold group-hover:scale-[1.02] transition-all duration-500 p-1 bg-gradient-to-tr from-gold/30 via-paper to-gold/30`}
               >
                 {/* Image */}
                 <img

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Calendar as CalendarIcon, Heart, Clock, Download, ExternalLink, Sparkles, Check } from 'lucide-react'
 import { getGoogleCalendarUrl, downloadIcsFile } from '../../utils/calendar.ts'
+import {
+  FrenchCornerFlourish,
+  FrenchCrestPediment,
+  FrenchFlourishDivider,
+} from './FrenchOrnaments.tsx'
 
 interface VisualWeddingCalendarProps {
   weddingDateStr?: string
@@ -56,8 +61,8 @@ export const VisualWeddingCalendar: React.FC<VisualWeddingCalendarProps> = ({
   // Week starts on Monday (T2 = 0, T3 = 1, T4 = 2, T5 = 3, T6 = 4, T7 = 5, CN = 6)
   // 2026-11-01 is a Sunday (CN), so 6 padding slots precede day 1.
   const weekDays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']
-  const paddingBefore = 6 // Empty cells for Mon..Sat
-  const totalDays = 30 // November has 30 days
+  const paddingBefore = 6
+  const totalDays = 30
   const weddingDay = 20
 
   const calendarParams = {
@@ -82,166 +87,194 @@ export const VisualWeddingCalendar: React.FC<VisualWeddingCalendarProps> = ({
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto my-12 bg-gradient-to-b from-paper-light via-paper to-paper-dark/40 rounded-3xl p-6 sm:p-10 border-2 border-gold/40 shadow-2xl relative overflow-hidden backdrop-blur-xs">
-      {/* Background Royal Watermark / Foil Flourish */}
-      <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-gold/10 blur-2xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-burgundy/10 blur-2xl pointer-events-none" />
+    <div className="w-full max-w-3xl mx-auto my-12 relative px-2 sm:px-0">
+      {/* Outer Romantic French Chateau Rose & Gold Aura */}
+      <div className="absolute -inset-3 bg-gradient-to-r from-gold/25 via-champagne/35 to-burgundy/15 rounded-[38px] blur-2xl opacity-75 pointer-events-none" />
 
-      {/* Header Tagline */}
-      <div className="text-center mb-8 relative z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-paper-light border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-medium shadow-xs mb-3">
-          <CalendarIcon className="w-3.5 h-3.5" />
-          <span>Save The Date • Lịch Hôn Lễ</span>
+      {/* Main French Desk Calendar Frame */}
+      <div className="relative french-card-bg french-triple-frame rounded-[32px] sm:rounded-[36px] p-6 sm:p-10 border-2 border-gold/70 shadow-2xl overflow-hidden text-charcoal">
+        {/* Subtle French Royal Damask Texture Watermark */}
+        <div className="absolute inset-0 french-damask-pattern opacity-30 pointer-events-none" />
+
+        {/* French Gilded Corner Flourishes */}
+        <FrenchCornerFlourish position="top-left" size={60} />
+        <FrenchCornerFlourish position="top-right" size={60} />
+        <FrenchCornerFlourish position="bottom-left" size={60} />
+        <FrenchCornerFlourish position="bottom-right" size={60} />
+
+        {/* Concentric Gold Hairline Frames */}
+        <div className="absolute inset-3 sm:inset-4 border border-gold/40 rounded-[26px] pointer-events-none" />
+
+        {/* Header Tagline with French Baroque Pediment */}
+        <div className="text-center mb-7 relative z-10 pt-2">
+          <FrenchCrestPediment className="mb-2" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold/20 via-paper-light to-gold/20 border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-semibold shadow-xs mb-2">
+            <CalendarIcon className="w-3.5 h-3.5 text-gold-dark" />
+            <span>Calendrier de Mariage • Lịch Hôn Lễ</span>
+          </div>
+          <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl text-charcoal font-bold tracking-tight">
+            Tháng 11 Năm 2026
+          </h3>
+          <p className="text-xs sm:text-sm text-charcoal-muted mt-1 font-serif italic">
+            Khoảnh khắc thiêng liêng nhất trong cuộc đời của chúng mình
+          </p>
+          <FrenchFlourishDivider className="max-w-xs mx-auto" />
         </div>
-        <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl text-charcoal font-semibold tracking-tight">
-          Tháng 11 Năm 2026
-        </h3>
-        <p className="text-xs sm:text-sm text-charcoal-muted mt-1 font-light">
-          Khoảnh khắc thiêng liêng nhất trong cuộc đời của chúng mình
-        </p>
-        <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-3" />
-      </div>
 
-      {/* 1. Visual Monthly Calendar Grid (Centered, Elegant Table Form) */}
-      <div className="w-full max-w-xl mx-auto bg-paper-light/95 rounded-2xl p-5 sm:p-7 border border-gold/30 shadow-md relative z-10">
-        {/* Calendar Month Bar */}
-        <div className="flex items-center justify-between border-b border-gold/20 pb-3 mb-4">
-          <span className="font-serif text-lg font-bold text-burgundy tracking-wide">
-            Tháng Mười Một
-          </span>
-          <span className="font-display text-sm tracking-widest text-gold-dark font-semibold">
-            NOVEMBER 2026
-          </span>
-        </div>
+        {/* 1. VISUAL MONTHLY CALENDAR GRID (Styled like a French Chateau Salon Calendar) */}
+        <div className="w-full max-w-xl mx-auto bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5EFE3] rounded-2xl p-5 sm:p-7 border-2 border-gold/50 shadow-lg relative z-10">
+          {/* Inner dashed gold hairline */}
+          <div className="absolute inset-2 border border-dashed border-gold/25 rounded-xl pointer-events-none" />
 
-        {/* Weekday Labels */}
-        <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2 text-center">
-          {weekDays.map((w, idx) => (
-            <div
-              key={w}
-              className={`py-1.5 text-xs font-semibold ${
-                idx === 6 ? 'text-burgundy' : 'text-charcoal-muted'
-              }`}
-            >
-              {w}
+          {/* Calendar Month Bar */}
+          <div className="flex items-center justify-between border-b border-gold/30 pb-3 mb-4 relative z-10">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-burgundy" />
+              <span className="font-serif text-lg sm:text-xl font-bold text-burgundy tracking-wide">
+                Tháng Mười Một
+              </span>
             </div>
-          ))}
-        </div>
+            <span className="font-display text-xs sm:text-sm tracking-[0.2em] text-gold-dark font-bold uppercase">
+              Novembre 2026
+            </span>
+          </div>
 
-        {/* Days Grid */}
-        <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center">
-          {/* Empty padding days before Nov 1 */}
-          {Array.from({ length: paddingBefore }).map((_, i) => (
-            <div key={`pad-${i}`} className="h-9 sm:h-11 rounded-lg" />
-          ))}
-
-          {/* Days 1 to 30 */}
-          {Array.from({ length: totalDays }, (_, i) => i + 1).map((day) => {
-            const isWedding = day === weddingDay
-            return (
+          {/* Weekday Labels in French Vintage Style */}
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-3 text-center relative z-10">
+            {weekDays.map((w, idx) => (
               <div
-                key={`day-${day}`}
-                className={`h-9 sm:h-11 rounded-xl flex flex-col items-center justify-center relative transition-all duration-300 ${
-                  isWedding
-                    ? 'bg-gradient-to-tr from-burgundy via-burgundy-light to-burgundy text-paper-light font-bold shadow-lg shadow-burgundy/30 scale-105 sm:scale-110 z-10 border-2 border-gold ring-2 ring-gold/40 animate-pulse'
-                    : 'text-charcoal hover:bg-gold/10 font-medium text-xs sm:text-sm'
+                key={w}
+                className={`py-1 text-xs font-bold font-serif uppercase tracking-wider ${
+                  idx === 6 ? 'text-burgundy' : 'text-charcoal-muted'
                 }`}
               >
-                <span className={isWedding ? 'text-sm sm:text-base font-serif font-bold text-white' : ''}>
-                  {day}
-                </span>
-                {isWedding && (
-                  <div className="absolute -bottom-1 flex items-center justify-center">
-                    <Heart className="w-2.5 h-2.5 text-gold-light fill-gold-light" />
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Wedding Day Legend Footer */}
-        <div className="mt-5 pt-3 border-t border-gold/15 flex items-center justify-between text-xs text-charcoal-muted">
-          <div className="flex items-center gap-2">
-            <span className="w-3.5 h-3.5 rounded-full bg-burgundy border border-gold inline-flex items-center justify-center">
-              <Heart className="w-2 h-2 text-gold-light fill-gold-light" />
-            </span>
-            <span className="font-serif font-medium text-burgundy">
-              Thứ Sáu, 20/11: Ngày Lễ Thành Hôn
-            </span>
-          </div>
-          <span className="text-[11px] text-gold-dark font-medium">18:00 Khai Tiệc</span>
-        </div>
-      </div>
-
-      {/* 2. CỤM ĐẾM NGƯỢC ĐƯỢC CHUYỂN XUỐNG PHÍA DƯỚI (Như mũi tên đỏ yêu cầu) */}
-      <div className="w-full max-w-xl mx-auto mt-8 relative z-10">
-        <div className="bg-paper-light/95 border border-gold/40 rounded-2xl p-5 sm:p-6 shadow-md text-center">
-          <div className="text-xs uppercase tracking-[0.2em] text-gold-dark font-medium mb-4 flex items-center justify-center gap-2">
-            <Clock className="w-4 h-4 text-gold-dark" />
-            <span>Đếm Ngược Đến Giờ Lành</span>
-          </div>
-
-          {/* 4 Countdown Digits Grid */}
-          <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto">
-            {[
-              { label: 'Ngày', value: timeLeft.days },
-              { label: 'Giờ', value: timeLeft.hours },
-              { label: 'Phút', value: timeLeft.minutes },
-              { label: 'Giây', value: timeLeft.seconds },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-paper border border-gold/35 rounded-xl py-3 px-2 shadow-xs flex flex-col items-center justify-center relative overflow-hidden"
-              >
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark opacity-70" />
-                <span className="font-serif text-2xl sm:text-3xl font-bold text-burgundy tracking-tight">
-                  {String(item.value).padStart(2, '0')}
-                </span>
-                <span className="text-[10px] sm:text-xs font-sans uppercase tracking-wider text-charcoal-muted mt-1 font-medium">
-                  {item.label}
-                </span>
+                {w}
               </div>
             ))}
           </div>
 
-          <p className="text-xs text-charcoal-muted mt-4 font-light flex items-center justify-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-gold-dark inline" />
-            <span>Chúng mình rất nóng lòng được đón tiếp quý khách!</span>
-          </p>
-        </div>
+          {/* Days Grid */}
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center relative z-10">
+            {/* Empty padding days before Nov 1 */}
+            {Array.from({ length: paddingBefore }).map((_, i) => (
+              <div key={`pad-${i}`} className="h-9 sm:h-11 rounded-lg opacity-20" />
+            ))}
 
-        {/* 3. Nút Lưu Lịch Nhắc Nhở Điện Thoại (Đặt dưới cụm đếm ngược) */}
-        <div className="mt-6 text-center space-y-3">
-          <p className="text-xs font-semibold text-charcoal uppercase tracking-wider">
-            Lưu lịch nhắc nhở điện thoại:
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={handleAddToGoogle}
-              className="w-full sm:w-auto min-h-[46px] px-6 py-2.5 rounded-full bg-paper-light hover:bg-paper border border-gold/50 text-charcoal hover:text-emerald text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-gold-dark" />
-              <span>Google Calendar</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleDownloadIcs}
-              className="w-full sm:w-auto min-h-[46px] px-6 py-2.5 rounded-full bg-paper-light hover:bg-paper border border-gold/50 text-charcoal hover:text-burgundy text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5 text-gold-dark" />
-              <span>Apple / Outlook (.ics)</span>
-            </button>
+            {/* Days 1 to 30 */}
+            {Array.from({ length: totalDays }, (_, i) => i + 1).map((day) => {
+              const isWedding = day === weddingDay
+              return (
+                <div
+                  key={`day-${day}`}
+                  className={`h-9 sm:h-11 rounded-xl flex flex-col items-center justify-center relative transition-all duration-300 ${
+                    isWedding
+                      ? 'bg-gradient-to-tr from-burgundy via-[#96383F] to-burgundy text-paper-light font-bold shadow-xl shadow-burgundy/40 scale-105 sm:scale-115 z-10 border-2 border-gold ring-2 ring-gold/50 animate-pulse'
+                      : 'text-charcoal hover:bg-gold/15 font-serif text-xs sm:text-sm border border-transparent hover:border-gold/30'
+                  }`}
+                >
+                  <span className={isWedding ? 'text-sm sm:text-base font-serif font-extrabold text-white drop-shadow-sm' : ''}>
+                    {day}
+                  </span>
+                  {isWedding && (
+                    <div className="absolute -bottom-1 flex items-center justify-center">
+                      <Heart className="w-2.5 h-2.5 text-gold-light fill-gold-light" />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
-          {addedNotice && (
-            <div className="text-center text-xs text-emerald font-medium flex items-center justify-center gap-1.5 animate-in fade-in">
-              <Check className="w-3.5 h-3.5" />
-              <span>{addedNotice}</span>
+          {/* Wedding Day Legend Footer */}
+          <div className="mt-5 pt-3.5 border-t border-gold/25 flex flex-wrap items-center justify-between text-xs text-charcoal-muted relative z-10 gap-2">
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full bg-burgundy border border-gold inline-flex items-center justify-center shadow-xs">
+                <Heart className="w-2.5 h-2.5 text-gold-light fill-gold-light" />
+              </span>
+              <span className="font-serif font-bold text-burgundy text-xs sm:text-sm">
+                Thứ Sáu, 20/11: Ngày Lễ Thành Hôn
+              </span>
             </div>
-          )}
+            <span className="text-[11px] font-display font-semibold text-gold-dark uppercase tracking-wider">
+              18:00 • Riverside Palace
+            </span>
+          </div>
+        </div>
+
+        {/* 2. CỤM ĐẾM NGƯỢC - FRENCH GILDED MANTELPIECE CLOCKS (Đồng Hồ Dát Vàng Cung Điện) */}
+        <div className="w-full max-w-xl mx-auto mt-8 relative z-10">
+          <div className="bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5EFE3] border-2 border-gold/50 rounded-2xl p-5 sm:p-7 shadow-lg text-center">
+            {/* Header with French Clock Motif */}
+            <div className="text-xs uppercase tracking-[0.25em] text-gold-dark font-bold mb-4 flex items-center justify-center gap-2 font-display">
+              <Clock className="w-4 h-4 text-gold-dark" />
+              <span>Compte à Rebours • Đếm Ngược Giờ Lành</span>
+            </div>
+
+            {/* 4 French Gilded Clock Digit Blocks */}
+            <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto">
+              {[
+                { label: 'Ngày', value: timeLeft.days, sub: 'Jours' },
+                { label: 'Giờ', value: timeLeft.hours, sub: 'Heures' },
+                { label: 'Phút', value: timeLeft.minutes, sub: 'Minutes' },
+                { label: 'Giây', value: timeLeft.seconds, sub: 'Secondes' },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="bg-gradient-to-b from-paper-light via-[#FBF8F2] to-[#F4EDE2] border-2 border-gold/50 rounded-xl py-3 px-2 shadow-md flex flex-col items-center justify-center relative overflow-hidden group hover:border-gold transition-colors"
+                >
+                  {/* Top Gilded Crown Accent */}
+                  <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />
+                  <span className="font-serif text-2xl sm:text-3xl font-extrabold text-burgundy tracking-tight gold-foil-text drop-shadow-xs">
+                    {String(item.value).padStart(2, '0')}
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-serif uppercase tracking-wider text-charcoal font-bold mt-0.5">
+                    {item.label}
+                  </span>
+                  <span className="text-[8px] font-display uppercase tracking-widest text-gold-dark/80 font-medium">
+                    {item.sub}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-charcoal-muted mt-4 font-serif italic flex items-center justify-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-gold-dark inline" />
+              <span>“Mỗi giây phút trôi qua đều hướng về ngày chung đôi hạnh phúc!”</span>
+            </p>
+          </div>
+
+          {/* 3. Nút Lưu Lịch Nhắc Nhở Điện Thoại (French Gilded Wax Styling) */}
+          <div className="mt-6 text-center space-y-3">
+            <p className="text-xs font-bold text-charcoal uppercase tracking-wider font-display">
+              Lưu lịch nhắc nhở vào điện thoại:
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleAddToGoogle}
+                className="w-full sm:w-auto min-h-[46px] px-6 py-2.5 rounded-full bg-paper hover:bg-gold/15 border-2 border-gold/60 text-charcoal hover:text-emerald text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-gold-dark" />
+                <span>Google Calendar</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDownloadIcs}
+                className="w-full sm:w-auto min-h-[46px] px-6 py-2.5 rounded-full bg-paper hover:bg-gold/15 border-2 border-gold/60 text-charcoal hover:text-burgundy text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5 text-gold-dark" />
+                <span>Apple / Outlook (.ics)</span>
+              </button>
+            </div>
+
+            {addedNotice && (
+              <div className="text-center text-xs text-emerald font-bold flex items-center justify-center gap-1.5 animate-in fade-in">
+                <Check className="w-3.5 h-3.5" />
+                <span>{addedNotice}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

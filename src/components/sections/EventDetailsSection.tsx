@@ -3,6 +3,11 @@ import { MapPin, Navigation, Clock, Calendar, Sparkles, Building2, Home } from '
 import { WeddingEvent } from '../../types/wedding.ts'
 import { weddingEvents } from '../../data/weddingData.ts'
 import { ScrollReveal } from '../ui/ScrollReveal.tsx'
+import {
+  FrenchCornerFlourish,
+  FrenchCrestPediment,
+  FrenchFlourishDivider,
+} from '../ui/FrenchOrnaments.tsx'
 
 interface EventDetailsSectionProps {
   events?: WeddingEvent[]
@@ -17,26 +22,26 @@ export const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({
         return {
           label: 'Tiệc Cưới Chính',
           icon: <Sparkles className="w-3.5 h-3.5 text-gold-light" aria-hidden="true" />,
-          className: 'bg-burgundy text-paper-light border-gold/40',
+          className: 'french-velvet-ribbon text-paper-light border-gold/50',
         }
       case 'ceremony':
       default:
         return {
           label: 'Nghi Lễ Gia Tiên',
-          icon: <Building2 className="w-3.5 h-3.5 text-gold-dark" aria-hidden="true" />,
-          className: 'bg-emerald text-paper-light border-gold/40',
+          icon: <Building2 className="w-3.5 h-3.5 text-gold-light" aria-hidden="true" />,
+          className: 'bg-gradient-to-r from-emerald-dark to-emerald text-paper-light border-gold/40',
         }
     }
   }
 
   const getEventIcon = (index: number) => {
     if (index === 0) {
-      return <Home className="w-6 h-6 text-burgundy" aria-hidden="true" />
+      return <Home className="w-5 h-5 text-burgundy" aria-hidden="true" />
     }
     if (index === 1) {
-      return <Home className="w-6 h-6 text-emerald" aria-hidden="true" />
+      return <Home className="w-5 h-5 text-emerald" aria-hidden="true" />
     }
-    return <Sparkles className="w-6 h-6 text-gold-dark" aria-hidden="true" />
+    return <Sparkles className="w-5 h-5 text-gold-dark" aria-hidden="true" />
   }
 
   return (
@@ -45,26 +50,30 @@ export const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({
       aria-label="Thông tin sự kiện hôn lễ"
       className="relative py-20 sm:py-28 px-4 bg-paper overflow-hidden"
     >
-      {/* Decorative luxury corners */}
+      {/* Decorative French Background Radiance */}
+      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full bg-gold/15 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] rounded-full bg-burgundy/10 blur-3xl pointer-events-none" />
+
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section Header */}
+        {/* Section Header with French Pediment */}
         <ScrollReveal direction="up" delay={0}>
           <div className="text-center mb-16 sm:mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-paper-light border border-gold/40 text-gold-dark text-xs uppercase tracking-[0.25em] font-medium mb-3 shadow-xs">
-              <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Lịch Trình Hôn Lễ</span>
+            <FrenchCrestPediment className="mb-2" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold/20 via-paper-light to-gold/20 border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-bold mb-3 shadow-xs font-display">
+              <Clock className="w-3.5 h-3.5 text-gold-dark" aria-hidden="true" />
+              <span>Programme des Cérémonies • Lịch Trình</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-semibold tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-bold tracking-tight">
               Thời Gian & Địa Điểm
             </h2>
-            <p className="mt-3 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-light">
+            <p className="mt-2 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-serif italic">
               Sự hiện diện của quý quan khách là niềm vinh hạnh to lớn cho gia đình chúng tôi
             </p>
-            <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-4" />
+            <FrenchFlourishDivider className="max-w-xs mx-auto" />
           </div>
         </ScrollReveal>
 
-        {/* 3 Events Grid */}
+        {/* 3 Events Grid: French Salon Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {events.map((event, idx) => {
             const badge = getEventBadge(event.type)
@@ -78,30 +87,41 @@ export const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({
                 className="h-full"
               >
                 <article
-                  className={`h-full relative flex flex-col justify-between rounded-3xl p-6 sm:p-8 transition-all duration-300 border ${
+                  className={`h-full relative flex flex-col justify-between french-card-bg french-triple-frame rounded-[32px] p-6 sm:p-8 transition-all duration-500 border-2 overflow-hidden ${
                     isHighlight
-                      ? 'bg-paper-light border-gold shadow-lg shadow-gold/10 md:-translate-y-2'
-                      : 'bg-paper-light/70 border-gold/30 shadow-sm hover:border-gold/60 hover:shadow-md'
+                      ? 'border-gold shadow-2xl md:-translate-y-2.5 ring-2 ring-gold/40'
+                      : 'border-gold/50 shadow-lg hover:border-gold hover:shadow-xl'
                   }`}
                 >
-                  {/* Highlight Badge for Reception */}
+                  {/* French Damask Pattern Watermark */}
+                  <div className="absolute inset-0 french-damask-pattern opacity-25 pointer-events-none" />
+
+                  {/* French Corner Flourishes */}
+                  <FrenchCornerFlourish position="top-left" size={44} />
+                  <FrenchCornerFlourish position="top-right" size={44} />
+                  <FrenchCornerFlourish position="bottom-left" size={44} />
+                  <FrenchCornerFlourish position="bottom-right" size={44} />
+
+                  {/* Highlight Ribbon for Reception */}
                   {isHighlight && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gold text-charcoal font-display text-xs font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5">
-                      <Sparkles className="w-3 h-3" />
-                      <span>Trọng Tâm Buổi Tiệc</span>
+                    <div className="absolute top-0 inset-x-0 flex justify-center z-20">
+                      <div className="px-5 py-1 rounded-b-2xl bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-charcoal font-display text-[11px] font-extrabold uppercase tracking-widest shadow-md flex items-center gap-1.5 border-b border-x border-gold-light">
+                        <Sparkles className="w-3.5 h-3.5 text-charcoal" />
+                        <span>Trọng Tâm Buổi Tiệc</span>
+                      </div>
                     </div>
                   )}
 
-                  <div>
-                    {/* Top Badge & Time */}
+                  <div className="relative z-10 pt-3">
+                    {/* Top Badge & Heraldic Medal Icon */}
                     <div className="flex items-center justify-between gap-2 mb-6">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${badge.className}`}
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-serif font-bold border shadow-xs ${badge.className}`}
                       >
                         {badge.icon}
                         <span>{badge.label}</span>
                       </span>
-                      <div className="w-10 h-10 rounded-full bg-paper border border-gold/30 flex items-center justify-center">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-paper via-paper-light to-gold/20 border-2 border-gold/60 flex items-center justify-center shadow-md">
                         {getEventIcon(idx)}
                       </div>
                     </div>
@@ -111,22 +131,22 @@ export const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({
                       {event.title}
                     </h3>
 
-                    {/* Date & Time Blocks */}
-                    <div className="space-y-3 mb-6 pb-6 border-b border-gold/20">
+                    {/* Date & Time Blocks in French Cartouche */}
+                    <div className="space-y-3 mb-6 p-4 rounded-2xl bg-paper/70 border border-gold/30 shadow-xs">
                       <div className="flex items-start gap-3 text-sm text-charcoal">
                         <Clock className="w-4 h-4 text-gold-dark mt-0.5 shrink-0" aria-hidden="true" />
                         <div>
-                          <span className="font-bold text-burgundy text-base block font-serif">
+                          <span className="font-bold text-burgundy text-lg block font-serif tracking-tight">
                             {event.time}
                           </span>
-                          <span className="text-xs text-charcoal-muted">Bắt đầu đón khách & làm lễ</span>
+                          <span className="text-xs text-charcoal-muted font-serif italic">Bắt đầu đón khách & làm lễ</span>
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-3 text-sm text-charcoal">
+                      <div className="flex items-start gap-3 text-sm text-charcoal pt-2 border-t border-gold/20">
                         <Calendar className="w-4 h-4 text-gold-dark mt-0.5 shrink-0" aria-hidden="true" />
                         <div>
-                          <span className="font-medium text-charcoal block">{event.date}</span>
+                          <span className="font-bold text-charcoal block font-serif">{event.date}</span>
                         </div>
                       </div>
                     </div>
@@ -146,26 +166,26 @@ export const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({
                       </div>
 
                       {event.notes && (
-                        <p className="text-xs italic text-charcoal/70 bg-paper/80 p-3 rounded-xl border border-gold/15 mt-3">
-                          {event.notes}
+                        <p className="text-xs italic text-charcoal/80 bg-paper/90 p-3 rounded-xl border border-gold/25 mt-3 font-serif">
+                          “{event.notes}”
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Bottom Action: Google Maps Button (Min 48px touch target) */}
-                  <div className="pt-2">
+                  {/* Bottom Action: French Gilded Map Button */}
+                  <div className="relative z-10 pt-2">
                     <a
                       href={event.mapUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`w-full min-h-[48px] px-4 py-3 rounded-xl font-sans text-sm font-semibold tracking-wide flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] border shadow-xs ${
+                      className={`w-full min-h-[48px] px-4 py-3 rounded-full font-display text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] border shadow-md cursor-pointer ${
                         isHighlight
-                          ? 'bg-emerald text-paper-light hover:bg-emerald-light border-gold/40 shadow-emerald/20'
-                          : 'bg-paper text-charcoal hover:bg-paper-dark border-gold/40 hover:text-emerald'
+                          ? 'bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-charcoal hover:brightness-105 border-gold-light shadow-gold/20'
+                          : 'bg-paper text-charcoal hover:bg-gold/15 border-gold/50 hover:text-burgundy'
                       }`}
                     >
-                      <Navigation className="w-4 h-4 text-gold" aria-hidden="true" />
+                      <Navigation className="w-4 h-4 text-charcoal" aria-hidden="true" />
                       <span>Xem Chỉ Đường Bản Đồ</span>
                     </a>
                   </div>
@@ -178,3 +198,5 @@ export const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({
     </section>
   )
 }
+
+export default EventDetailsSection

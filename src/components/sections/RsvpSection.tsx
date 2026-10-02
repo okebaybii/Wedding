@@ -3,6 +3,11 @@ import { CheckCircle2, Heart, Sparkles, User, Phone, Users, Utensils, MessageSqu
 import { triggerWeddingConfetti } from '../../utils/confetti.ts'
 import { ScrollReveal } from '../ui/ScrollReveal.tsx'
 import { useWeddingData } from '../../store/WeddingContext.tsx'
+import {
+  FrenchCornerFlourish,
+  FrenchCrestPediment,
+  FrenchFlourishDivider,
+} from '../ui/FrenchOrnaments.tsx'
 
 interface RsvpFormData {
   fullName: string
@@ -88,26 +93,36 @@ export const RsvpSection: React.FC = () => {
       className="relative py-20 sm:py-28 px-4 bg-gradient-to-b from-paper via-paper-light to-paper overflow-hidden"
     >
       <div className="max-w-2xl mx-auto relative z-10">
-        {/* Section Header */}
+        {/* Section Header with French Pediment */}
         <ScrollReveal direction="up" delay={0}>
           <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-paper border border-gold/40 text-gold-dark text-xs uppercase tracking-[0.25em] font-medium mb-3 shadow-xs">
+            <FrenchCrestPediment className="mb-2" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold/20 via-paper to-gold/20 border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-bold mb-3 shadow-xs font-display">
               <Heart className="w-3.5 h-3.5 text-burgundy fill-burgundy" aria-hidden="true" />
-              <span>Phản Hồi Tham Dự</span>
+              <span>Réponse S'il Vous Plaît • RSVP</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-semibold tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-bold tracking-tight">
               Xác Nhận Tham Dự
             </h2>
-            <p className="mt-3 text-charcoal-muted text-sm sm:text-base max-w-md mx-auto font-light">
+            <p className="mt-2 text-charcoal-muted text-sm sm:text-base max-w-md mx-auto font-serif italic">
               Để ban tổ chức chuẩn bị chu đáo nhất, xin quý khách vui lòng xác nhận trước ngày <strong>10/11/2026</strong>.
             </p>
-            <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-4" />
+            <FrenchFlourishDivider className="max-w-xs mx-auto" />
           </div>
         </ScrollReveal>
 
-        {/* Content Box */}
+        {/* Content Box: French Gilded Salon Card */}
         <ScrollReveal direction="up" delay={150}>
-          <div className="bg-paper-light border border-gold/40 rounded-3xl p-6 sm:p-10 shadow-xl shadow-gold/5 relative overflow-hidden">
+          <div className="french-card-bg french-triple-frame rounded-[32px] sm:rounded-[36px] p-6 sm:p-10 border-2 border-gold/60 shadow-2xl relative overflow-hidden">
+            {/* French Damask Pattern Watermark */}
+            <div className="absolute inset-0 french-damask-pattern opacity-25 pointer-events-none" />
+
+            {/* French Corner Flourishes */}
+            <FrenchCornerFlourish position="top-left" size={48} />
+            <FrenchCornerFlourish position="top-right" size={48} />
+            <FrenchCornerFlourish position="bottom-left" size={48} />
+            <FrenchCornerFlourish position="bottom-right" size={48} />
+
             {/* Subtle gold ribbon top edge */}
             <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />
 

@@ -3,6 +3,11 @@ import { MessageSquareHeart, Send, Sparkles, User, Users, Quote, Check } from 'l
 import { triggerWeddingConfetti } from '../../utils/confetti.ts'
 import { ScrollReveal } from '../ui/ScrollReveal.tsx'
 import { useWeddingData } from '../../store/WeddingContext.tsx'
+import {
+  FrenchCornerFlourish,
+  FrenchCrestPediment,
+  FrenchFlourishDivider,
+} from '../ui/FrenchOrnaments.tsx'
 
 const quickWishes = [
   'Chúc hai bạn trăm năm tình viên mãn, đầu bạc răng long! 💍',
@@ -60,29 +65,37 @@ export const GuestbookSection: React.FC = () => {
       className="relative py-20 sm:py-28 px-4 bg-paper overflow-hidden"
     >
       <div className="max-w-5xl mx-auto relative z-10">
-        {/* Section Header */}
+        {/* Section Header with French Pediment */}
         <ScrollReveal direction="up" delay={0}>
           <div className="text-center mb-16 sm:mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-paper-light border border-gold/40 text-gold-dark text-xs uppercase tracking-[0.25em] font-medium mb-3 shadow-xs">
+            <FrenchCrestPediment className="mb-2" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold/20 via-paper-light to-gold/20 border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-bold mb-3 shadow-xs font-display">
               <MessageSquareHeart className="w-3.5 h-3.5 text-burgundy" aria-hidden="true" />
-              <span>Sổ Lưu Bút Chúc Phúc</span>
+              <span>Livre d'Or • Sổ Lưu Bút Chúc Phúc</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-semibold tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-bold tracking-tight">
               Gửi Lời Chúc Mừng
             </h2>
-            <p className="mt-3 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-light">
+            <p className="mt-2 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-serif italic">
               Những lời chúc tốt lành và tình cảm của quý vị là hành trang đẹp nhất cho khởi đầu mới của chúng mình
             </p>
-            <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-4" />
+            <FrenchFlourishDivider className="max-w-xs mx-auto" />
           </div>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left / Top: Interactive Post Wish Form (5 cols on lg) */}
+          {/* Left / Top: Interactive Post Wish Form (French Salon Style) */}
           <div className="lg:col-span-5">
             <ScrollReveal direction="right" delay={150}>
-              <div className="bg-paper-light border border-gold/40 rounded-3xl p-6 sm:p-8 shadow-md relative">
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark rounded-t-3xl" />
+              <div className="french-card-bg french-triple-frame border-2 border-gold/60 rounded-[32px] p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                {/* French Damask Pattern Watermark */}
+                <div className="absolute inset-0 french-damask-pattern opacity-25 pointer-events-none" />
+
+                {/* French Corner Flourishes */}
+                <FrenchCornerFlourish position="top-left" size={44} />
+                <FrenchCornerFlourish position="top-right" size={44} />
+
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />
 
                 <h3 className="font-serif text-xl sm:text-2xl text-charcoal font-bold tracking-tight mb-2 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-gold-dark" />
@@ -207,8 +220,9 @@ export const GuestbookSection: React.FC = () => {
                 {wishes.map((item) => (
                   <article
                     key={item.id}
-                    className="bg-paper-light/90 border border-gold/30 rounded-2xl p-5 shadow-xs hover:border-gold/60 transition-all duration-200 relative group"
+                    className="french-card-bg border-2 border-gold/40 rounded-2xl p-5 shadow-sm hover:border-gold hover:shadow-md transition-all duration-300 relative group overflow-hidden"
                   >
+                    <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-gold/40 rounded-tr-xl pointer-events-none opacity-60" />
                     <div className="flex items-start justify-between gap-3 mb-2.5">
                       <div className="flex items-center gap-3">
                         {/* Monogram / Avatar circle */}
