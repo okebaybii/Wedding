@@ -110,7 +110,16 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
             monogram={couple.monogram}
             groomName={couple.groom.shortName}
             brideName={couple.bride.shortName}
-            weddingDate="THỨ SÁU • 20 . 11 . 2026"
+            groomFullName={couple.groom.fullName}
+            brideFullName={couple.bride.fullName}
+            groomParents={couple.groom.parents}
+            brideParents={couple.bride.parents}
+            weddingDate="THỨ SÁU, NGÀY 20 THÁNG 11 NĂM 2026"
+            weddingTime="18:00 Tối"
+            lunarDate="(Nhằm ngày 12 tháng 10 năm Bính Ngọ)"
+            venueName="Trung Tâm Hội Nghị Tiệc Cưới Riverside Palace"
+            venueHall="Sảnh Grand Ballroom (Tầng 2)"
+            venueAddress="360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh"
           />
         </div>
       </main>

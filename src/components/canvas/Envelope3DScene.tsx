@@ -11,7 +11,32 @@ export interface Envelope3DSceneProps {
   monogram?: string
   groomName?: string
   brideName?: string
+  groomFullName?: string
+  brideFullName?: string
+  groomParents?: string
+  brideParents?: string
   weddingDate?: string
+  weddingTime?: string
+  lunarDate?: string
+  venueName?: string
+  venueHall?: string
+  venueAddress?: string
+}
+
+interface CardTextureParams {
+  monogram: string
+  groomName: string
+  brideName: string
+  groomFullName: string
+  brideFullName: string
+  groomParents: string
+  brideParents: string
+  weddingDate: string
+  weddingTime: string
+  lunarDate: string
+  venueName: string
+  venueHall: string
+  venueAddress: string
 }
 
 // Generates procedural burgundy wax seal texture with embossed gold monogram
@@ -194,146 +219,307 @@ function createWaxSealBumpMap(monogramText: string): THREE.CanvasTexture {
   return texture
 }
 
-// Generates luxury wedding invitation card texture
-function createCardTexture(
-  groomName: string,
-  brideName: string,
-  monogram: string,
-  weddingDate: string
-): THREE.CanvasTexture {
+// Generates luxury Vietnamese royal wedding invitation card texture
+function createCardTexture({
+  monogram,
+  groomName,
+  brideName,
+  groomFullName,
+  brideFullName,
+  groomParents,
+  brideParents,
+  weddingDate,
+  weddingTime,
+  lunarDate,
+  venueName,
+  venueHall,
+  venueAddress,
+}: CardTextureParams): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')
-  canvas.width = 1280
-  canvas.height = 860
+  canvas.width = 1600
+  canvas.height = 1120
   const ctx = canvas.getContext('2d')
 
   if (ctx) {
     const w = canvas.width
     const h = canvas.height
 
-    // Cream / Ivory fine art paper base
-    ctx.fillStyle = '#FDFBF7'
+    // 1. Fine-art ivory/cream parchment gradient base
+    const baseGrad = ctx.createRadialGradient(w / 2, h / 2, 80, w / 2, h / 2, 920)
+    baseGrad.addColorStop(0, '#FFFDF8')
+    baseGrad.addColorStop(0.65, '#FAF5EB')
+    baseGrad.addColorStop(1, '#F2E9D8')
+    ctx.fillStyle = baseGrad
     ctx.fillRect(0, 0, w, h)
 
     // Subtle paper grain noise
     ctx.fillStyle = 'rgba(0, 0, 0, 0.015)'
-    for (let i = 0; i < 3000; i++) {
+    for (let i = 0; i < 4000; i++) {
       const rx = Math.random() * w
       const ry = Math.random() * h
       ctx.fillRect(rx, ry, 1, 1)
     }
 
-    // Outer thin gold foil border
-    ctx.strokeStyle = '#C8A86B'
-    ctx.lineWidth = 2.5
-    ctx.strokeRect(40, 40, w - 80, h - 80)
+    // 2. Triple French Gilded Borders
+    // Outer border
+    ctx.strokeStyle = '#C5A059'
+    ctx.lineWidth = 3.5
+    ctx.strokeRect(36, 36, w - 72, h - 72)
 
-    // Inner delicate gold foil border
-    ctx.strokeStyle = 'rgba(200, 168, 107, 0.5)'
+    // Middle hairline border
+    ctx.strokeStyle = 'rgba(197, 160, 89, 0.45)'
     ctx.lineWidth = 1
-    ctx.strokeRect(52, 52, w - 104, h - 104)
+    ctx.strokeRect(46, 46, w - 92, h - 92)
 
-    // Corner decorative gold ornaments
+    // Inner ornate border
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 1.8
+    ctx.strokeRect(58, 58, w - 116, h - 116)
+
+    // Corner decorative flourishes at 4 corners
     const drawCorner = (cx: number, cy: number, rot: number) => {
       ctx.save()
       ctx.translate(cx, cy)
       ctx.rotate(rot)
       ctx.strokeStyle = '#D4AF37'
-      ctx.lineWidth = 1.5
+      ctx.lineWidth = 1.8
       ctx.beginPath()
       ctx.moveTo(0, 0)
-      ctx.lineTo(28, 0)
-      ctx.arc(28, 28, 28, -Math.PI / 2, Math.PI, true)
-      ctx.lineTo(0, 28)
+      ctx.lineTo(36, 0)
+      ctx.arc(36, 36, 36, -Math.PI / 2, Math.PI, true)
+      ctx.lineTo(0, 36)
       ctx.stroke()
 
-      ctx.fillStyle = '#D4AF37'
       ctx.beginPath()
-      ctx.arc(14, 14, 3, 0, Math.PI * 2)
+      ctx.arc(18, 18, 4.5, 0, Math.PI * 2)
+      ctx.fillStyle = '#D4AF37'
       ctx.fill()
       ctx.restore()
     }
-    drawCorner(52, 52, 0)
-    drawCorner(w - 52, 52, Math.PI / 2)
-    drawCorner(w - 52, h - 52, Math.PI)
-    drawCorner(52, h - 52, -Math.PI / 2)
+    drawCorner(58, 58, 0)
+    drawCorner(w - 58, 58, Math.PI / 2)
+    drawCorner(w - 58, h - 58, Math.PI)
+    drawCorner(58, h - 58, -Math.PI / 2)
 
-    // Header: "WEDDING INVITATION"
     ctx.save()
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
 
-    ctx.font = '600 24px "Cinzel", "Playfair Display", serif'
-    ctx.letterSpacing = '10px'
-    ctx.fillStyle = '#C8A86B'
-    ctx.fillText('WEDDING INVITATION', w / 2, 85)
-
-    // Monogram Crest in circle
-    ctx.strokeStyle = '#D4AF37'
-    ctx.lineWidth = 1.5
-    ctx.beginPath()
-    ctx.arc(w / 2, 175, 38, 0, Math.PI * 2)
-    ctx.stroke()
-
-    ctx.font = 'bold 36px "Playfair Display", serif'
-    ctx.letterSpacing = '2px'
-    const crestGrad = ctx.createLinearGradient(w / 2 - 30, 145, w / 2 + 30, 205)
-    crestGrad.addColorStop(0, '#B38728')
-    crestGrad.addColorStop(0.5, '#FBF5B7')
-    crestGrad.addColorStop(1, '#AA771C')
-    ctx.fillStyle = crestGrad
-    ctx.fillText(monogram, w / 2, 155)
-
-    // Sub-invitation text
-    ctx.font = 'italic 400 22px "Cormorant Garamond", serif'
-    ctx.letterSpacing = '1px'
-    ctx.fillStyle = '#635F59'
-    ctx.fillText('Trân trọng kính mời Quý Khách tới dự lễ thành hôn của', w / 2, 235)
-
-    // Couple Names (Gold Foil Shimmer Styling)
-    ctx.font = 'bold 58px "Playfair Display", serif'
-    ctx.letterSpacing = '3px'
-    const nameGrad = ctx.createLinearGradient(w / 2 - 250, 0, w / 2 + 250, 0)
-    nameGrad.addColorStop(0, '#8E343A')
-    nameGrad.addColorStop(0.2, '#B8860B')
-    nameGrad.addColorStop(0.5, '#D4AF37')
-    nameGrad.addColorStop(0.8, '#8E343A')
-    ctx.fillStyle = nameGrad
-    ctx.fillText(`${groomName}  &  ${brideName}`, w / 2, 285)
-
-    // Gold floral divider line with heart/diamond
-    ctx.strokeStyle = '#D4AF37'
-    ctx.lineWidth = 1.5
-    ctx.beginPath()
-    ctx.moveTo(w / 2 - 180, 380)
-    ctx.lineTo(w / 2 - 30, 380)
-    ctx.moveTo(w / 2 + 30, 380)
-    ctx.lineTo(w / 2 + 180, 380)
-    ctx.stroke()
-
-    // Diamond center
+    // 3. Royal Fleur-de-lis / Crown Accent
     ctx.fillStyle = '#D4AF37'
     ctx.beginPath()
-    ctx.moveTo(w / 2, 372)
-    ctx.lineTo(w / 2 + 8, 380)
-    ctx.lineTo(w / 2, 388)
-    ctx.lineTo(w / 2 - 8, 380)
+    ctx.moveTo(w / 2, 70)
+    ctx.lineTo(w / 2 + 10, 84)
+    ctx.lineTo(w / 2 + 20, 75)
+    ctx.lineTo(w / 2 + 14, 92)
+    ctx.lineTo(w / 2 - 14, 92)
+    ctx.lineTo(w / 2 - 20, 75)
+    ctx.lineTo(w / 2 - 10, 84)
     ctx.closePath()
     ctx.fill()
 
-    // Date & Venue Details
-    ctx.font = '600 28px "Cinzel", "Playfair Display", serif'
-    ctx.letterSpacing = '4px'
-    ctx.fillStyle = '#2D2A26'
-    ctx.fillText(weddingDate, w / 2, 415)
+    // Circular Monogram Crest
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.arc(w / 2, 134, 34, 0, Math.PI * 2)
+    ctx.stroke()
 
-    ctx.font = '500 21px "Plus Jakarta Sans", sans-serif'
-    ctx.letterSpacing = '1px'
-    ctx.fillStyle = '#55514B'
-    ctx.fillText('THE GRAND PALACE • TRUNG TÂM TIỆC CƯỚI & HỘI NGHỊ', w / 2, 468)
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.arc(w / 2, 134, 40, 0, Math.PI * 2)
+    ctx.stroke()
 
-    ctx.font = 'italic 300 20px "Cormorant Garamond", serif'
-    ctx.fillStyle = '#78736B'
-    ctx.fillText('Sự hiện diện của Quý Khách là niềm vinh hạnh lớn cho gia đình chúng tôi', w / 2, 515)
+    ctx.font = 'bold 30px "Playfair Display", "Cinzel", serif'
+    const crestGrad = ctx.createLinearGradient(w / 2 - 25, 116, w / 2 + 25, 152)
+    crestGrad.addColorStop(0, '#9E782F')
+    crestGrad.addColorStop(0.5, '#F5DE96')
+    crestGrad.addColorStop(1, '#9E782F')
+    ctx.fillStyle = crestGrad
+    ctx.fillText(monogram, w / 2, 116)
+
+    // 4. Header: "THIỆP MỜI THÀNH HÔN"
+    ctx.font = 'bold 24px "Cinzel", "Playfair Display", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '8px'
+    ctx.fillStyle = '#967431'
+    ctx.fillText('THIỆP MỜI THÀNH HÔN', w / 2, 186)
+
+    ctx.font = 'italic 400 19px "Cormorant Garamond", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    ctx.fillStyle = '#5A554E'
+    ctx.fillText('Trân trọng kính mời Quý Khách tới dự tiệc rượu mừng Lễ Thành Hôn cùng hai gia đình', w / 2, 224)
+
+    // 5. Two-column Royal Family Heraldry
+    const drawBadge = (bx: number, by: number, bw: number, bh: number, label: string) => {
+      ctx.save()
+      ctx.fillStyle = '#78242A'
+      ctx.strokeStyle = '#D4AF37'
+      ctx.lineWidth = 1.2
+      ctx.beginPath()
+      ctx.roundRect(bx - bw / 2, by, bw, bh, bh / 2)
+      ctx.fill()
+      ctx.stroke()
+      ctx.font = 'bold 12px "Cinzel", sans-serif'
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '2px'
+      ctx.fillStyle = '#FCE7B8'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(label, bx, by + bh / 2 + 1)
+      ctx.restore()
+    }
+
+    // Left Column: Nhà Trai (centered at x = 420)
+    drawBadge(420, 262, 160, 28, 'NHÀ TRAI')
+
+    const groomParentsParts = groomParents ? groomParents.split('&').map((s) => s.trim()) : ['Ông: Nguyễn Văn Nam', 'Bà: Trần Thị Lan']
+    ctx.font = '400 18px "Cormorant Garamond", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    ctx.fillStyle = '#38332E'
+    ctx.fillText(groomParentsParts[0] || 'Ông: Nguyễn Văn Nam', 420, 305)
+    ctx.fillText(groomParentsParts[1] ? (groomParentsParts[1].startsWith('Bà') ? groomParentsParts[1] : `Bà: ${groomParentsParts[1]}`) : 'Bà: Trần Thị Lan', 420, 332)
+
+    ctx.font = 'italic 500 16px "Cormorant Garamond", serif'
+    ctx.fillStyle = '#8C6F34'
+    ctx.fillText('Trưởng nam:', 420, 366)
+
+    ctx.font = 'bold 34px "Playfair Display", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px'
+    const groomGrad = ctx.createLinearGradient(280, 0, 560, 0)
+    groomGrad.addColorStop(0, '#78242A')
+    groomGrad.addColorStop(0.5, '#B8860B')
+    groomGrad.addColorStop(1, '#78242A')
+    ctx.fillStyle = groomGrad
+    ctx.fillText(groomFullName || groomName, 420, 392)
+
+    // Center Column: Double Happiness 囍
+    ctx.font = 'bold 48px "Playfair Display", serif'
+    ctx.fillStyle = '#D4AF37'
+    ctx.fillText('囍', w / 2, 330)
+
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(w / 2, 298)
+    ctx.lineTo(w / 2, 320)
+    ctx.moveTo(w / 2, 396)
+    ctx.lineTo(w / 2, 418)
+    ctx.stroke()
+
+    // Right Column: Nhà Gái (centered at x = 1180)
+    drawBadge(1180, 262, 160, 28, 'NHÀ GÁI')
+
+    const brideParentsParts = brideParents ? brideParents.split('&').map((s) => s.trim()) : ['Ông: Lê Minh Tuấn', 'Bà: Phạm Hồng Nga']
+    ctx.font = '400 18px "Cormorant Garamond", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    ctx.fillStyle = '#38332E'
+    ctx.fillText(brideParentsParts[0] || 'Ông: Lê Minh Tuấn', 1180, 305)
+    ctx.fillText(brideParentsParts[1] ? (brideParentsParts[1].startsWith('Bà') ? brideParentsParts[1] : `Bà: ${brideParentsParts[1]}`) : 'Bà: Phạm Hồng Nga', 1180, 332)
+
+    ctx.font = 'italic 500 16px "Cormorant Garamond", serif'
+    ctx.fillStyle = '#8C6F34'
+    ctx.fillText('Út nữ:', 1180, 366)
+
+    ctx.font = 'bold 34px "Playfair Display", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px'
+    const brideGrad = ctx.createLinearGradient(1040, 0, 1320, 0)
+    brideGrad.addColorStop(0, '#78242A')
+    brideGrad.addColorStop(0.5, '#B8860B')
+    brideGrad.addColorStop(1, '#78242A')
+    ctx.fillStyle = brideGrad
+    ctx.fillText(brideFullName || brideName, 1180, 392)
+
+    // 6. Horizontal Divider with Diamond Motif
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 1.4
+    ctx.beginPath()
+    ctx.moveTo(w / 2 - 280, 452)
+    ctx.lineTo(w / 2 - 35, 452)
+    ctx.moveTo(w / 2 + 35, 452)
+    ctx.lineTo(w / 2 + 280, 452)
+    ctx.stroke()
+
+    ctx.fillStyle = '#D4AF37'
+    ctx.beginPath()
+    ctx.moveTo(w / 2, 444)
+    ctx.lineTo(w / 2 + 9, 452)
+    ctx.lineTo(w / 2, 460)
+    ctx.lineTo(w / 2 - 9, 452)
+    ctx.closePath()
+    ctx.fill()
+
+    // 7. Wedding Date & Time Golden Cartouche Box
+    const boxW = 1080
+    const boxH = 135
+    const boxX = w / 2 - boxW / 2
+    const boxY = 480
+    ctx.fillStyle = 'rgba(255, 253, 248, 0.96)'
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.roundRect(boxX, boxY, boxW, boxH, 18)
+    ctx.fill()
+    ctx.stroke()
+
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.roundRect(boxX + 6, boxY + 6, boxW - 12, boxH - 12, 14)
+    ctx.stroke()
+
+    ctx.font = 'bold 13px "Cinzel", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '3px'
+    ctx.fillStyle = '#78242A'
+    ctx.fillText('HÔN LỄ ĐƯỢC TỔ CHỨC VÀO LÚC', w / 2, boxY + 20)
+
+    ctx.font = 'bold 28px "Cinzel", "Playfair Display", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '3px'
+    ctx.fillStyle = '#1C1917'
+    ctx.fillText(`${weddingTime ? weddingTime.toUpperCase() : '18:00 TỐI'}  •  ${weddingDate ? weddingDate.toUpperCase() : 'THỨ SÁU, NGÀY 20 THÁNG 11 NĂM 2026'}`, w / 2, boxY + 48)
+
+    ctx.font = 'italic 18px "Cormorant Garamond", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '1px'
+    ctx.fillStyle = '#7A6230'
+    ctx.fillText(lunarDate || '(Nhằm ngày 12 tháng 10 năm Bính Ngọ)', w / 2, boxY + 92)
+
+    // 8. Venue & Reception Location Information
+    ctx.font = 'bold 24px "Cinzel", "Playfair Display", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '2px'
+    ctx.fillStyle = '#78242A'
+    ctx.fillText(venueName ? venueName.toUpperCase() : 'TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI RIVERSIDE PALACE', w / 2, 645)
+
+    ctx.font = '600 20px "Playfair Display", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '1px'
+    ctx.fillStyle = '#9E782F'
+    ctx.fillText(venueHall || 'Sảnh Grand Ballroom (Tầng 2)', w / 2, 684)
+
+    ctx.font = '500 17px "Plus Jakarta Sans", sans-serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    ctx.fillStyle = '#3F3B36'
+    ctx.fillText(venueAddress || '360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh', w / 2, 718)
+
+    ctx.font = 'italic 17px "Cormorant Garamond", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '1px'
+    ctx.fillStyle = '#6E675D'
+    ctx.fillText('Đón khách lúc: 17:30   •   Khai tiệc lúc: 18:30', w / 2, 752)
+
+    // 9. Horizontal Divider & Solemn Closing Words
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 1.2
+    ctx.beginPath()
+    ctx.moveTo(w / 2 - 200, 792)
+    ctx.lineTo(w / 2 + 200, 792)
+    ctx.stroke()
+
+    ctx.font = 'italic 19px "Cormorant Garamond", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    ctx.fillStyle = '#524C44'
+    ctx.fillText('“Sự hiện diện của Quý Khách là niềm vinh hạnh lớn lao cho hai gia đình chúng tôi”', w / 2, 814)
+
+    ctx.font = 'bold 15px "Cinzel", serif'
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '3px'
+    ctx.fillStyle = '#9E782F'
+    ctx.fillText('RẤT HÂN HẠNH ĐƯỢC ĐÓN TIẾP!', w / 2, 854)
 
     ctx.restore()
   }
@@ -391,7 +577,16 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
   monogram = 'Q & M',
   groomName = 'Minh Quân',
   brideName = 'Thảo My',
-  weddingDate = 'THỨ SÁU, 20 . 11 . 2026',
+  groomFullName = 'Nguyễn Minh Quân',
+  brideFullName = 'Lê Hoàng Thảo My',
+  groomParents = 'Ông Nguyễn Văn Nam & Bà Trần Thị Lan',
+  brideParents = 'Ông Lê Minh Tuấn & Bà Phạm Hồng Nga',
+  weddingDate = 'Thứ Sáu, ngày 20 tháng 11 năm 2026',
+  weddingTime = '18:00 Tối',
+  lunarDate = '(Nhằm ngày 12 tháng 10 năm Bính Ngọ)',
+  venueName = 'Trung Tâm Hội Nghị Tiệc Cưới Riverside Palace',
+  venueHall = 'Sảnh Grand Ballroom (Tầng 2)',
+  venueAddress = '360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -510,7 +705,21 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
     // Textures
     const waxTexture = createWaxSealTexture(monogram)
     const waxBumpTexture = createWaxSealBumpMap(monogram)
-    const cardTexture = createCardTexture(groomName, brideName, monogram, weddingDate)
+    const cardTexture = createCardTexture({
+      monogram,
+      groomName,
+      brideName,
+      groomFullName,
+      brideFullName,
+      groomParents,
+      brideParents,
+      weddingDate,
+      weddingTime,
+      lunarDate,
+      venueName,
+      venueHall,
+      venueAddress,
+    })
     const bokehTexture = createBokehTexture()
 
     // Burgundy wax seal material (#72262B) with embossed monogram
@@ -565,9 +774,9 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
     envelopeGroup.add(frontMesh)
 
     // C. Wedding Invitation Card Inside
-    const cardW = 3.25
-    const cardH = 2.15
-    const cardGeometry = new THREE.BoxGeometry(cardW, cardH, 0.012)
+    const cardW = 3.35
+    const cardH = 2.35
+    const cardGeometry = new THREE.BoxGeometry(cardW, cardH, 0.015)
     const cardMaterials = [
       paperMaterial, // right
       paperMaterial, // left
@@ -951,26 +1160,30 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
         }
       }
 
-      // 2. Flap Rotation Open (progress 0.1 -> 0.65)
-      const flapT = THREE.MathUtils.smoothstep(p, 0.1, 0.65)
-      // Rotates from 0 rad down to -162 degrees (-2.82 rad) back and up
-      topFlapGroup.rotation.x = -THREE.MathUtils.lerp(0, Math.PI * 0.88, flapT)
+      // 2. Flap Rotation Open (progress 0.1 -> 0.60)
+      const flapT = THREE.MathUtils.smoothstep(p, 0.1, 0.60)
+      // Positive rotation swings flap backwards behind envelope
+      topFlapGroup.rotation.x = THREE.MathUtils.lerp(0, Math.PI * 0.98, flapT)
+      topFlapGroup.position.z = THREE.MathUtils.lerp(envDepth / 2 + 0.005, -envDepth / 2 - 0.015, flapT)
 
       // 3. Invitation Card Slide Up (progress 0.35 -> 1.0)
       const cardT = THREE.MathUtils.smoothstep(p, 0.35, 1.0)
       // Ease out cubic
       const cardEase = 1 - Math.pow(1 - cardT, 3)
-      cardMesh.position.y = THREE.MathUtils.lerp(0.02, 1.55, cardEase)
-      cardMesh.position.z = THREE.MathUtils.lerp(0.005, 0.16, cardEase)
-      cardMesh.rotation.x = THREE.MathUtils.lerp(0, -0.06, cardEase)
+      cardMesh.position.y = THREE.MathUtils.lerp(0.02, 1.48, cardEase)
+      cardMesh.position.z = THREE.MathUtils.lerp(0.005, 0.22, cardEase)
+      cardMesh.rotation.x = THREE.MathUtils.lerp(0, -0.04, cardEase)
+      const cardScale = THREE.MathUtils.lerp(1.0, 1.04, cardEase)
+      cardMesh.scale.set(cardScale, cardScale, 1.0)
 
       // 4. Camera subtle zoom & framing
-      const camT = THREE.MathUtils.smoothstep(p, 0.2, 0.9)
+      const camT = THREE.MathUtils.smoothstep(p, 0.25, 0.95)
       const currentAspect = (container.clientWidth || window.innerWidth) / (container.clientHeight || 600)
       const baseCamZ = currentAspect < 1.0 ? 5.2 * Math.min(1.4, 0.95 / currentAspect) : 5.2
-      const targetCamZ = currentAspect < 1.0 ? baseCamZ * 0.92 : 4.6
+      const targetCamZ = currentAspect < 1.0 ? baseCamZ * 0.88 : 4.45
       camera.position.z = THREE.MathUtils.lerp(baseCamZ, targetCamZ, camT)
-      camera.position.y = THREE.MathUtils.lerp(0.0, 0.42, camT)
+      camera.position.y = THREE.MathUtils.lerp(0.0, 0.72, camT)
+      camera.lookAt(0, THREE.MathUtils.lerp(0.0, 0.65, camT), 0)
 
       // C. 3D Floating Particles Animation
       // Rose petals drifting with sinusoidal turbulence
@@ -1049,7 +1262,22 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       // Gracefully dispose WebGL renderer without forcing context loss (enables React StrictMode re-mount)
       renderer.dispose()
     }
-  }, [monogram, groomName, brideName, weddingDate, handleOpenTrigger])
+  }, [
+    monogram,
+    groomName,
+    brideName,
+    groomFullName,
+    brideFullName,
+    groomParents,
+    brideParents,
+    weddingDate,
+    weddingTime,
+    lunarDate,
+    venueName,
+    venueHall,
+    venueAddress,
+    handleOpenTrigger,
+  ])
 
   return (
     <div

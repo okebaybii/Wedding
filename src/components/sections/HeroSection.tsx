@@ -1,21 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
 import {
   Sparkles,
-  Volume2,
-  VolumeX,
-  Play,
-  Pause,
   ChevronDown,
   Film,
   Image as ImageIcon,
-  Maximize2,
-  Mail,
   Heart,
   Calendar,
 } from 'lucide-react'
 import { CoupleInfo } from '../../types/wedding.ts'
 import { weddingCouple } from '../../data/weddingData.ts'
-import { useWeddingAudio } from '../../hooks/useWeddingAudio.ts'
+import { WeddingFloralFlanks } from '../ui/WeddingFloralFlanks.tsx'
 
 export interface HeroReelItem {
   id: string
@@ -38,14 +32,11 @@ interface HeroSectionProps {
 export const HeroSection: React.FC<HeroSectionProps> = ({
   couple = weddingCouple,
   onScrollToStory,
-  onReopenGateway,
 }) => {
-  const { isMuted, toggleMute } = useWeddingAudio()
   const videoRef = useRef<HTMLVideoElement>(null)
   const heroContainerRef = useRef<HTMLDivElement>(null)
 
   const [activeReelIndex, setActiveReelIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
   const [isVideoLoading, setIsVideoLoading] = useState(false)
 
   // Curated 4K cinematic wedding reels & master shots
@@ -117,35 +108,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       videoRef.current
         .play()
         .then(() => {
-          setIsPlaying(true)
           setIsVideoLoading(false)
         })
         .catch(() => {
-          setIsPlaying(false)
           setIsVideoLoading(false)
         })
     }
   }, [activeReelIndex, activeReel.type])
-
-  const handleTogglePlay = () => {
-    if (activeReel.type !== 'video' || !videoRef.current) return
-    if (isPlaying) {
-      videoRef.current.pause()
-      setIsPlaying(false)
-    } else {
-      videoRef.current.play()
-      setIsPlaying(true)
-    }
-  }
-
-  const handleFullscreen = () => {
-    if (!heroContainerRef.current) return
-    if (!document.fullscreenElement) {
-      heroContainerRef.current.requestFullscreen?.().catch(() => {})
-    } else {
-      document.exitFullscreen?.().catch(() => {})
-    }
-  }
 
   return (
     <section
@@ -165,7 +134,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               poster={activeReel.thumbnailUrl}
               autoPlay
               loop
-              muted={isMuted}
+              muted
               playsInline
               onPlaying={() => setIsVideoLoading(false)}
               className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
@@ -202,90 +171,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="absolute top-6 right-6 w-12 h-12 border-t-2 border-r-2 border-gold/40 pointer-events-none hidden sm:block" />
       </div>
 
-      {/* 2. TOP FLOATING STAGE HEADER: Monogram Brand & Interactive Controls */}
-      <div className="relative z-20 w-full px-5 sm:px-10 pt-6 sm:pt-8 flex items-center justify-between">
-        {/* Monogram Seal & Chapter Info */}
-        <div className="flex items-center gap-3.5">
-          <div className="relative group">
-            <div className="w-13 h-13 rounded-full border-2 border-gold bg-black/60 backdrop-blur-md flex items-center justify-center shadow-xl shadow-gold/25 ring-2 ring-gold/30">
-              <span className="font-display font-bold text-base text-gold-light gold-foil-text tracking-wider">
-                {couple.monogram}
-              </span>
-            </div>
-            <div className="absolute inset-0 rounded-full border border-gold/40 animate-ping opacity-25 pointer-events-none" />
-          </div>
-
-          <div className="flex flex-col text-left">
-            <span className="text-[11px] sm:text-xs uppercase tracking-[0.3em] text-gold-light font-medium flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-gold" />
-              <span>Wedding Cinema • 4K</span>
-            </span>
-            <span className="text-xs sm:text-sm text-paper-light/85 font-serif italic">
-              {activeReel.title}
-            </span>
-          </div>
-        </div>
-
-        {/* Stage Media Controls: Sound, Play/Pause, Reopen 3D Envelope, Fullscreen */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Audio toggle button with sound visualizer bars */}
-          <button
-            type="button"
-            onClick={toggleMute}
-            className="h-10 px-4 rounded-full bg-black/60 hover:bg-black/85 border border-gold/50 text-gold-light text-xs font-serif flex items-center gap-2.5 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
-            title={isMuted ? 'Bật âm thanh hôn lễ' : 'Tắt âm thanh'}
-          >
-            {isMuted ? (
-              <VolumeX className="w-4 h-4 text-paper-light/70" />
-            ) : (
-              <div className="flex items-center gap-0.5">
-                <span className="w-0.5 h-3 bg-gold animate-pulse" />
-                <span className="w-0.5 h-4 bg-gold-light animate-pulse delay-75" />
-                <span className="w-0.5 h-2 bg-gold animate-pulse delay-150" />
-              </div>
-            )}
-            <span className="font-medium">{isMuted ? 'Mute' : 'Nhạc Lễ'}</span>
-          </button>
-
-          {/* Video Play/Pause (only if active media is video) */}
-          {activeReel.type === 'video' && (
-            <button
-              type="button"
-              onClick={handleTogglePlay}
-              className="h-10 w-10 rounded-full bg-black/60 hover:bg-black/85 border border-gold/50 text-gold-light flex items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
-              title={isPlaying ? 'Tạm dừng video' : 'Tiếp tục phát'}
-            >
-              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5 fill-gold-light" />}
-            </button>
-          )}
-
-          {/* Fullscreen Button */}
-          <button
-            type="button"
-            onClick={handleFullscreen}
-            className="hidden sm:flex h-10 w-10 rounded-full bg-black/60 hover:bg-black/85 border border-gold/50 text-gold-light items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
-            title="Xem toàn màn hình"
-          >
-            <Maximize2 className="w-4 h-4" />
-          </button>
-
-          {/* Reopen 3D Envelope Gateway button */}
-          {onReopenGateway && (
-            <button
-              type="button"
-              onClick={onReopenGateway}
-              className="h-10 px-3.5 sm:px-4 rounded-full bg-burgundy/85 hover:bg-burgundy border border-gold/60 text-paper-light text-xs font-serif flex items-center gap-2 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
-              title="Mở lại thiệp cưới 3D tương tác"
-            >
-              <Mail className="w-3.5 h-3.5 text-gold-light" />
-              <span className="hidden sm:inline">Mở lại thiệp 3D</span>
-            </button>
-          )}
-        </div>
-      </div>
+      {/* 2. WEDDING FLORAL FLANKS: Vòm Hoa Cưới Lung Linh Lộng Lẫy Hai Bên */}
+      <WeddingFloralFlanks />
 
       {/* 3. CENTER HERO BRANDING & MAJESTIC COUPLE NAMES */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center my-auto flex flex-col items-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center my-auto pt-14 sm:pt-20 flex flex-col items-center">
         {/* Royal Crest Tagline */}
         <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-black/55 backdrop-blur-md border border-gold/60 text-gold-light text-xs uppercase tracking-[0.35em] font-medium shadow-2xl mb-5">
           <Sparkles className="w-3.5 h-3.5 text-gold" />

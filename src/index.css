@@ -112,3 +112,26 @@
   50% { height: 12px; }
 }
 
+/* Floating Wedding Petal Animation */
+@keyframes floatPetal {
+  0% {
+    transform: translateY(0vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(50vh) translateX(25px) rotate(180deg);
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(105vh) translateX(-15px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+

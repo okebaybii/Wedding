@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Gift, Heart, Sparkles, Sliders } from 'lucide-react'
+import { Gift, Heart, Sparkles } from 'lucide-react'
 import {
   HeroSection,
   SaveTheDateSection,
@@ -26,6 +26,51 @@ const MainAppContent: React.FC = () => {
   const [hasEnteredSite, setHasEnteredSite] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const { isMuted } = useWeddingAudio()
+
+  // Detect /admin in pathname or #admin in hash to open Admin Dashboard
+  useEffect(() => {
+    const checkAdminRoute = () => {
+      const path = window.location.pathname.toLowerCase()
+      const hash = window.location.hash.toLowerCase()
+      if (path === '/admin' || path.endsWith('/admin') || hash === '#admin') {
+        setIsAdminOpen(true)
+        setHasEnteredSite(true)
+      }
+    }
+
+    checkAdminRoute()
+    window.addEventListener('popstate', checkAdminRoute)
+    window.addEventListener('hashchange', checkAdminRoute)
+
+    // Keyboard shortcut: Ctrl+Shift+A or Alt+A to quickly open Admin
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') ||
+        (e.altKey && e.key.toLowerCase() === 'a')
+      ) {
+        e.preventDefault()
+        setIsAdminOpen((prev) => !prev)
+        setHasEnteredSite(true)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('popstate', checkAdminRoute)
+      window.removeEventListener('hashchange', checkAdminRoute)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
+  const handleCloseAdmin = () => {
+    setIsAdminOpen(false)
+    if (window.location.pathname.endsWith('/admin')) {
+      const cleanPath = window.location.pathname.replace(/\/admin\/?$/, '/') || '/'
+      window.history.pushState(null, '', cleanPath)
+    } else if (window.location.hash === '#admin') {
+      window.history.pushState(null, '', window.location.pathname)
+    }
+  }
 
   // Track scroll progress for subtle golden indicator
   useEffect(() => {
@@ -75,26 +120,12 @@ const MainAppContent: React.FC = () => {
         />
       </div>
 
-      {/* Floating Quick Admin Trigger Button (Discreet top-right button when needed) */}
-      <div className="fixed top-4 right-4 z-40">
-        <button
-          type="button"
-          onClick={() => setIsAdminOpen(true)}
-          className="h-9 px-3 rounded-full bg-black/40 hover:bg-black/75 text-paper-light border border-gold/40 text-xs font-serif flex items-center gap-1.5 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-md opacity-70 hover:opacity-100"
-          title="Bảng Quản Trị (Admin)"
-        >
-          <Sliders className="w-3.5 h-3.5 text-gold-light" />
-          <span className="hidden sm:inline">Quản Trị</span>
-        </button>
-      </div>
-
       {/* Main Wedding Content Sections with Luxury Ornaments */}
       <main>
         {/* 1. Hero: Fullscreen Cinematic 3D/Video Reel Stage ("click vào cái nào hiển thị cái đó") */}
         <HeroSection
           couple={couple}
           onScrollToStory={handleScrollToStory}
-          onReopenGateway={handleReopenGateway}
         />
 
         {/* 2. Save The Date: Visual Wedding Calendar & Countdown (Cụm đếm ngược nằm bên dưới như ảnh 5.png) */}
@@ -157,14 +188,16 @@ const MainAppContent: React.FC = () => {
           <div className="mt-6 pt-4 border-t border-gold/20 flex flex-wrap items-center justify-center gap-4 text-xs text-charcoal-muted">
             <span>Thiệp Cưới Điện Tử Cao Cấp D--Webdding © 2026</span>
             <span>•</span>
-            <button
-              type="button"
-              onClick={() => setIsAdminOpen(true)}
-              className="text-gold-dark hover:text-burgundy flex items-center gap-1 font-serif underline underline-offset-4 cursor-pointer"
+            <a
+              href="#admin"
+              onClick={(e) => {
+                e.preventDefault()
+                setIsAdminOpen(true)
+              }}
+              className="text-gold-dark/80 hover:text-burgundy font-serif underline underline-offset-4 cursor-pointer"
             >
-              <Sliders className="w-3.5 h-3.5" />
-              <span>Bảng Quản Trị Admin</span>
-            </button>
+              <span>Quản Trị (/admin)</span>
+            </a>
           </div>
         </div>
       </footer>
@@ -192,10 +225,10 @@ const MainAppContent: React.FC = () => {
         onClose={() => setIsGiftModalOpen(false)}
       />
 
-      {/* Admin Management Dashboard Modal */}
+      {/* Admin Management Dashboard Modal (Gõ /admin hoặc #admin để mở) */}
       <AdminDashboard
         isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
+        onClose={handleCloseAdmin}
       />
     </div>
   )
