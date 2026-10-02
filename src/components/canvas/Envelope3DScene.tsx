@@ -369,6 +369,8 @@ function createBokehTexture(): THREE.CanvasTexture {
 function playAudioOpen(isMuted?: boolean) {
   if (isMuted || typeof window === 'undefined') return
   try {
+    // Start music synchronously in user click gesture to ensure AudioContext resumes
+    weddingAudioManager.startMusic()
     weddingAudioManager.playWaxBreakSFX()
     window.setTimeout(() => {
       weddingAudioManager.playPaperRustleSFX()
@@ -376,7 +378,6 @@ function playAudioOpen(isMuted?: boolean) {
     window.setTimeout(() => {
       weddingAudioManager.playChimeSFX()
     }, 450)
-    weddingAudioManager.startMusic()
   } catch {
     // Autoplay restrictions or audio disabled, gracefully handled
   }
@@ -412,6 +413,9 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
   const isOpenedRef = useRef(isOpened)
   useEffect(() => {
     isOpenedRef.current = isOpened
+    if (!isOpened) {
+      setHasInteracted(false)
+    }
   }, [isOpened])
 
   const openProgressRef = useRef(isOpened ? 1.0 : 0.0)
@@ -436,7 +440,9 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
     const scene = new THREE.Scene()
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100)
-    camera.position.set(0, 0, 5.2)
+    const initialAspect = width / height
+    const initialCamZ = initialAspect < 1.0 ? 5.2 * Math.min(1.4, 0.95 / initialAspect) : 5.2
+    camera.position.set(0, 0, initialCamZ)
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -844,6 +850,12 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
 
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     canvas.addEventListener('pointerdown', onPointerDown)
+    const onCanvasClick = () => {
+      if (openProgressRef.current < 0.05) {
+        handleOpenTrigger()
+      }
+    }
+    canvas.addEventListener('click', onCanvasClick)
     if (window.DeviceOrientationEvent) {
       window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true })
     }
@@ -853,7 +865,13 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       if (!container || !canvas) return
       const newW = container.clientWidth || window.innerWidth
       const newH = container.clientHeight || 600
-      camera.aspect = newW / newH
+      const aspect = newW / newH
+      camera.aspect = aspect
+      if (aspect < 1.0) {
+        camera.position.z = 5.2 * Math.min(1.4, 0.95 / aspect)
+      } else {
+        camera.position.z = 5.2
+      }
       camera.updateProjectionMatrix()
       renderer.setSize(newW, newH)
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
@@ -948,7 +966,10 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
 
       // 4. Camera subtle zoom & framing
       const camT = THREE.MathUtils.smoothstep(p, 0.2, 0.9)
-      camera.position.z = THREE.MathUtils.lerp(5.2, 4.6, camT)
+      const currentAspect = (container.clientWidth || window.innerWidth) / (container.clientHeight || 600)
+      const baseCamZ = currentAspect < 1.0 ? 5.2 * Math.min(1.4, 0.95 / currentAspect) : 5.2
+      const targetCamZ = currentAspect < 1.0 ? baseCamZ * 0.92 : 4.6
+      camera.position.z = THREE.MathUtils.lerp(baseCamZ, targetCamZ, camT)
       camera.position.y = THREE.MathUtils.lerp(0.0, 0.42, camT)
 
       // C. 3D Floating Particles Animation
@@ -996,6 +1017,7 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       resizeObserver.disconnect()
       window.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerdown', onPointerDown)
+      canvas.removeEventListener('click', onCanvasClick)
       if (window.DeviceOrientationEvent) {
         window.removeEventListener('deviceorientation', onDeviceOrientation)
       }
@@ -1024,8 +1046,8 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       cardTexture.dispose()
       bokehTexture.dispose()
 
+      // Gracefully dispose WebGL renderer without forcing context loss (enables React StrictMode re-mount)
       renderer.dispose()
-      renderer.forceContextLoss()
     }
   }, [monogram, groomName, brideName, weddingDate, handleOpenTrigger])
 
@@ -1043,7 +1065,7 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
 
       {/* Floating Action Affordance Indicator (Fades out when opened) */}
       <div
-        className={`absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 transition-all duration-700 pointer-events-none flex flex-col items-center gap-2 ${
+        className={`absolute bottom-6 md:bottom-8 z-20 left-1/2 -translate-x-1/2 transition-all duration-700 pointer-events-none flex flex-col items-center gap-2 ${
           isOpened || hasInteracted ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
         }`}
       >

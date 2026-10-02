@@ -120,31 +120,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
-        {/* Interactive 3D Wedding Envelope */}
-        <div className="w-full max-w-md sm:max-w-xl my-6 relative">
-          <div className="w-full h-[360px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-gold/40 bg-gradient-to-b from-paper-light via-paper to-paper-dark relative">
-            <Envelope3DScene
-              isOpened={isEnvelopeOpened}
-              onOpen={handleEnvelopeOpen}
-              isMuted={isMuted}
-              monogram={couple.monogram}
-              groomName={couple.groom.shortName}
-              brideName={couple.bride.shortName}
-              weddingDate="20 . 11 . 2026"
-            />
-          </div>
-          {isEnvelopeOpened && (
-            <button
-              type="button"
-              onClick={() => setIsEnvelopeOpened(false)}
-              className="mt-2.5 text-xs text-charcoal-muted hover:text-burgundy flex items-center justify-center gap-1.5 mx-auto transition-colors py-1 px-3 rounded-full hover:bg-paper-light border border-transparent hover:border-gold/30 cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-gold-dark" />
-              <span>Gập lại phong bì 3D</span>
-            </button>
-          )}
-        </div>
-
         {/* Invitation Headline */}
         <p className="font-serif italic text-burgundy text-base sm:text-lg mb-2 tracking-wide">
           Trân trọng báo tin Lễ Thành Hôn
@@ -173,7 +148,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </p>
 
         {/* 3D Interactive Wedding Envelope Showcase */}
-        <div className="w-full max-w-xl h-[440px] sm:h-[520px] my-4 relative">
+        <div className="w-full max-w-2xl h-[500px] sm:h-[580px] my-6 relative rounded-3xl overflow-hidden shadow-2xl border border-gold/40 bg-gradient-to-b from-paper-light via-paper to-paper-dark">
           <Envelope3DScene
             isOpened={isEnvelopeOpened}
             onOpen={handleEnvelopeOpen}
@@ -185,15 +160,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           />
 
           {isEnvelopeOpened && (
-            <div className="absolute top-2 right-2 z-20">
+            <div className="absolute top-4 right-4 z-30">
               <button
                 type="button"
                 onClick={() => setIsEnvelopeOpened(false)}
-                className="px-3 py-1.5 rounded-full bg-paper-light/90 border border-gold/40 text-charcoal hover:text-burgundy text-xs font-serif flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                className="px-3.5 py-1.5 rounded-full bg-paper-light/95 border border-gold/60 text-charcoal hover:text-burgundy text-xs font-serif flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all cursor-pointer backdrop-blur-md active:scale-95"
                 title="Đóng phong bì để xem lại"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-gold-dark" />
-                <span>Đóng lại</span>
+                <span>Gập lại phong bì</span>
               </button>
             </div>
           )}
