@@ -1,4 +1,4 @@
-import { CoupleInfo, Milestone, WeddingEvent, GuestWish, BankAccount } from '../types/wedding.ts'
+import { CoupleInfo, Milestone, WeddingEvent, GuestWish, BankAccount, GalleryPhoto, RsvpEntry } from '../types/wedding.ts'
 
 export const weddingCouple: CoupleInfo = {
   groom: {
@@ -17,10 +17,118 @@ export const weddingCouple: CoupleInfo = {
     bio: 'Nhà thiết kế sáng tạo yêu nghệ thuật và ẩm thực. Người mang ánh nắng ấm áp và sự ngọt ngào vào cuộc sống của Quân.',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop'
   },
+  // Ảnh cưới chụp chung giữa hai người (Master Couple Portrait)
+  jointImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop',
+  // Danh sách các bức ảnh chạy banner trang đầu (Hero Wedding Slides)
+  heroBanners: [
+    'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1400&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1400&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1400&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1400&auto=format&fit=crop',
+  ],
   monogram: 'Q & M',
   weddingDate: '2026-11-20T18:00:00',
   quote: '“Tình yêu đích thực không phải là tìm kiếm một người hoàn hảo, mà là cùng nhau học cách yêu thương những điều chưa hoàn hảo một cách trọn vẹn nhất.”'
 }
+
+export const initialGalleryPhotos: GalleryPhoto[] = [
+  {
+    id: 'gal-1',
+    url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop',
+    title: 'Khoảnh Khắc Hạnh Phúc',
+    category: 'ceremony',
+    aspectRatio: 'tall',
+    caption: 'Ánh mắt trao nhau trong ngày trọng đại nhất đời người.'
+  },
+  {
+    id: 'gal-2',
+    url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1000&auto=format&fit=crop',
+    title: 'Ngoại Cảnh Bình Minh',
+    category: 'outdoor',
+    aspectRatio: 'wide',
+    caption: 'Đón tia nắng đầu tiên của ngày mới tại biển lộng gió.'
+  },
+  {
+    id: 'gal-3',
+    url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1000&auto=format&fit=crop',
+    title: 'Nhẫn Cưới & Hoa Cưới',
+    category: 'moments',
+    aspectRatio: 'square',
+    caption: 'Vật đính ước trăm năm tình viên mãn.'
+  },
+  {
+    id: 'gal-4',
+    url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1000&auto=format&fit=crop',
+    title: 'Dưới Vòm Hoa Lãng Mạn',
+    category: 'ceremony',
+    aspectRatio: 'tall',
+    caption: 'Cùng nhau bước qua cổng hoa cưới rực rỡ sắc màu.'
+  },
+  {
+    id: 'gal-5',
+    url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=1000&auto=format&fit=crop',
+    title: 'Hoàng Hôn Cao Nguyên',
+    category: 'outdoor',
+    aspectRatio: 'tall',
+    caption: 'Chiều hoàng hôn mộng mơ trên đồi thông Đà Lạt.'
+  },
+  {
+    id: 'gal-6',
+    url: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1000&auto=format&fit=crop',
+    title: 'Nụ Cười Tình Yêu',
+    category: 'moments',
+    aspectRatio: 'square',
+    caption: 'Những nụ cười tự nhiên và chân thành nhất của đôi ta.'
+  },
+  {
+    id: 'gal-7',
+    url: 'https://images.unsplash.com/photo-1519225424976-135832a82967?q=80&w=1000&auto=format&fit=crop',
+    title: 'Lễ Đường Lung Linh',
+    category: 'ceremony',
+    aspectRatio: 'wide',
+    caption: 'Không gian tiệc cưới ấm cúng ngập tràn ánh nến và hoa tươi.'
+  },
+  {
+    id: 'gal-8',
+    url: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=1000&auto=format&fit=crop',
+    title: 'Nắm Tay Dạo Bước',
+    category: 'outdoor',
+    aspectRatio: 'tall',
+    caption: 'Đi bên nhau qua mọi nẻo đường của tuổi thanh xuân.'
+  }
+]
+
+export const initialRsvps: RsvpEntry[] = [
+  {
+    id: 'rsvp-1',
+    fullName: 'Trần Văn Hoàng',
+    phone: '0912345678',
+    side: 'groom',
+    attendance: 'yes',
+    guestCount: 2,
+    dietaryNotes: 'Không ăn cay',
+    submittedAt: '2026-10-01 14:30'
+  },
+  {
+    id: 'rsvp-2',
+    fullName: 'Nguyễn Thị Ngọc Ánh',
+    phone: '0987654321',
+    side: 'bride',
+    attendance: 'yes',
+    guestCount: 1,
+    dietaryNotes: 'Ăn chay nhẹ',
+    submittedAt: '2026-10-01 16:15'
+  },
+  {
+    id: 'rsvp-3',
+    fullName: 'Lê Quốc Bảo',
+    phone: '0903112233',
+    side: 'mutual',
+    attendance: 'yes',
+    guestCount: 2,
+    submittedAt: '2026-10-02 09:40'
+  }
+]
 
 export const loveMilestones: Milestone[] = [
   {

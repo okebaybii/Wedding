@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { X, Copy, Check, Gift, Heart, Sparkles, Building2, User, CreditCard } from 'lucide-react'
-import { bankAccounts } from '../../data/weddingData.ts'
 import { triggerWeddingConfetti } from '../../utils/confetti.ts'
+import { useWeddingData } from '../../store/WeddingContext.tsx'
 
 interface GiftBoxModalProps {
   isOpen: boolean
@@ -11,6 +11,8 @@ interface GiftBoxModalProps {
 type RecipientTab = 'groom' | 'bride'
 
 export const GiftBoxModal: React.FC<GiftBoxModalProps> = ({ isOpen, onClose }) => {
+  const { state } = useWeddingData()
+  const bankAccounts = state.bankAccounts
   const [activeTab, setActiveTab] = useState<RecipientTab>('groom')
   const [copiedField, setCopiedField] = useState<string | null>(null)
 

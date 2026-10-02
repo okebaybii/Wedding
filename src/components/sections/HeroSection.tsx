@@ -1,301 +1,428 @@
-import React, { useState, useEffect } from 'react'
-import { Calendar, Heart, Clock, ChevronDown, Check, Download, ExternalLink, RotateCcw } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import {
+  Sparkles,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  ChevronDown,
+  Film,
+  Image as ImageIcon,
+  Maximize2,
+  Mail,
+  Heart,
+} from 'lucide-react'
 import { CoupleInfo } from '../../types/wedding.ts'
 import { weddingCouple } from '../../data/weddingData.ts'
-import { getGoogleCalendarUrl, downloadIcsFile } from '../../utils/calendar.ts'
-import { Envelope3DScene } from '../canvas/Envelope3DScene.tsx'
 import { useWeddingAudio } from '../../hooks/useWeddingAudio.ts'
+
+export interface HeroReelItem {
+  id: string
+  title: string
+  subtitle: string
+  type: 'video' | 'image'
+  mediaUrl: string
+  thumbnailUrl: string
+  badge: string
+  description?: string
+}
 
 interface HeroSectionProps {
   couple?: CoupleInfo
   onScrollToStory?: () => void
-}
-
-interface TimeLeft {
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
-  isExpired: boolean
+  onReopenGateway?: () => void
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   couple = weddingCouple,
   onScrollToStory,
+  onReopenGateway,
 }) => {
-  const [calendarMenuOpen, setCalendarMenuOpen] = useState(false)
-  const [addedNotice, setAddedNotice] = useState<string | null>(null)
-  const [isEnvelopeOpened, setIsEnvelopeOpened] = useState(false)
-  const { startMusic, isMuted } = useWeddingAudio()
+  const { isMuted, toggleMute } = useWeddingAudio()
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const heroContainerRef = useRef<HTMLDivElement>(null)
 
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => calculateTimeLeft(couple.weddingDate))
+  const [activeReelIndex, setActiveReelIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const [isVideoLoading, setIsVideoLoading] = useState(false)
 
-  const handleEnvelopeOpen = () => {
-    setIsEnvelopeOpened(true)
-    startMusic().catch(() => {})
-  }
+  // Construct dynamic cinematic reels based on couple data & high-res wedding video streams
+  const reels: HeroReelItem[] = [
+    {
+      id: 'reel-1',
+      title: 'Phim Cưới Điện Ảnh',
+      subtitle: 'Con Đường Hạnh Phúc',
+      type: 'video',
+      mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-newlywed-couple-walking-outdoors-holding-hands-41140-large.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop',
+      badge: 'Video 4K',
+      description: 'Từng bước chân sánh vai bước vào lễ đường hôn nhân trọn vẹn.',
+    },
+    {
+      id: 'reel-2',
+      title: 'Trao Nhẫn Thiêng Liêng',
+      subtitle: 'Lời Thề Trăm Năm',
+      type: 'video',
+      mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-bride-and-groom-with-wedding-rings-41142-large.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop',
+      badge: 'Cinematic 3D',
+      description: 'Nhẫn cưới trao tay, minh chứng cho một tình yêu vĩnh cửu.',
+    },
+    {
+      id: 'reel-3',
+      title: 'Khoảnh Khắc Ngọt Ngào',
+      subtitle: 'Nụ Cười Vu Quy',
+      type: 'video',
+      mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-bride-and-groom-at-their-wedding-41139-large.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600&auto=format&fit=crop',
+      badge: 'Video 3D',
+      description: 'Nụ cười rạng ngời và ánh mắt đong đầy yêu thương.',
+    },
+    {
+      id: 'reel-4',
+      title: 'Bức Bích Họa Đôi Lứa',
+      subtitle: 'Minh Quân & Thảo My',
+      type: 'image',
+      mediaUrl: couple.jointImage || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop',
+      thumbnailUrl: couple.jointImage || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop',
+      badge: 'Ảnh Chung Đôi',
+      description: 'Bức chân dung cưới trang trọng gắn kết tình duyên đôi lứa.',
+    },
+    {
+      id: 'reel-5',
+      title: 'Hoàng Hôn Tình Yêu',
+      subtitle: 'Ngoại Cảnh Lãng Mạn',
+      type: 'image',
+      mediaUrl: (couple.heroBanners && couple.heroBanners[1]) || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1600&auto=format&fit=crop',
+      thumbnailUrl: (couple.heroBanners && couple.heroBanners[1]) || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=600&auto=format&fit=crop',
+      badge: 'Master Shot',
+      description: 'Khung cảnh thiên nhiên thơ mộng lưu giữ những phút giây êm đềm.',
+    },
+  ]
 
+  const activeReel = reels[activeReelIndex] || reels[0]
+
+  // Synchronize video play/pause
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(couple.weddingDate))
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [couple.weddingDate])
-
-  function calculateTimeLeft(targetDateStr: string): TimeLeft {
-    const target = new Date(targetDateStr).getTime()
-    const now = new Date().getTime()
-    const diff = target - now
-
-    if (diff <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true }
+    if (activeReel.type === 'video' && videoRef.current) {
+      setIsVideoLoading(true)
+      videoRef.current.currentTime = 0
+      videoRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true)
+          setIsVideoLoading(false)
+        })
+        .catch(() => {
+          // Autoplay policy or buffering fallback
+          setIsPlaying(false)
+          setIsVideoLoading(false)
+        })
     }
+  }, [activeReelIndex, activeReel.type])
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-    return { days, hours, minutes, seconds, isExpired: false }
+  const handleTogglePlay = () => {
+    if (activeReel.type !== 'video' || !videoRef.current) return
+    if (isPlaying) {
+      videoRef.current.pause()
+      setIsPlaying(false)
+    } else {
+      videoRef.current.play()
+      setIsPlaying(true)
+    }
   }
 
-  const calendarParams = {
-    title: `Lễ Cưới ${couple.groom.shortName} & ${couple.bride.shortName}`,
-    description: `Trân trọng kính mời quý khách tới tham dự Lễ thành hôn của ${couple.groom.fullName} & ${couple.bride.fullName}.`,
-    location: 'Riverside Palace, 360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh',
-    startDate: couple.weddingDate,
-    durationHours: 4,
-  }
-
-  const handleAddToGoogle = () => {
-    const url = getGoogleCalendarUrl(calendarParams)
-    window.open(url, '_blank', 'noopener,noreferrer')
-    setCalendarMenuOpen(false)
-    setAddedNotice('Đã mở Google Calendar!')
-    setTimeout(() => setAddedNotice(null), 3000)
-  }
-
-  const handleDownloadIcs = () => {
-    downloadIcsFile(calendarParams)
-    setCalendarMenuOpen(false)
-    setAddedNotice('Đã tải lịch Apple / Outlook (.ics)!')
-    setTimeout(() => setAddedNotice(null), 3000)
+  const handleFullscreen = () => {
+    if (!heroContainerRef.current) return
+    if (!document.fullscreenElement) {
+      heroContainerRef.current.requestFullscreen?.().catch(() => {})
+    } else {
+      document.exitFullscreen?.().catch(() => {})
+    }
   }
 
   return (
     <section
       id="hero"
-      aria-label="Thư mời cưới"
-      className="relative min-h-[92vh] flex flex-col items-center justify-center text-center px-4 py-16 sm:py-24 overflow-hidden bg-gradient-to-b from-paper-light via-paper to-paper-dark/30"
+      ref={heroContainerRef}
+      aria-label="Khung cảnh cưới điện ảnh 3D toàn màn hình"
+      className="relative w-full h-screen min-h-[640px] md:min-h-[720px] max-h-[1200px] overflow-hidden flex flex-col justify-between select-none bg-black text-paper-light"
     >
-      {/* Subtle vintage luxury corner ornament borders */}
-      <div className="absolute top-6 left-6 w-16 h-16 border-t-2 border-l-2 border-gold/40 pointer-events-none hidden sm:block" />
-      <div className="absolute top-6 right-6 w-16 h-16 border-t-2 border-r-2 border-gold/40 pointer-events-none hidden sm:block" />
-      <div className="absolute bottom-6 left-6 w-16 h-16 border-b-2 border-l-2 border-gold/40 pointer-events-none hidden sm:block" />
-      <div className="absolute bottom-6 right-6 w-16 h-16 border-b-2 border-r-2 border-gold/40 pointer-events-none hidden sm:block" />
-
-      {/* Background Soft Glow */}
-      <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-40">
-        <div className="w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-gold/15 via-champagne/25 to-transparent blur-3xl" />
-      </div>
-
-      <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
-        {/* Monogram Seal Badge */}
-        <div className="mb-6 flex flex-col items-center">
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full p-[2px] bg-gradient-to-tr from-gold-dark via-gold-light to-gold shadow-md shadow-gold/20 flex items-center justify-center">
-            <div className="w-full h-full rounded-full bg-paper flex flex-col items-center justify-center border border-gold/40 relative overflow-hidden group">
-              <span className="font-display font-bold text-xl sm:text-2xl tracking-widest text-burgundy gold-foil-text select-none">
-                {couple.monogram}
-              </span>
-              <div className="absolute inset-0 border border-gold/30 rounded-full scale-90 pointer-events-none" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-center gap-3">
-            <span className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-gold/70" />
-            <span className="font-display text-xs sm:text-sm tracking-[0.25em] uppercase text-gold-dark font-medium">
-              Save Our Date
-            </span>
-            <span className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-gold/70" />
-          </div>
-        </div>
-
-        {/* Invitation Headline */}
-        <p className="font-serif italic text-burgundy text-base sm:text-lg mb-2 tracking-wide">
-          Trân trọng báo tin Lễ Thành Hôn
-        </p>
-
-        {/* Couple Names */}
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-charcoal font-semibold tracking-tight mb-4 leading-tight">
-          <span className="block sm:inline">{couple.groom.shortName}</span>
-          <span className="inline-block mx-3 text-gold font-script text-4xl sm:text-5xl md:text-6xl align-middle font-normal">
-            &
-          </span>
-          <span className="block sm:inline">{couple.bride.shortName}</span>
-        </h1>
-
-        {/* Wedding Date Display */}
-        <div className="my-3 py-2 px-6 rounded-full border border-gold/40 bg-paper-light/90 shadow-sm backdrop-blur-xs flex items-center gap-3">
-          <Calendar className="w-4 h-4 text-gold-dark" aria-hidden="true" />
-          <span className="font-display text-sm sm:text-base font-semibold tracking-widest text-charcoal uppercase">
-            Thứ Sáu • 20 . 11 . 2026
-          </span>
-          <Heart className="w-3.5 h-3.5 text-burgundy fill-burgundy" aria-hidden="true" />
-        </div>
-
-        <p className="text-charcoal-muted text-sm sm:text-base max-w-md mx-auto mb-4 font-light">
-          Tại Trung Tâm Tiệc Cưới Riverside Palace • TP. Hồ Chí Minh
-        </p>
-
-        {/* 3D Interactive Wedding Envelope Showcase */}
-        <div className="w-full max-w-2xl h-[500px] sm:h-[580px] my-6 relative rounded-3xl overflow-hidden shadow-2xl border border-gold/40 bg-gradient-to-b from-paper-light via-paper to-paper-dark">
-          <Envelope3DScene
-            isOpened={isEnvelopeOpened}
-            onOpen={handleEnvelopeOpen}
-            isMuted={isMuted}
-            monogram={couple.monogram}
-            groomName={couple.groom.shortName}
-            brideName={couple.bride.shortName}
-            weddingDate="THỨ SÁU • 20 . 11 . 2026"
-          />
-
-          {isEnvelopeOpened && (
-            <div className="absolute top-4 right-4 z-30">
-              <button
-                type="button"
-                onClick={() => setIsEnvelopeOpened(false)}
-                className="px-3.5 py-1.5 rounded-full bg-paper-light/95 border border-gold/60 text-charcoal hover:text-burgundy text-xs font-serif flex items-center gap-1.5 shadow-md hover:shadow-lg transition-all cursor-pointer backdrop-blur-md active:scale-95"
-                title="Đóng phong bì để xem lại"
-              >
-                <RotateCcw className="w-3.5 h-3.5 text-gold-dark" />
-                <span>Gập lại phong bì</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Countdown Timer */}
-        <div className="w-full max-w-lg mb-8">
-          <div className="text-xs uppercase tracking-[0.2em] text-gold-dark font-medium mb-3 flex items-center justify-center gap-2">
-            <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Đếm ngược ngày chung đôi</span>
-          </div>
-
-          <div className="grid grid-cols-4 gap-2 sm:gap-4">
-            {[
-              { label: 'Ngày', value: timeLeft.days },
-              { label: 'Giờ', value: timeLeft.hours },
-              { label: 'Phút', value: timeLeft.minutes },
-              { label: 'Giây', value: timeLeft.seconds },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-paper-light/90 border border-gold/30 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-xs"
-              >
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark opacity-60" />
-                <span className="font-serif text-2xl sm:text-4xl font-bold text-burgundy tracking-tight">
-                  {String(item.value).padStart(2, '0')}
-                </span>
-                <span className="text-[10px] sm:text-xs font-sans uppercase tracking-wider text-charcoal-muted mt-1 font-medium">
-                  {item.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Actions: Add to Calendar & Quick Links */}
-        <div className="relative flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-          {/* Calendar Trigger */}
-          <div className="relative w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => setCalendarMenuOpen((prev) => !prev)}
-              aria-expanded={calendarMenuOpen}
-              aria-haspopup="true"
-              className="w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-full bg-emerald text-paper-light font-sans text-sm font-medium tracking-wide flex items-center justify-center gap-2.5 shadow-md shadow-emerald/20 hover:bg-emerald-light transition-colors active:scale-[0.98] border border-gold/30"
-            >
-              <Calendar className="w-4 h-4 text-gold-light" aria-hidden="true" />
-              <span>Thêm vào lịch</span>
-              <ChevronDown
-                className={`w-4 h-4 text-gold-light transition-transform duration-200 ${
-                  calendarMenuOpen ? 'rotate-180' : ''
-                }`}
-                aria-hidden="true"
+      {/* 1. CINEMATIC FULLSCREEN STAGE LAYER (VIDEO / 3D PHOTO) */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {activeReel.type === 'video' ? (
+          <div className="relative w-full h-full">
+            <video
+              ref={videoRef}
+              key={activeReel.mediaUrl}
+              src={activeReel.mediaUrl}
+              poster={activeReel.thumbnailUrl}
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              onPlaying={() => setIsVideoLoading(false)}
+              className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
+            />
+            {/* Poster fallback image when video is loading */}
+            {isVideoLoading && (
+              <img
+                src={activeReel.thumbnailUrl}
+                alt={activeReel.title}
+                className="absolute inset-0 w-full h-full object-cover object-center animate-fade-in"
               />
-            </button>
-
-            {/* Dropdown Menu */}
-            {calendarMenuOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-20"
-                  onClick={() => setCalendarMenuOpen(false)}
-                  aria-hidden="true"
-                />
-                <div className="absolute left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 mt-2 w-64 rounded-xl bg-paper-light border border-gold/40 shadow-xl p-2 z-30 text-left animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3 py-2 border-b border-gold/15 mb-1">
-                    <p className="text-xs font-semibold text-charcoal">Chọn loại lịch nhắc nhở</p>
-                    <p className="text-[11px] text-charcoal-muted">Không bỏ lỡ ngày vui của hai đứa mình</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleAddToGoogle}
-                    className="w-full min-h-[44px] px-3 py-2.5 rounded-lg flex items-center justify-between text-xs font-medium text-charcoal hover:bg-paper hover:text-emerald transition-colors"
-                  >
-                    <span className="flex items-center gap-2.5">
-                      <span className="w-2 h-2 rounded-full bg-gold" />
-                      Google Calendar
-                    </span>
-                    <ExternalLink className="w-3.5 h-3.5 text-charcoal-muted" aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDownloadIcs}
-                    className="w-full min-h-[44px] px-3 py-2.5 rounded-lg flex items-center justify-between text-xs font-medium text-charcoal hover:bg-paper hover:text-emerald transition-colors"
-                  >
-                    <span className="flex items-center gap-2.5">
-                      <span className="w-2 h-2 rounded-full bg-burgundy" />
-                      Apple / Outlook (.ics)
-                    </span>
-                    <Download className="w-3.5 h-3.5 text-charcoal-muted" aria-hidden="true" />
-                  </button>
-                </div>
-              </>
             )}
           </div>
+        ) : (
+          <div className="relative w-full h-full">
+            <img
+              key={activeReel.mediaUrl}
+              src={activeReel.mediaUrl}
+              alt={activeReel.title}
+              className="w-full h-full object-cover object-center animate-ken-burns scale-105"
+            />
+          </div>
+        )}
 
-          {/* Toast / Notification when calendar added */}
-          {addedNotice && (
-            <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap bg-emerald text-paper-light text-xs px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 border border-gold/30">
-              <Check className="w-3.5 h-3.5 text-gold-light" />
-              <span>{addedNotice}</span>
-            </div>
-          )}
+        {/* Filmic Vignette & Luxury Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/95 via-black/40 to-charcoal/80 pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-vignette opacity-70 pointer-events-none" />
 
-          {/* Quick link to RSVP */}
-          <a
-            href="#rsvp"
-            className="w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-full bg-burgundy text-paper-light font-sans text-sm font-medium tracking-wide flex items-center justify-center gap-2 shadow-md shadow-burgundy/20 hover:bg-burgundy-light transition-colors active:scale-[0.98] border border-gold/30"
-          >
-            <Heart className="w-4 h-4 text-champagne" aria-hidden="true" />
-            <span>Xác nhận tham dự</span>
-          </a>
+        {/* Ambient Gold Shimmer Particles */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-gold/10 blur-3xl pointer-events-none" />
+      </div>
+
+      {/* 2. TOP FLOATING STAGE HEADER: Quick Controls */}
+      <div className="relative z-20 w-full px-4 sm:px-8 pt-6 sm:pt-8 flex items-center justify-between">
+        {/* Monogram Seal & Chapter Info */}
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full border-2 border-gold/70 bg-black/60 backdrop-blur-md flex items-center justify-center shadow-lg shadow-gold/20">
+            <span className="font-display font-bold text-sm text-gold-light gold-foil-text tracking-wider">
+              {couple.monogram}
+            </span>
+          </div>
+          <div className="hidden sm:flex flex-col text-left">
+            <span className="text-[11px] uppercase tracking-[0.25em] text-gold-light font-medium flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-gold" />
+              <span>Cinematic Wedding Stage</span>
+            </span>
+            <span className="text-xs text-paper-light/80 font-serif italic">
+              {activeReel.title} • {activeReel.subtitle}
+            </span>
+          </div>
         </div>
 
-        {/* Scroll cue */}
-        {onScrollToStory && (
+        {/* Stage Media Controls: Sound, Play/Pause, Reopen 3D Envelope, Fullscreen */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Audio toggle button */}
           <button
             type="button"
-            onClick={onScrollToStory}
-            aria-label="Cuộn xem chi tiết"
-            className="mt-14 inline-flex flex-col items-center gap-1 text-charcoal-muted hover:text-burgundy transition-colors min-h-[48px] min-w-[48px] justify-center"
+            onClick={toggleMute}
+            className="h-10 px-3.5 rounded-full bg-black/50 hover:bg-black/80 border border-gold/40 text-gold-light text-xs font-serif flex items-center gap-2 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-md"
+            title={isMuted ? 'Bật âm thanh hôn lễ' : 'Tắt âm thanh'}
           >
-            <span className="text-[11px] font-sans uppercase tracking-widest font-medium">Cuộn để xem</span>
-            <ChevronDown className="w-4 h-4 animate-bounce text-gold-dark" aria-hidden="true" />
+            {isMuted ? <VolumeX className="w-4 h-4 text-paper-light/70" /> : <Volume2 className="w-4 h-4 text-gold animate-pulse" />}
+            <span className="hidden md:inline">{isMuted ? 'Mute' : 'Nhạc Lễ'}</span>
           </button>
-        )}
+
+          {/* Video Play/Pause (only if video) */}
+          {activeReel.type === 'video' && (
+            <button
+              type="button"
+              onClick={handleTogglePlay}
+              className="h-10 w-10 rounded-full bg-black/50 hover:bg-black/80 border border-gold/40 text-gold-light flex items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-md"
+              title={isPlaying ? 'Tạm dừng video' : 'Tiếp tục phát'}
+            >
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5 fill-gold-light" />}
+            </button>
+          )}
+
+          {/* Fullscreen Button */}
+          <button
+            type="button"
+            onClick={handleFullscreen}
+            className="hidden sm:flex h-10 w-10 rounded-full bg-black/50 hover:bg-black/80 border border-gold/40 text-gold-light items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-md"
+            title="Xem toàn màn hình"
+          >
+            <Maximize2 className="w-4 h-4" />
+          </button>
+
+          {/* Reopen 3D Envelope Gateway button */}
+          {onReopenGateway && (
+            <button
+              type="button"
+              onClick={onReopenGateway}
+              className="h-10 px-3.5 rounded-full bg-burgundy/80 hover:bg-burgundy border border-gold/50 text-paper-light text-xs font-serif flex items-center gap-2 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-md"
+              title="Mở lại thiệp cưới 3D tương tác"
+            >
+              <Mail className="w-3.5 h-3.5 text-gold-light" />
+              <span className="hidden sm:inline">Mở lại thiệp 3D</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 3. CENTER HERO BRANDING & COUPLE NAMES (Cinematic Typography) */}
+      <div className="relative z-10 max-w-4xl mx-auto px-4 text-center my-auto flex flex-col items-center">
+        {/* Save Our Date ribbon */}
+        <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-gold/50 text-gold-light text-xs uppercase tracking-[0.3em] font-medium shadow-xl mb-4">
+          <Sparkles className="w-3.5 h-3.5 text-gold" />
+          <span>Save Our Date • Lễ Thành Hôn</span>
+          <Sparkles className="w-3.5 h-3.5 text-gold" />
+        </div>
+
+        {/* Majestic Couple Names */}
+        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-paper-light drop-shadow-2xl leading-none">
+          <span className="inline-block hover:text-gold-light transition-colors">{couple.groom.shortName}</span>
+          <span className="inline-block mx-3 sm:mx-5 font-script text-gold font-normal text-5xl sm:text-7xl md:text-8xl align-middle">
+            &
+          </span>
+          <span className="inline-block hover:text-gold-light transition-colors">{couple.bride.shortName}</span>
+        </h1>
+
+        {/* Wedding Date & Venue Tagline */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-display tracking-[0.25em] uppercase text-paper-light/90">
+          <span>Thứ Sáu</span>
+          <span className="text-gold">•</span>
+          <span className="font-bold text-gold-light">20 Tháng 11 Năm 2026</span>
+          <span className="text-gold">•</span>
+          <span>Riverside Palace, TP. HCM</span>
+        </div>
+
+        {/* Romantic Quote */}
+        <p className="font-serif italic text-xs sm:text-base text-paper-light/85 max-w-2xl mt-4 px-4 line-clamp-2 drop-shadow-md">
+          {couple.quote}
+        </p>
+
+        {/* Quick Jump Buttons */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="#calendar"
+            className="min-h-[44px] px-6 py-2.5 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-charcoal font-semibold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-gold/30 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-gold-light"
+          >
+            <span>Xem Lịch Cưới & Đếm Ngược</span>
+            <ChevronDown className="w-4 h-4" />
+          </a>
+
+          <a
+            href="#rsvp"
+            className="min-h-[44px] px-6 py-2.5 rounded-full bg-burgundy/80 hover:bg-burgundy text-paper-light border border-gold/50 font-semibold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all active:scale-95 cursor-pointer backdrop-blur-xs"
+          >
+            <Heart className="w-3.5 h-3.5 text-gold-light fill-gold-light" />
+            <span>Xác Nhận Tham Dự (RSVP)</span>
+          </a>
+        </div>
+      </div>
+
+      {/* 4. BOTTOM INTERACTIVE 3D/VIDEO REEL SELECTOR DOCK ("Click vào cái nào hiển thị cái đó") */}
+      <div className="relative z-20 w-full px-4 sm:px-8 pb-4 sm:pb-6 bg-gradient-to-t from-black via-black/80 to-transparent pt-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Dock Header Notice */}
+          <div className="flex items-center justify-between mb-3 text-xs">
+            <div className="flex items-center gap-2 text-gold-light font-medium uppercase tracking-widest text-[11px] sm:text-xs">
+              <Film className="w-3.5 h-3.5 text-gold" />
+              <span>Chọn Thước Phim Cưới 3D & Khoảnh Khắc (Chạm để hiển thị):</span>
+            </div>
+            <div className="text-[11px] text-paper-light/60 hidden sm:block font-serif italic">
+              {activeReelIndex + 1} / {reels.length} khoảnh khắc
+            </div>
+          </div>
+
+          {/* Interactive Reel Cards Grid / Horizontal Deck */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-3.5 overflow-x-auto pb-1">
+            {reels.map((reel, index) => {
+              const isActive = index === activeReelIndex
+              return (
+                <button
+                  key={reel.id}
+                  type="button"
+                  onClick={() => setActiveReelIndex(index)}
+                  className={`group relative rounded-2xl overflow-hidden text-left transition-all duration-300 cursor-pointer flex flex-col p-1.5 sm:p-2 ${
+                    isActive
+                      ? 'bg-gradient-to-b from-gold/30 via-gold/15 to-black/80 border-2 border-gold ring-2 ring-gold/40 shadow-xl shadow-gold/25 -translate-y-1.5'
+                      : 'bg-black/60 hover:bg-black/90 border border-gold/30 hover:border-gold/70 opacity-75 hover:opacity-100 hover:-translate-y-0.5'
+                  }`}
+                >
+                  {/* Thumbnail Container */}
+                  <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-black/40">
+                    <img
+                      src={reel.thumbnailUrl}
+                      alt={reel.title}
+                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+
+                    {/* Media Type Icon Badge */}
+                    <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-xs border border-gold/40 text-[9px] sm:text-[10px] text-gold-light font-medium flex items-center gap-1">
+                      {reel.type === 'video' ? (
+                        <>
+                          <Film className="w-2.5 h-2.5 text-gold" />
+                          <span>{reel.badge}</span>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="w-2.5 h-2.5 text-champagne" />
+                          <span>{reel.badge}</span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Active State Pulse Indicator */}
+                    {isActive && (
+                      <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-burgundy/90 border border-gold text-[9px] text-white font-bold tracking-wider flex items-center gap-1 shadow-md animate-pulse">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping" />
+                        <span>ĐANG CHIẾU</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Title & Subtitle */}
+                  <div className="mt-1.5 px-1 pb-0.5">
+                    <p
+                      className={`text-xs font-serif font-bold truncate ${
+                        isActive ? 'text-gold-light' : 'text-paper-light group-hover:text-gold-light'
+                      }`}
+                    >
+                      {reel.title}
+                    </p>
+                    <p className="text-[10px] text-paper-light/60 truncate font-light">
+                      {reel.subtitle}
+                    </p>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Bottom Scroll Cue */}
+          <div className="mt-4 flex items-center justify-center">
+            {onScrollToStory ? (
+              <button
+                type="button"
+                onClick={onScrollToStory}
+                className="inline-flex items-center gap-1.5 text-xs text-paper-light/70 hover:text-gold-light transition-colors cursor-pointer group py-1"
+              >
+                <span className="font-sans uppercase tracking-[0.2em] text-[10px]">
+                  Cuộn xuống để xem chi tiết hôn lễ
+                </span>
+                <ChevronDown className="w-4 h-4 text-gold group-hover:translate-y-1 transition-transform animate-bounce" />
+              </button>
+            ) : (
+              <a
+                href="#calendar"
+                className="inline-flex items-center gap-1.5 text-xs text-paper-light/70 hover:text-gold-light transition-colors cursor-pointer group py-1"
+              >
+                <span className="font-sans uppercase tracking-[0.2em] text-[10px]">
+                  Cuộn xuống để xem chi tiết hôn lễ
+                </span>
+                <ChevronDown className="w-4 h-4 text-gold group-hover:translate-y-1 transition-transform animate-bounce" />
+              </a>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   )
 }
+
+export default HeroSection
