@@ -42,7 +42,7 @@ const MainAppContent: React.FC = () => {
   }, [])
 
   const handleScrollToStory = () => {
-    const el = document.getElementById('calendar') || document.getElementById('couple')
+    const el = document.getElementById('invitation') || document.getElementById('calendar') || document.getElementById('couple')
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' })
     }

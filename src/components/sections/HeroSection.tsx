@@ -330,11 +330,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Quick Action CTAs */}
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <a
-            href="#calendar"
+            href="#invitation"
             className="min-h-[46px] px-7 py-3 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-charcoal font-bold text-xs uppercase tracking-wider flex items-center gap-2.5 shadow-xl shadow-gold/30 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-gold-light"
           >
             <Calendar className="w-4 h-4 text-charcoal" />
-            <span>Xem Lịch Cưới & Đếm Ngược</span>
+            <span>Xem Thiệp Mời & Lịch Cưới</span>
           </a>
 
           <a
