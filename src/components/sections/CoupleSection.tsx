@@ -67,7 +67,7 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
 
               {/* Groom Image Frame: Thu nhỏ lại làm nền cho ảnh chung */}
               <div className="relative mb-5 z-10">
-                <div className="french-picture-frame w-40 h-54 sm:w-46 sm:h-62 rounded-t-full rounded-b-2xl p-2">
+                <div className="french-picture-frame w-40 h-[216px] sm:w-[184px] sm:h-[248px] rounded-t-full rounded-b-2xl p-2">
                   <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden bg-paper relative border border-gold/60">
                     <img
                       src={couple.groom.image}
@@ -195,7 +195,7 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
 
               {/* Bride Image Frame: Thu nhỏ lại làm nền cho ảnh chung */}
               <div className="relative mb-5 z-10">
-                <div className="french-picture-frame w-40 h-54 sm:w-46 sm:h-62 rounded-t-full rounded-b-2xl p-2">
+                <div className="french-picture-frame w-40 h-[216px] sm:w-[184px] sm:h-[248px] rounded-t-full rounded-b-2xl p-2">
                   <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden bg-paper relative border border-gold/60">
                     <img
                       src={couple.bride.image}
