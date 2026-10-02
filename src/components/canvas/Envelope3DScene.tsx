@@ -1,0 +1,1070 @@
+import React, { useEffect, useRef, useState, useCallback } from 'react'
+import * as THREE from 'three'
+import { Sparkles, Heart } from 'lucide-react'
+import { weddingAudioManager } from '../../hooks/useWeddingAudio.ts'
+
+export interface Envelope3DSceneProps {
+  isOpened: boolean
+  onOpen?: () => void
+  isMuted?: boolean
+  className?: string
+  monogram?: string
+  groomName?: string
+  brideName?: string
+  weddingDate?: string
+}
+
+// Generates procedural burgundy wax seal texture with embossed gold monogram
+function createWaxSealTexture(monogramText: string): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 512
+  canvas.height = 512
+  const ctx = canvas.getContext('2d')
+
+  if (ctx) {
+    const center = 256
+    const radius = 230
+
+    // Burgundy wax base radial gradient
+    const grad = ctx.createRadialGradient(center - 40, center - 40, 20, center, center, radius)
+    grad.addColorStop(0, '#8E343A') // Lighter burgundy highlight
+    grad.addColorStop(0.5, '#72262B') // Classic burgundy wax
+    grad.addColorStop(0.85, '#561A1E') // Deep burgundy shade
+    grad.addColorStop(1, '#3D1013') // Dark wax perimeter
+    ctx.fillStyle = grad
+    ctx.beginPath()
+    ctx.arc(center, center, radius, 0, Math.PI * 2)
+    ctx.fill()
+
+    // Subtle wax surface texture / stippling
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)'
+    for (let i = 0; i < 600; i++) {
+      const a = Math.random() * Math.PI * 2
+      const r = Math.random() * (radius - 20)
+      ctx.beginPath()
+      ctx.arc(center + Math.cos(a) * r, center + Math.sin(a) * r, Math.random() * 2 + 1, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    // Outer concentric gold beaded ring
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    ctx.arc(center, center, 205, 0, Math.PI * 2)
+    ctx.stroke()
+
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)'
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.arc(center, center, 192, 0, Math.PI * 2)
+    ctx.stroke()
+
+    // Gold bead studs along the ring
+    const beadCount = 36
+    for (let i = 0; i < beadCount; i++) {
+      const angle = (i / beadCount) * Math.PI * 2
+      const bx = center + Math.cos(angle) * 198
+      const by = center + Math.sin(angle) * 198
+      ctx.fillStyle = '#FFE599'
+      ctx.beginPath()
+      ctx.arc(bx, by, 3, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.fillStyle = '#AA7A1E'
+      ctx.beginPath()
+      ctx.arc(bx + 1, by + 1, 2, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    // Laurel branches wreath (left & right)
+    ctx.save()
+    ctx.translate(center, center)
+    ctx.strokeStyle = '#C8A86B'
+    ctx.fillStyle = '#DFBF7A'
+    ctx.lineWidth = 2.5
+
+    for (let side = -1; side <= 1; side += 2) {
+      ctx.save()
+      ctx.scale(side, 1)
+      ctx.beginPath()
+      ctx.arc(0, 0, 160, Math.PI * 0.25, Math.PI * 0.75, false)
+      ctx.stroke()
+
+      // Leaves along the arc
+      const leafCount = 9
+      for (let j = 0; j < leafCount; j++) {
+        const theta = Math.PI * 0.28 + (j / (leafCount - 1)) * (Math.PI * 0.44)
+        const lx = Math.cos(theta) * 160
+        const ly = Math.sin(theta) * 160
+        ctx.save()
+        ctx.translate(lx, ly)
+        ctx.rotate(theta + Math.PI / 2)
+        ctx.beginPath()
+        ctx.ellipse(0, 0, 5, 12, 0.4, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
+      ctx.restore()
+    }
+    ctx.restore()
+
+    // Embossed gold monogram "Q & M"
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = 'bold 112px "Playfair Display", "Cinzel", "Times New Roman", serif'
+
+    // Deep embossed shadow
+    ctx.fillStyle = '#2A0B0E'
+    ctx.fillText(monogramText, center + 4, center + 5)
+
+    // Gold foil shimmer gradient
+    const goldGrad = ctx.createLinearGradient(center - 100, center - 100, center + 100, center + 100)
+    goldGrad.addColorStop(0, '#FFE89E')
+    goldGrad.addColorStop(0.3, '#E5C068')
+    goldGrad.addColorStop(0.6, '#B8860B')
+    goldGrad.addColorStop(0.85, '#FFDF73')
+    goldGrad.addColorStop(1, '#AA7A1E')
+
+    ctx.fillStyle = goldGrad
+    ctx.fillText(monogramText, center, center)
+
+    // Top specular highlight edge for 3D raised stamping
+    ctx.lineWidth = 1.5
+    ctx.strokeStyle = 'rgba(255, 245, 200, 0.75)'
+    ctx.strokeText(monogramText, center - 1, center - 1)
+
+    // Bottom seal text "WEDDING"
+    ctx.font = '600 24px "Cinzel", serif'
+    ctx.letterSpacing = '6px'
+    ctx.fillStyle = '#DFBF7A'
+    ctx.fillText('INVITATION', center, center + 120)
+
+    ctx.restore()
+  }
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  return texture
+}
+
+// Bump map generator for realistic tactile wax embossing
+function createWaxSealBumpMap(monogramText: string): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 512
+  canvas.height = 512
+  const ctx = canvas.getContext('2d')
+
+  if (ctx) {
+    const center = 256
+    // Neutral base gray
+    ctx.fillStyle = '#555555'
+    ctx.fillRect(0, 0, 512, 512)
+
+    // Outer rim raised ridge
+    ctx.strokeStyle = '#FFFFFF'
+    ctx.lineWidth = 8
+    ctx.beginPath()
+    ctx.arc(center, center, 205, 0, Math.PI * 2)
+    ctx.stroke()
+
+    // Inner rim groove
+    ctx.strokeStyle = '#222222'
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    ctx.arc(center, center, 192, 0, Math.PI * 2)
+    ctx.stroke()
+
+    // Monogram raised height
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.font = 'bold 112px "Playfair Display", "Cinzel", "Times New Roman", serif'
+    ctx.fillStyle = '#FFFFFF'
+    ctx.fillText(monogramText, center, center)
+
+    // Subtext
+    ctx.font = '600 24px "Cinzel", serif'
+    ctx.letterSpacing = '6px'
+    ctx.fillStyle = '#CCCCCC'
+    ctx.fillText('INVITATION', center, center + 120)
+    ctx.restore()
+  }
+
+  const texture = new THREE.CanvasTexture(canvas)
+  return texture
+}
+
+// Generates luxury wedding invitation card texture
+function createCardTexture(
+  groomName: string,
+  brideName: string,
+  monogram: string,
+  weddingDate: string
+): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 1280
+  canvas.height = 860
+  const ctx = canvas.getContext('2d')
+
+  if (ctx) {
+    const w = canvas.width
+    const h = canvas.height
+
+    // Cream / Ivory fine art paper base
+    ctx.fillStyle = '#FDFBF7'
+    ctx.fillRect(0, 0, w, h)
+
+    // Subtle paper grain noise
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.015)'
+    for (let i = 0; i < 3000; i++) {
+      const rx = Math.random() * w
+      const ry = Math.random() * h
+      ctx.fillRect(rx, ry, 1, 1)
+    }
+
+    // Outer thin gold foil border
+    ctx.strokeStyle = '#C8A86B'
+    ctx.lineWidth = 2.5
+    ctx.strokeRect(40, 40, w - 80, h - 80)
+
+    // Inner delicate gold foil border
+    ctx.strokeStyle = 'rgba(200, 168, 107, 0.5)'
+    ctx.lineWidth = 1
+    ctx.strokeRect(52, 52, w - 104, h - 104)
+
+    // Corner decorative gold ornaments
+    const drawCorner = (cx: number, cy: number, rot: number) => {
+      ctx.save()
+      ctx.translate(cx, cy)
+      ctx.rotate(rot)
+      ctx.strokeStyle = '#D4AF37'
+      ctx.lineWidth = 1.5
+      ctx.beginPath()
+      ctx.moveTo(0, 0)
+      ctx.lineTo(28, 0)
+      ctx.arc(28, 28, 28, -Math.PI / 2, Math.PI, true)
+      ctx.lineTo(0, 28)
+      ctx.stroke()
+
+      ctx.fillStyle = '#D4AF37'
+      ctx.beginPath()
+      ctx.arc(14, 14, 3, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+    drawCorner(52, 52, 0)
+    drawCorner(w - 52, 52, Math.PI / 2)
+    drawCorner(w - 52, h - 52, Math.PI)
+    drawCorner(52, h - 52, -Math.PI / 2)
+
+    // Header: "WEDDING INVITATION"
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'top'
+
+    ctx.font = '600 24px "Cinzel", "Playfair Display", serif'
+    ctx.letterSpacing = '10px'
+    ctx.fillStyle = '#C8A86B'
+    ctx.fillText('WEDDING INVITATION', w / 2, 85)
+
+    // Monogram Crest in circle
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.arc(w / 2, 175, 38, 0, Math.PI * 2)
+    ctx.stroke()
+
+    ctx.font = 'bold 36px "Playfair Display", serif'
+    ctx.letterSpacing = '2px'
+    const crestGrad = ctx.createLinearGradient(w / 2 - 30, 145, w / 2 + 30, 205)
+    crestGrad.addColorStop(0, '#B38728')
+    crestGrad.addColorStop(0.5, '#FBF5B7')
+    crestGrad.addColorStop(1, '#AA771C')
+    ctx.fillStyle = crestGrad
+    ctx.fillText(monogram, w / 2, 155)
+
+    // Sub-invitation text
+    ctx.font = 'italic 400 22px "Cormorant Garamond", serif'
+    ctx.letterSpacing = '1px'
+    ctx.fillStyle = '#635F59'
+    ctx.fillText('Trân trọng kính mời Quý Khách tới dự lễ thành hôn của', w / 2, 235)
+
+    // Couple Names (Gold Foil Shimmer Styling)
+    ctx.font = 'bold 58px "Playfair Display", serif'
+    ctx.letterSpacing = '3px'
+    const nameGrad = ctx.createLinearGradient(w / 2 - 250, 0, w / 2 + 250, 0)
+    nameGrad.addColorStop(0, '#8E343A')
+    nameGrad.addColorStop(0.2, '#B8860B')
+    nameGrad.addColorStop(0.5, '#D4AF37')
+    nameGrad.addColorStop(0.8, '#8E343A')
+    ctx.fillStyle = nameGrad
+    ctx.fillText(`${groomName}  &  ${brideName}`, w / 2, 285)
+
+    // Gold floral divider line with heart/diamond
+    ctx.strokeStyle = '#D4AF37'
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    ctx.moveTo(w / 2 - 180, 380)
+    ctx.lineTo(w / 2 - 30, 380)
+    ctx.moveTo(w / 2 + 30, 380)
+    ctx.lineTo(w / 2 + 180, 380)
+    ctx.stroke()
+
+    // Diamond center
+    ctx.fillStyle = '#D4AF37'
+    ctx.beginPath()
+    ctx.moveTo(w / 2, 372)
+    ctx.lineTo(w / 2 + 8, 380)
+    ctx.lineTo(w / 2, 388)
+    ctx.lineTo(w / 2 - 8, 380)
+    ctx.closePath()
+    ctx.fill()
+
+    // Date & Venue Details
+    ctx.font = '600 28px "Cinzel", "Playfair Display", serif'
+    ctx.letterSpacing = '4px'
+    ctx.fillStyle = '#2D2A26'
+    ctx.fillText(weddingDate, w / 2, 415)
+
+    ctx.font = '500 21px "Plus Jakarta Sans", sans-serif'
+    ctx.letterSpacing = '1px'
+    ctx.fillStyle = '#55514B'
+    ctx.fillText('THE GRAND PALACE • TRUNG TÂM TIỆC CƯỚI & HỘI NGHỊ', w / 2, 468)
+
+    ctx.font = 'italic 300 20px "Cormorant Garamond", serif'
+    ctx.fillStyle = '#78736B'
+    ctx.fillText('Sự hiện diện của Quý Khách là niềm vinh hạnh lớn cho gia đình chúng tôi', w / 2, 515)
+
+    ctx.restore()
+  }
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  return texture
+}
+
+// Generates gold bokeh particle sprite texture
+function createBokehTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 64
+  canvas.height = 64
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32)
+    grad.addColorStop(0, 'rgba(255, 255, 255, 1.0)')
+    grad.addColorStop(0.2, 'rgba(255, 230, 160, 0.9)')
+    grad.addColorStop(0.5, 'rgba(200, 168, 107, 0.5)')
+    grad.addColorStop(0.8, 'rgba(200, 168, 107, 0.15)')
+    grad.addColorStop(1, 'rgba(200, 168, 107, 0.0)')
+    ctx.fillStyle = grad
+    ctx.beginPath()
+    ctx.arc(32, 32, 32, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  const texture = new THREE.CanvasTexture(canvas)
+  return texture
+}
+
+// Synthesized Web Audio API sound for wax breaking, paper rustling, celestial chime, and BGM serenade
+function playAudioOpen(isMuted?: boolean) {
+  if (isMuted || typeof window === 'undefined') return
+  try {
+    weddingAudioManager.playWaxBreakSFX()
+    window.setTimeout(() => {
+      weddingAudioManager.playPaperRustleSFX()
+    }, 100)
+    window.setTimeout(() => {
+      weddingAudioManager.playChimeSFX()
+    }, 450)
+    weddingAudioManager.startMusic()
+  } catch {
+    // Autoplay restrictions or audio disabled, gracefully handled
+  }
+}
+
+export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
+  isOpened,
+  onOpen,
+  isMuted = false,
+  className = '',
+  monogram = 'Q & M',
+  groomName = 'Minh Quân',
+  brideName = 'Thảo My',
+  weddingDate = 'THỨ SÁU, 20 . 11 . 2026',
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [hasInteracted, setHasInteracted] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+
+  // Stable callback ref to prevent unneeded effect re-runs
+  const onOpenRef = useRef(onOpen)
+  useEffect(() => {
+    onOpenRef.current = onOpen
+  }, [onOpen])
+
+  const isMutedRef = useRef(isMuted)
+  useEffect(() => {
+    isMutedRef.current = isMuted
+  }, [isMuted])
+
+  // State refs for animation loop
+  const isOpenedRef = useRef(isOpened)
+  useEffect(() => {
+    isOpenedRef.current = isOpened
+  }, [isOpened])
+
+  const openProgressRef = useRef(isOpened ? 1.0 : 0.0)
+
+  // Handle direct click
+  const handleOpenTrigger = useCallback(() => {
+    if (openProgressRef.current > 0.05) return
+    setHasInteracted(true)
+    playAudioOpen(isMutedRef.current)
+    onOpenRef.current?.()
+  }, [])
+
+  useEffect(() => {
+    const container = containerRef.current
+    const canvas = canvasRef.current
+    if (!container || !canvas) return
+
+    // 1. Scene, Camera, Renderer Setup
+    const width = container.clientWidth || window.innerWidth
+    const height = container.clientHeight || 600
+
+    const scene = new THREE.Scene()
+
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100)
+    camera.position.set(0, 0, 5.2)
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+    })
+    renderer.setSize(width, height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1.05
+
+    // 2. Lighting Rig (3-Point Soft Studio Light)
+    const ambientLight = new THREE.AmbientLight(0xfff8f0, 0.95)
+    scene.add(ambientLight)
+
+    const keyLight = new THREE.DirectionalLight(0xfff6ec, 1.6)
+    keyLight.position.set(3.5, 5.0, 4.0)
+    keyLight.castShadow = true
+    keyLight.shadow.mapSize.width = 1024
+    keyLight.shadow.mapSize.height = 1024
+    keyLight.shadow.camera.near = 0.5
+    keyLight.shadow.camera.far = 12
+    keyLight.shadow.bias = -0.001
+    scene.add(keyLight)
+
+    const fillLight = new THREE.DirectionalLight(0xead5cd, 0.7)
+    fillLight.position.set(-3.5, 1.5, 3.0)
+    scene.add(fillLight)
+
+    const rimLight = new THREE.DirectionalLight(0xd4af37, 1.1)
+    rimLight.position.set(0, 4.0, -3.5)
+    scene.add(rimLight)
+
+    // Top accent light on the wax seal
+    const sealLight = new THREE.PointLight(0xffe8a0, 1.2, 5)
+    sealLight.position.set(0, 0, 2.5)
+    scene.add(sealLight)
+
+    // 3. Materials
+    // Luxury cream/ivory paper material (#FAF6F0) with realistic bevels and paper roughness
+    const paperMaterial = new THREE.MeshStandardMaterial({
+      color: 0xfaf6f0,
+      roughness: 0.72,
+      metalness: 0.04,
+      side: THREE.DoubleSide,
+    })
+
+    const paperInnerMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf3ede3,
+      roughness: 0.85,
+      metalness: 0.02,
+      side: THREE.DoubleSide,
+    })
+
+    // Gold rim material
+    const goldRimMaterial = new THREE.MeshStandardMaterial({
+      color: 0xd4af37,
+      metalness: 0.88,
+      roughness: 0.22,
+    })
+
+    // Textures
+    const waxTexture = createWaxSealTexture(monogram)
+    const waxBumpTexture = createWaxSealBumpMap(monogram)
+    const cardTexture = createCardTexture(groomName, brideName, monogram, weddingDate)
+    const bokehTexture = createBokehTexture()
+
+    // Burgundy wax seal material (#72262B) with embossed monogram
+    const waxSealMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x72262b,
+      roughness: 0.32,
+      metalness: 0.12,
+      clearcoat: 0.65,
+      clearcoatRoughness: 0.25,
+      map: waxTexture,
+      bumpMap: waxBumpTexture,
+      bumpScale: 0.035,
+    })
+
+    // 4. Envelope Geometry Construction
+    const envelopeGroup = new THREE.Group()
+    scene.add(envelopeGroup)
+
+    const envW = 3.6
+    const envH = 2.4
+    const envDepth = 0.05
+
+    // A. Back Panel
+    const backGeometry = new THREE.BoxGeometry(envW, envH, 0.015)
+    const backMesh = new THREE.Mesh(backGeometry, paperInnerMaterial)
+    backMesh.position.set(0, 0, -envDepth / 2)
+    backMesh.castShadow = true
+    backMesh.receiveShadow = true
+    envelopeGroup.add(backMesh)
+
+    // B. Front Pocket with authentic V-cut opening
+    const frontShape = new THREE.Shape()
+    frontShape.moveTo(-envW / 2, -envH / 2)
+    frontShape.lineTo(envW / 2, -envH / 2)
+    frontShape.lineTo(envW / 2, 0.35)
+    frontShape.lineTo(0, -0.25) // V-neck dip
+    frontShape.lineTo(-envW / 2, 0.35)
+    frontShape.closePath()
+
+    const frontExtrudeSettings: THREE.ExtrudeGeometryOptions = {
+      depth: 0.015,
+      bevelEnabled: true,
+      bevelThickness: 0.012,
+      bevelSize: 0.012,
+      bevelSegments: 2,
+    }
+    const frontGeometry = new THREE.ExtrudeGeometry(frontShape, frontExtrudeSettings)
+    const frontMesh = new THREE.Mesh(frontGeometry, paperMaterial)
+    frontMesh.position.set(0, 0, envDepth / 2 - 0.01)
+    frontMesh.castShadow = true
+    frontMesh.receiveShadow = true
+    envelopeGroup.add(frontMesh)
+
+    // C. Wedding Invitation Card Inside
+    const cardW = 3.25
+    const cardH = 2.15
+    const cardGeometry = new THREE.BoxGeometry(cardW, cardH, 0.012)
+    const cardMaterials = [
+      paperMaterial, // right
+      paperMaterial, // left
+      paperMaterial, // top
+      paperMaterial, // bottom
+      new THREE.MeshStandardMaterial({
+        map: cardTexture,
+        roughness: 0.45,
+        metalness: 0.15,
+      }), // front (with invitation text and gold foil)
+      paperMaterial, // back
+    ]
+    const cardMesh = new THREE.Mesh(cardGeometry, cardMaterials)
+    cardMesh.position.set(0, 0.02, 0.005) // Tucked safely inside the pocket
+    cardMesh.castShadow = true
+    cardMesh.receiveShadow = true
+    envelopeGroup.add(cardMesh)
+
+    // D. Top Triangular Flap with Hinge at top edge (y = envH / 2 = 1.2)
+    const topFlapGroup = new THREE.Group()
+    topFlapGroup.position.set(0, envH / 2, envDepth / 2 + 0.005)
+    envelopeGroup.add(topFlapGroup)
+
+    const flapShape = new THREE.Shape()
+    flapShape.moveTo(-envW / 2, 0)
+    flapShape.lineTo(envW / 2, 0)
+    flapShape.lineTo(0.18, -1.45)
+    flapShape.quadraticCurveTo(0, -1.52, -0.18, -1.45)
+    flapShape.lineTo(-envW / 2, 0)
+    flapShape.closePath()
+
+    const flapGeometry = new THREE.ExtrudeGeometry(flapShape, {
+      depth: 0.012,
+      bevelEnabled: true,
+      bevelThickness: 0.008,
+      bevelSize: 0.008,
+      bevelSegments: 2,
+    })
+    const flapMesh = new THREE.Mesh(flapGeometry, paperMaterial)
+    flapMesh.position.set(0, 0, 0)
+    flapMesh.castShadow = true
+    flapMesh.receiveShadow = true
+    topFlapGroup.add(flapMesh)
+
+    // E. 3D Wax Seal Mesh (Organic melted wax disc + embossed monogram face + gold rim)
+    const waxSealGroup = new THREE.Group()
+    // Position seal at the tip of the flap
+    waxSealGroup.position.set(0, -1.35, 0.025)
+    topFlapGroup.add(waxSealGroup)
+
+    // Organic melted wax rim shape
+    const sealPoints = 36
+    const sealShape = new THREE.Shape()
+    for (let i = 0; i <= sealPoints; i++) {
+      const angle = (i / sealPoints) * Math.PI * 2
+      // Radial waviness for authentic melted edge
+      const radiusPerturb =
+        0.38 +
+        Math.sin(angle * 7) * 0.02 +
+        Math.cos(angle * 4 + 0.8) * 0.015 +
+        Math.sin(angle * 11) * 0.008
+      const px = Math.cos(angle) * radiusPerturb
+      const py = Math.sin(angle) * radiusPerturb
+      if (i === 0) sealShape.moveTo(px, py)
+      else sealShape.lineTo(px, py)
+    }
+
+    const sealBaseGeometry = new THREE.ExtrudeGeometry(sealShape, {
+      depth: 0.02,
+      bevelEnabled: true,
+      bevelThickness: 0.015,
+      bevelSize: 0.015,
+      bevelSegments: 3,
+    })
+    const sealBaseMesh = new THREE.Mesh(sealBaseGeometry, waxSealMaterial)
+    sealBaseMesh.castShadow = true
+    waxSealGroup.add(sealBaseMesh)
+
+    // Golden rim reflection ring
+    const goldRimGeo = new THREE.TorusGeometry(0.33, 0.012, 12, 48)
+    const goldRimMesh = new THREE.Mesh(goldRimGeo, goldRimMaterial)
+    goldRimMesh.position.set(0, 0, 0.024)
+    waxSealGroup.add(goldRimMesh)
+
+    // Seal front cap face with embossed monogram texture
+    const sealFaceGeo = new THREE.CircleGeometry(0.32, 48)
+    const sealFaceMesh = new THREE.Mesh(sealFaceGeo, waxSealMaterial)
+    sealFaceMesh.position.set(0, 0, 0.025)
+    waxSealGroup.add(sealFaceMesh)
+
+    // F. Golden Sparkle Burst Particles for Wax Breaking Effect
+    const burstCount = 28
+    const burstGeometry = new THREE.BufferGeometry()
+    const burstPositions = new Float32Array(burstCount * 3)
+    const burstVelocities: { x: number; y: number; z: number }[] = []
+
+    for (let i = 0; i < burstCount; i++) {
+      burstPositions[i * 3] = 0
+      burstPositions[i * 3 + 1] = 0
+      burstPositions[i * 3 + 2] = 0
+      const theta = Math.random() * Math.PI * 2
+      const phi = (Math.random() - 0.5) * Math.PI
+      const speed = Math.random() * 2.2 + 0.8
+      burstVelocities.push({
+        x: Math.cos(theta) * Math.cos(phi) * speed,
+        y: Math.sin(phi) * speed + 0.5,
+        z: Math.sin(theta) * Math.cos(phi) * speed + 0.5,
+      })
+    }
+    burstGeometry.setAttribute('position', new THREE.BufferAttribute(burstPositions, 3))
+    const burstMaterial = new THREE.PointsMaterial({
+      size: 0.08,
+      color: 0xffdf7a,
+      map: bokehTexture,
+      transparent: true,
+      opacity: 0.0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    })
+    const burstPoints = new THREE.Points(burstGeometry, burstMaterial)
+    burstPoints.position.set(0, -0.15, 0.1) // Located at initial wax seal world pos
+    envelopeGroup.add(burstPoints)
+
+    // 5. 3D Floating Particles System (40-50 rose petals & golden bokeh)
+    // A. 25 Rose Petals
+    const petalCount = 25
+    const petalGroup = new THREE.Group()
+    scene.add(petalGroup)
+
+    const petalShape = new THREE.Shape()
+    petalShape.moveTo(0, -0.08)
+    petalShape.bezierCurveTo(0.09, -0.04, 0.11, 0.1, 0, 0.16)
+    petalShape.bezierCurveTo(-0.11, 0.1, -0.09, -0.04, 0, -0.08)
+
+    const petalGeo = new THREE.ShapeGeometry(petalShape)
+    const petalColors = [0x8e343a, 0xc58b7e, 0xd9828a, 0xe8b4b8, 0xa8424b]
+
+    interface PetalData {
+      mesh: THREE.Mesh
+      vx: number
+      vy: number
+      vz: number
+      drx: number
+      dry: number
+      drz: number
+      seedX: number
+      seedZ: number
+    }
+    const petals: PetalData[] = []
+
+    for (let i = 0; i < petalCount; i++) {
+      const mat = new THREE.MeshStandardMaterial({
+        color: petalColors[i % petalColors.length],
+        roughness: 0.65,
+        metalness: 0.05,
+        side: THREE.DoubleSide,
+      })
+      const mesh = new THREE.Mesh(petalGeo, mat)
+      const scale = Math.random() * 0.7 + 0.65
+      mesh.scale.set(scale, scale, scale)
+
+      mesh.position.set(
+        (Math.random() - 0.5) * 7.5,
+        (Math.random() - 0.5) * 6.5,
+        (Math.random() - 0.5) * 4.0
+      )
+      mesh.rotation.set(
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2
+      )
+
+      petals.push({
+        mesh,
+        vx: (Math.random() - 0.5) * 0.15,
+        vy: -(Math.random() * 0.35 + 0.25),
+        vz: (Math.random() - 0.5) * 0.12,
+        drx: (Math.random() - 0.5) * 1.5,
+        dry: (Math.random() - 0.5) * 1.8,
+        drz: (Math.random() - 0.5) * 1.2,
+        seedX: Math.random() * 100,
+        seedZ: Math.random() * 100,
+      })
+      petalGroup.add(mesh)
+    }
+
+    // B. 22 Golden Bokeh Glowing Particles
+    const bokehCount = 22
+    const bokehGroup = new THREE.Group()
+    scene.add(bokehGroup)
+
+    interface BokehData {
+      sprite: THREE.Sprite
+      baseY: number
+      baseScale: number
+      vy: number
+      pulsePhase: number
+    }
+    const bokehList: BokehData[] = []
+
+    for (let i = 0; i < bokehCount; i++) {
+      const mat = new THREE.SpriteMaterial({
+        map: bokehTexture,
+        color: 0xffe29a,
+        transparent: true,
+        opacity: Math.random() * 0.4 + 0.3,
+        blending: THREE.AdditiveBlending,
+      })
+      const sprite = new THREE.Sprite(mat)
+      const baseScale = Math.random() * 0.22 + 0.12
+      sprite.scale.set(baseScale, baseScale, 1)
+
+      sprite.position.set(
+        (Math.random() - 0.5) * 7.0,
+        (Math.random() - 0.5) * 5.5,
+        (Math.random() - 0.5) * 3.5
+      )
+
+      bokehList.push({
+        sprite,
+        baseY: sprite.position.y,
+        baseScale,
+        vy: Math.random() * 0.12 + 0.05,
+        pulsePhase: Math.random() * Math.PI * 2,
+      })
+      bokehGroup.add(sprite)
+    }
+
+    // 6. Interactive Raycasting & Mouse Tilt
+    const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2(-999, -999)
+    const targetTilt = { x: 0, y: 0 }
+    const currentTilt = { x: 0, y: 0 }
+
+    const updatePointerPos = (clientX: number, clientY: number) => {
+      const rect = canvas.getBoundingClientRect()
+      pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1
+      pointer.y = -(((clientY - rect.top) / rect.height) * 2 - 1)
+
+      // Smooth envelope tilt toward cursor (within refined angles)
+      targetTilt.y = pointer.x * 0.22
+      targetTilt.x = -pointer.y * 0.18
+    }
+
+    const onPointerMove = (e: PointerEvent) => {
+      updatePointerPos(e.clientX, e.clientY)
+
+      // Check hover on interactive objects
+      raycaster.setFromCamera(pointer, camera)
+      const intersects = raycaster.intersectObjects([waxSealGroup, envelopeGroup], true)
+      if (intersects.length > 0 && openProgressRef.current < 0.1) {
+        setIsHovered(true)
+        canvas.style.cursor = 'pointer'
+      } else {
+        setIsHovered(false)
+        canvas.style.cursor = 'default'
+      }
+    }
+
+    const onPointerDown = (e: PointerEvent) => {
+      updatePointerPos(e.clientX, e.clientY)
+      raycaster.setFromCamera(pointer, camera)
+      const intersects = raycaster.intersectObjects([waxSealGroup, envelopeGroup], true)
+
+      if (intersects.length > 0 || openProgressRef.current < 0.05) {
+        handleOpenTrigger()
+      }
+    }
+
+    // Mobile Gyroscope support
+    const onDeviceOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma !== null && e.beta !== null) {
+        // Clamp angles gracefully
+        const clampedGamma = Math.max(-30, Math.min(30, e.gamma))
+        const clampedBeta = Math.max(-30, Math.min(30, e.beta - 45))
+        targetTilt.y = (clampedGamma / 30) * 0.2
+        targetTilt.x = (clampedBeta / 30) * 0.15
+      }
+    }
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
+    canvas.addEventListener('pointerdown', onPointerDown)
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true })
+    }
+
+    // 7. Smooth Resize Handler
+    const onResize = () => {
+      if (!container || !canvas) return
+      const newW = container.clientWidth || window.innerWidth
+      const newH = container.clientHeight || 600
+      camera.aspect = newW / newH
+      camera.updateProjectionMatrix()
+      renderer.setSize(newW, newH)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    }
+    const resizeObserver = new ResizeObserver(onResize)
+    resizeObserver.observe(container)
+
+    // 8. Main Render & Animation Loop
+    let animationFrameId: number
+    const clock = new THREE.Clock()
+    let burstActive = false
+    let burstTimer = 0
+
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate)
+      const delta = Math.min(clock.getDelta(), 0.1)
+      const elapsedTime = clock.getElapsedTime()
+
+      // Target state sync
+      const shouldBeOpened = isOpenedRef.current
+      if (shouldBeOpened && openProgressRef.current < 1.0) {
+        openProgressRef.current = Math.min(1.0, openProgressRef.current + delta * 0.85)
+      } else if (!shouldBeOpened && openProgressRef.current > 0.0) {
+        openProgressRef.current = Math.max(0.0, openProgressRef.current - delta * 0.95)
+      }
+
+      const p = openProgressRef.current
+
+      // A. Idle floating animation + Mouse/Gyro Tilt
+      currentTilt.x += (targetTilt.x - currentTilt.x) * (delta * 5.0)
+      currentTilt.y += (targetTilt.y - currentTilt.y) * (delta * 5.0)
+
+      const floatY = Math.sin(elapsedTime * 1.5) * 0.06
+      const floatRotZ = Math.sin(elapsedTime * 1.1) * 0.015
+
+      envelopeGroup.position.y = floatY
+      envelopeGroup.rotation.x = currentTilt.x
+      envelopeGroup.rotation.y = currentTilt.y
+      envelopeGroup.rotation.z = floatRotZ
+
+      // B. Opening Sequence Animations
+      // 1. Wax seal fracture / scale-fade effect (progress 0.0 -> 0.28)
+      if (p > 0.01 && p < 0.35) {
+        if (!burstActive && p > 0.04) {
+          burstActive = true
+          burstTimer = 0
+        }
+        const sealFade = Math.max(0, 1.0 - p / 0.28)
+        waxSealGroup.scale.set(sealFade, sealFade, sealFade)
+        waxSealMaterial.opacity = sealFade
+        waxSealMaterial.transparent = true
+      } else if (p >= 0.35) {
+        waxSealGroup.scale.set(0.001, 0.001, 0.001)
+        waxSealGroup.visible = false
+      } else {
+        waxSealGroup.scale.set(1, 1, 1)
+        waxSealMaterial.opacity = 1.0
+        waxSealMaterial.transparent = false
+        waxSealGroup.visible = true
+      }
+
+      // Sparkle burst progression
+      if (burstActive) {
+        burstTimer += delta
+        burstMaterial.opacity = Math.max(0, 1.0 - burstTimer / 0.85) * 0.85
+        const posAttr = burstGeometry.attributes.position as THREE.BufferAttribute
+        const posArray = posAttr.array as Float32Array
+        for (let i = 0; i < burstCount; i++) {
+          posArray[i * 3] += burstVelocities[i].x * delta
+          posArray[i * 3 + 1] += burstVelocities[i].y * delta
+          posArray[i * 3 + 2] += burstVelocities[i].z * delta
+          burstVelocities[i].y -= 2.0 * delta // gentle gravity
+        }
+        posAttr.needsUpdate = true
+        if (burstTimer > 0.85) {
+          burstActive = false
+        }
+      }
+
+      // 2. Flap Rotation Open (progress 0.1 -> 0.65)
+      const flapT = THREE.MathUtils.smoothstep(p, 0.1, 0.65)
+      // Rotates from 0 rad down to -162 degrees (-2.82 rad) back and up
+      topFlapGroup.rotation.x = -THREE.MathUtils.lerp(0, Math.PI * 0.88, flapT)
+
+      // 3. Invitation Card Slide Up (progress 0.35 -> 1.0)
+      const cardT = THREE.MathUtils.smoothstep(p, 0.35, 1.0)
+      // Ease out cubic
+      const cardEase = 1 - Math.pow(1 - cardT, 3)
+      cardMesh.position.y = THREE.MathUtils.lerp(0.02, 1.55, cardEase)
+      cardMesh.position.z = THREE.MathUtils.lerp(0.005, 0.16, cardEase)
+      cardMesh.rotation.x = THREE.MathUtils.lerp(0, -0.06, cardEase)
+
+      // 4. Camera subtle zoom & framing
+      const camT = THREE.MathUtils.smoothstep(p, 0.2, 0.9)
+      camera.position.z = THREE.MathUtils.lerp(5.2, 4.6, camT)
+      camera.position.y = THREE.MathUtils.lerp(0.0, 0.42, camT)
+
+      // C. 3D Floating Particles Animation
+      // Rose petals drifting with sinusoidal turbulence
+      for (let i = 0; i < petals.length; i++) {
+        const pt = petals[i]
+        pt.mesh.position.y += pt.vy * delta
+        pt.mesh.position.x += Math.sin(elapsedTime * 0.8 + pt.seedX) * 0.004
+        pt.mesh.position.z += Math.cos(elapsedTime * 0.6 + pt.seedZ) * 0.003
+
+        pt.mesh.rotation.x += pt.drx * delta
+        pt.mesh.rotation.y += pt.dry * delta
+        pt.mesh.rotation.z += pt.drz * delta
+
+        // Seamless bounding wrap
+        if (pt.mesh.position.y < -3.6) {
+          pt.mesh.position.y = 3.6
+          pt.mesh.position.x = (Math.random() - 0.5) * 7.5
+          pt.mesh.position.z = (Math.random() - 0.5) * 4.0
+        }
+      }
+
+      // Golden bokeh particles hover & pulse
+      for (let i = 0; i < bokehList.length; i++) {
+        const bk = bokehList[i]
+        bk.sprite.position.y += bk.vy * delta
+        const pulse = Math.sin(elapsedTime * 2.2 + bk.pulsePhase)
+        const scale = bk.baseScale * (1 + pulse * 0.25)
+        bk.sprite.scale.set(scale, scale, 1)
+
+        if (bk.sprite.position.y > 3.6) {
+          bk.sprite.position.y = -3.6
+          bk.sprite.position.x = (Math.random() - 0.5) * 7.0
+        }
+      }
+
+      renderer.render(scene, camera)
+    }
+
+    animate()
+
+    // 9. Thorough Cleanup on Component Unmount
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+      resizeObserver.disconnect()
+      window.removeEventListener('pointermove', onPointerMove)
+      canvas.removeEventListener('pointerdown', onPointerDown)
+      if (window.DeviceOrientationEvent) {
+        window.removeEventListener('deviceorientation', onDeviceOrientation)
+      }
+
+      // Dispose Geometries, Materials, and Textures
+      scene.traverse((obj) => {
+        if (obj instanceof THREE.Mesh) {
+          obj.geometry?.dispose()
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach((m) => m.dispose())
+          } else {
+            obj.material?.dispose()
+          }
+        } else if (obj instanceof THREE.Points) {
+          obj.geometry?.dispose()
+          if (obj.material instanceof THREE.Material) {
+            obj.material.dispose()
+          }
+        } else if (obj instanceof THREE.Sprite) {
+          obj.material.dispose()
+        }
+      })
+
+      waxTexture.dispose()
+      waxBumpTexture.dispose()
+      cardTexture.dispose()
+      bokehTexture.dispose()
+
+      renderer.dispose()
+      renderer.forceContextLoss()
+    }
+  }, [monogram, groomName, brideName, weddingDate, handleOpenTrigger])
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative w-full h-full min-h-[480px] md:min-h-[580px] flex items-center justify-center select-none overflow-hidden ${className}`}
+    >
+      {/* 3D WebGL Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full block touch-none cursor-pointer outline-none"
+        aria-label="Interactive 3D Wedding Envelope"
+      />
+
+      {/* Floating Action Affordance Indicator (Fades out when opened) */}
+      <div
+        className={`absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 transition-all duration-700 pointer-events-none flex flex-col items-center gap-2 ${
+          isOpened || hasInteracted ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
+        }`}
+      >
+        <button
+          type="button"
+          onClick={handleOpenTrigger}
+          className={`pointer-events-auto group px-6 py-2.5 rounded-full backdrop-blur-md bg-paper-light/80 hover:bg-paper-light border border-gold/40 hover:border-gold shadow-lg shadow-gold/10 hover:shadow-gold/20 transition-all duration-300 flex items-center gap-2.5 text-xs md:text-sm tracking-wider uppercase font-serif text-charcoal hover:text-burgundy cursor-pointer ${
+            isHovered ? 'scale-105 border-gold shadow-gold/30' : ''
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-gold group-hover:rotate-12 transition-transform duration-500 animate-pulse" />
+          <span>Chạm để mở thiệp</span>
+          <Heart className="w-3.5 h-3.5 text-burgundy fill-burgundy/20 group-hover:scale-125 transition-transform duration-300" />
+        </button>
+
+        <p className="text-[11px] font-sans text-charcoal-muted tracking-wide flex items-center gap-1.5 opacity-75">
+          <span>Di chuyển chuột hoặc nghiêng điện thoại để ngắm nhìn</span>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default Envelope3DScene
