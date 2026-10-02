@@ -29,15 +29,15 @@
   border-image: linear-gradient(to right, #C8A86B, #FDF2A9, #AA771C) 1;
 }
 
-/* French Chateau Luxury Styling (Phong cách Cung Điện Pháp Versailles) */
+/* French Chateau Luxury Styling (Phong cách Tiệc Cưới Xanh Thanh Nhã & Hoa Trắng) */
 .french-card-bg {
-  background: radial-gradient(circle at 50% 0%, #FFFDF9 0%, #FAF5ED 50%, #F5EFE4 100%);
+  background: radial-gradient(circle at 50% 0%, #FFFFFF 0%, #F5F8FC 50%, #E8F0F7 100%);
   position: relative;
 }
 
 /* Subtle French Royal Damask Texture Watermark */
 .french-damask-pattern {
-  background-image: radial-gradient(#C8A86B 0.75px, transparent 0.75px), radial-gradient(#C8A86B 0.75px, #FAF5ED 0.75px);
+  background-image: radial-gradient(#6B8EAC 0.75px, transparent 0.75px), radial-gradient(#6B8EAC 0.75px, #F0F5FA 0.75px);
   background-size: 30px 30px;
   background-position: 0 0, 15px 15px;
   background-repeat: repeat;
@@ -47,21 +47,21 @@
 .french-gilded-border {
   border: 2px solid transparent;
   background:
-    linear-gradient(#FAF5ED, #FAF5ED) padding-box,
+    linear-gradient(#F4F8FC, #F4F8FC) padding-box,
     linear-gradient(135deg, #C5A059 0%, #FDF3C7 25%, #B4833E 50%, #F5E2B3 75%, #8C6527 100%) border-box;
   box-shadow:
-    0 10px 30px -5px rgba(180, 130, 50, 0.15),
+    0 10px 30px -5px rgba(37, 68, 101, 0.12),
     0 0 0 1px rgba(251, 245, 183, 0.4) inset,
-    0 2px 10px rgba(0, 0, 0, 0.05);
+    0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
 /* French Triple Concentric Filigree Frame */
 .french-triple-frame {
   box-shadow:
-    0 0 0 2px #C8A86B,
-    0 0 0 5px #FAF6F0,
-    0 0 0 7px rgba(200, 168, 107, 0.5),
-    0 16px 40px -10px rgba(114, 38, 43, 0.12);
+    0 0 0 2px #CCA968,
+    0 0 0 5px #F2F7FB,
+    0 0 0 7px rgba(204, 169, 104, 0.5),
+    0 16px 40px -10px rgba(37, 68, 101, 0.16);
 }
 
 /* Gilded Picture Frame Molding (Khung tranh dát vàng kiểu Pháp) */
@@ -70,16 +70,16 @@
   padding: 8px;
   border-radius: 36px;
   box-shadow:
-    0 15px 35px -5px rgba(114, 38, 43, 0.2),
-    0 5px 15px rgba(170, 119, 28, 0.3),
+    0 15px 35px -5px rgba(37, 68, 101, 0.25),
+    0 5px 15px rgba(170, 119, 28, 0.25),
     inset 0 2px 4px rgba(255, 255, 255, 0.8),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* French Vintage Rose Velvet Tag */
+/* French Royal Velvet Ribbon Tag (Màu xanh thanh nhã hoàng gia) */
 .french-velvet-ribbon {
-  background: linear-gradient(135deg, #8E343A 0%, #72262B 50%, #4D161A 100%);
-  box-shadow: 0 4px 12px rgba(114, 38, 43, 0.35);
+  background: linear-gradient(135deg, #3A5F84 0%, #254465 50%, #15293E 100%);
+  box-shadow: 0 4px 14px rgba(21, 41, 62, 0.35);
 }
 
 /* Custom Scrollbar */

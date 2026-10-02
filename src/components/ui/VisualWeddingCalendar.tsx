@@ -122,7 +122,7 @@ export const VisualWeddingCalendar: React.FC<VisualWeddingCalendarProps> = ({
         </div>
 
         {/* 1. VISUAL MONTHLY CALENDAR GRID (Styled like a French Chateau Salon Calendar) */}
-        <div className="w-full max-w-xl mx-auto bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5EFE3] rounded-2xl p-5 sm:p-7 border-2 border-gold/50 shadow-lg relative z-10">
+        <div className="w-full max-w-xl mx-auto bg-gradient-to-b from-[#FFFFFF] via-[#F4F8FC] to-[#E8F0F7] rounded-2xl p-5 sm:p-7 border-2 border-gold/50 shadow-lg relative z-10">
           {/* Inner dashed gold hairline */}
           <div className="absolute inset-2 border border-dashed border-gold/25 rounded-xl pointer-events-none" />
 
@@ -168,7 +168,7 @@ export const VisualWeddingCalendar: React.FC<VisualWeddingCalendarProps> = ({
                   key={`day-${day}`}
                   className={`h-9 sm:h-11 rounded-xl flex flex-col items-center justify-center relative transition-all duration-300 ${
                     isWedding
-                      ? 'bg-gradient-to-tr from-burgundy via-[#96383F] to-burgundy text-paper-light font-bold shadow-xl shadow-burgundy/40 scale-105 sm:scale-115 z-10 border-2 border-gold ring-2 ring-gold/50 animate-pulse'
+                      ? 'bg-gradient-to-tr from-[#1E3A56] via-[#2F547A] to-[#1E3A56] text-white font-bold shadow-xl shadow-[#1E3A56]/40 scale-105 sm:scale-115 z-10 border-2 border-gold ring-2 ring-gold/50 animate-pulse'
                       : 'text-charcoal hover:bg-gold/15 font-serif text-xs sm:text-sm border border-transparent hover:border-gold/30'
                   }`}
                 >
@@ -203,7 +203,7 @@ export const VisualWeddingCalendar: React.FC<VisualWeddingCalendarProps> = ({
 
         {/* 2. CỤM ĐẾM NGƯỢC - FRENCH GILDED MANTELPIECE CLOCKS (Đồng Hồ Dát Vàng Cung Điện) */}
         <div className="w-full max-w-xl mx-auto mt-8 relative z-10">
-          <div className="bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5EFE3] border-2 border-gold/50 rounded-2xl p-5 sm:p-7 shadow-lg text-center">
+          <div className="bg-gradient-to-b from-[#FFFFFF] via-[#F4F8FC] to-[#E8F0F7] border-2 border-gold/50 rounded-2xl p-5 sm:p-7 shadow-lg text-center">
             {/* Header with French Clock Motif */}
             <div className="text-xs uppercase tracking-[0.25em] text-gold-dark font-bold mb-4 flex items-center justify-center gap-2 font-display">
               <Clock className="w-4 h-4 text-gold-dark" />
@@ -220,7 +220,7 @@ export const VisualWeddingCalendar: React.FC<VisualWeddingCalendarProps> = ({
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-gradient-to-b from-paper-light via-[#FBF8F2] to-[#F4EDE2] border-2 border-gold/50 rounded-xl py-3 px-2 shadow-md flex flex-col items-center justify-center relative overflow-hidden group hover:border-gold transition-colors"
+                  className="bg-gradient-to-b from-white via-[#F4F8FC] to-[#E8F0F7] border-2 border-gold/50 rounded-xl py-3 px-2 shadow-md flex flex-col items-center justify-center relative overflow-hidden group hover:border-gold transition-colors"
                 >
                   {/* Top Gilded Crown Accent */}
                   <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />

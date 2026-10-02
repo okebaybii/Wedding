@@ -44,31 +44,31 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
           </div>
         </ScrollReveal>
 
-        {/* 3-Column French Gilded Gallery Grid: Chú Rể (Trái) | Ảnh Chung Đôi (Giữa) | Cô Dâu (Phải) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10 items-stretch">
-          {/* 1. CHÚ RỂ (GROOM) - FRENCH GILDED SALON FRAME */}
-          <ScrollReveal direction="right" delay={100} className="h-full">
-            <article className="h-full flex flex-col items-center text-center french-card-bg french-triple-frame p-6 sm:p-8 rounded-[32px] border-2 border-gold/60 shadow-xl relative group hover:border-gold transition-all duration-500 overflow-hidden">
+        {/* 3-Column French Gilded Gallery Grid: Chú Rể (Trái, Thấp & Thu Nhỏ) | Ảnh Chung Đôi (Giữa, Cao Vượt Trội) | Cô Dâu (Phải, Thấp & Thu Nhỏ) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-end">
+          {/* 1. CHÚ RỂ (GROOM) - THẤP XUỐNG & THU NHỎ LẠI THEO YÊU CẦU */}
+          <ScrollReveal direction="right" delay={100} className="w-full">
+            <article className="max-w-[320px] mx-auto flex flex-col items-center text-center french-card-bg french-triple-frame p-5 sm:p-6 rounded-[28px] border-2 border-gold/60 shadow-lg relative group hover:border-gold transition-all duration-500 overflow-hidden lg:translate-y-8">
               {/* French Damask Pattern Watermark */}
               <div className="absolute inset-0 french-damask-pattern opacity-25 pointer-events-none" />
 
               {/* French Corner Flourishes */}
-              <FrenchCornerFlourish position="top-left" size={50} />
-              <FrenchCornerFlourish position="top-right" size={50} />
-              <FrenchCornerFlourish position="bottom-left" size={50} />
-              <FrenchCornerFlourish position="bottom-right" size={50} />
+              <FrenchCornerFlourish position="top-left" size={40} />
+              <FrenchCornerFlourish position="top-right" size={40} />
+              <FrenchCornerFlourish position="bottom-left" size={40} />
+              <FrenchCornerFlourish position="bottom-right" size={40} />
 
-              {/* Top French Velvet Ribbon Badge */}
-              <div className="relative z-10 mb-4 inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-gradient-to-r from-emerald-dark via-emerald to-emerald-dark text-paper-light border border-gold/50 shadow-md">
-                <span className="text-[11px] font-display uppercase tracking-[0.25em] font-bold">
+              {/* Top French Royal Slate Blue Ribbon Badge */}
+              <div className="relative z-10 mb-3 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#1E3A56] via-[#2A4D70] to-[#1E3A56] text-sky-100 border border-sky-300/40 shadow-md">
+                <span className="text-[10px] font-display uppercase tracking-[0.25em] font-bold">
                   Chú Rể • Le Marié
                 </span>
               </div>
 
-              {/* Groom Image Frame: French Gilded Picture Moulding */}
-              <div className="relative mb-6 z-10">
-                <div className="french-picture-frame w-52 h-70 sm:w-60 sm:h-80 rounded-t-full rounded-b-3xl">
-                  <div className="w-full h-full rounded-t-full rounded-b-2xl overflow-hidden bg-paper relative border border-gold/60">
+              {/* Groom Image Frame: Thu nhỏ lại làm nền cho ảnh chung */}
+              <div className="relative mb-5 z-10">
+                <div className="french-picture-frame w-40 h-54 sm:w-46 sm:h-62 rounded-t-full rounded-b-2xl p-2">
+                  <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden bg-paper relative border border-gold/60">
                     <img
                       src={couple.groom.image}
                       alt={`Chú rể ${couple.groom.fullName}`}
@@ -79,38 +79,38 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
                   </div>
                 </div>
 
-                {/* Monogram Seal on Image Corner */}
-                <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-gradient-to-br from-emerald-light to-emerald-dark text-paper-light flex items-center justify-center border-2 border-gold-light shadow-xl">
-                  <span className="font-display text-base font-extrabold text-gold-light">Q</span>
+                {/* Monogram Seal on Image Corner (Thu nhỏ tỉ lệ) */}
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-gradient-to-br from-[#1E3A56] to-[#0F2236] text-white flex items-center justify-center border-2 border-gold-light shadow-lg">
+                  <span className="font-display text-sm font-extrabold text-gold-light">Q</span>
                 </div>
               </div>
 
-              {/* Groom Info */}
-              <div className="relative z-10 w-full mt-2">
-                <span className="text-xs uppercase tracking-[0.2em] font-bold text-emerald mb-1 block font-display">
+              {/* Groom Info (Gọn gàng, tinh tế) */}
+              <div className="relative z-10 w-full mt-1">
+                <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-burgundy mb-0.5 block font-display">
                   {couple.groom.title}
                 </span>
-                <h3 className="font-serif text-2xl sm:text-3xl text-charcoal font-bold tracking-tight mb-2">
+                <h3 className="font-serif text-xl sm:text-2xl text-charcoal font-bold tracking-tight mb-2">
                   {couple.groom.fullName}
                 </h3>
 
                 {/* Parents Info in French Cartouche */}
-                <div className="text-xs text-charcoal-muted mb-4 p-3 rounded-xl bg-paper/80 border border-gold/30 shadow-xs max-w-xs mx-auto">
+                <div className="text-[11px] text-charcoal-muted mb-3 p-2 rounded-lg bg-paper-light/90 border border-gold/30 shadow-xs max-w-[260px] mx-auto">
                   <span className="font-serif font-bold text-charcoal block">Thân phụ & Mẫu thân:</span>
                   <p className="mt-0.5 font-serif italic text-charcoal-muted">{couple.groom.parents}</p>
                 </div>
 
                 {/* Bio / Love Note */}
-                <p className="font-serif italic text-xs sm:text-sm text-charcoal/85 leading-relaxed px-2">
+                <p className="font-serif italic text-xs text-charcoal/85 leading-relaxed px-1 max-w-[260px] mx-auto line-clamp-3">
                   “{couple.groom.bio}”
                 </p>
               </div>
             </article>
           </ScrollReveal>
 
-          {/* 2. ẢNH CƯỚI CHỤP CHUNG GIỮA 2 NGƯỜI (GRAND PALAIS ROYAL CENTERPIECE) */}
-          <ScrollReveal direction="up" delay={200} className="h-full">
-            <article className="h-full flex flex-col items-center justify-between text-center french-card-bg french-triple-frame p-6 sm:p-8 rounded-[36px] border-2 border-gold shadow-2xl relative group hover:border-gold transition-all duration-500 overflow-hidden lg:-translate-y-3">
+          {/* 2. ẢNH CƯỚI CHỤP CHUNG GIỮA 2 NGƯỜI (CAO VƯỢT TRỘI, TÂM ĐIỂM HOÀNG GIA) */}
+          <ScrollReveal direction="up" delay={200} className="w-full">
+            <article className="max-w-[380px] sm:max-w-[420px] mx-auto min-h-[660px] sm:min-h-[730px] flex flex-col items-center justify-between text-center french-card-bg french-triple-frame p-6 sm:p-8 rounded-[40px] border-2 border-gold shadow-2xl relative group hover:border-gold transition-all duration-500 overflow-hidden lg:-translate-y-8 z-20">
               {/* French Damask Pattern Watermark */}
               <div className="absolute inset-0 french-damask-pattern opacity-35 pointer-events-none" />
 
@@ -121,17 +121,17 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
               <FrenchCornerFlourish position="bottom-right" size={56} />
 
               {/* Top Banner Ribbon */}
-              <div className="relative z-10 mb-2 inline-flex items-center gap-2 px-5 py-1.5 rounded-full french-velvet-ribbon text-paper-light border border-gold/60 shadow-lg">
+              <div className="relative z-10 mb-2 inline-flex items-center gap-2 px-6 py-2 rounded-full french-velvet-ribbon text-white border border-gold/70 shadow-xl">
                 <Heart className="w-3.5 h-3.5 text-gold-light fill-gold-light" />
-                <span className="text-[11px] font-display uppercase tracking-[0.25em] font-extrabold text-gold-light">
+                <span className="text-xs font-display uppercase tracking-[0.25em] font-extrabold text-gold-light">
                   Trọn Đời Bên Nhau • Ensemble Pour Toujours
                 </span>
                 <Heart className="w-3.5 h-3.5 text-gold-light fill-gold-light" />
               </div>
 
-              {/* Master Joint Portrait Image in French Grand Gilded Moulding */}
-              <div className="relative w-full max-w-[290px] sm:max-w-[330px] my-3 z-10">
-                <div className="french-picture-frame aspect-[4/5] rounded-t-full rounded-b-3xl">
+              {/* Master Joint Portrait Image: CAO VƯỢT TRỘI TRUNG TÂM */}
+              <div className="relative w-full max-w-[320px] sm:max-w-[360px] my-3 z-10">
+                <div className="french-picture-frame h-[380px] sm:h-[450px] rounded-t-full rounded-b-3xl p-3 shadow-2xl">
                   <div className="w-full h-full rounded-t-full rounded-b-2xl overflow-hidden bg-paper relative border border-gold/70">
                     <img
                       src={couple.jointImage}
@@ -144,7 +144,7 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
 
                     {/* Overlay text at bottom of joint image */}
                     <div className="absolute bottom-3 inset-x-0 text-center pointer-events-none">
-                      <span className="font-display font-extrabold text-xs uppercase tracking-[0.3em] text-paper-light drop-shadow-md">
+                      <span className="font-display font-extrabold text-xs uppercase tracking-[0.3em] text-white drop-shadow-md">
                         Together Forever
                       </span>
                     </div>
@@ -174,29 +174,29 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
             </article>
           </ScrollReveal>
 
-          {/* 3. CÔ DÂU (BRIDE) - FRENCH GILDED SALON FRAME */}
-          <ScrollReveal direction="left" delay={300} className="h-full">
-            <article className="h-full flex flex-col items-center text-center french-card-bg french-triple-frame p-6 sm:p-8 rounded-[32px] border-2 border-gold/60 shadow-xl relative group hover:border-gold transition-all duration-500 overflow-hidden">
+          {/* 3. CÔ DÂU (BRIDE) - THẤP XUỐNG & THU NHỎ LẠI THEO YÊU CẦU */}
+          <ScrollReveal direction="left" delay={300} className="w-full">
+            <article className="max-w-[320px] mx-auto flex flex-col items-center text-center french-card-bg french-triple-frame p-5 sm:p-6 rounded-[28px] border-2 border-gold/60 shadow-lg relative group hover:border-gold transition-all duration-500 overflow-hidden lg:translate-y-8">
               {/* French Damask Pattern Watermark */}
               <div className="absolute inset-0 french-damask-pattern opacity-25 pointer-events-none" />
 
               {/* French Corner Flourishes */}
-              <FrenchCornerFlourish position="top-left" size={50} />
-              <FrenchCornerFlourish position="top-right" size={50} />
-              <FrenchCornerFlourish position="bottom-left" size={50} />
-              <FrenchCornerFlourish position="bottom-right" size={50} />
+              <FrenchCornerFlourish position="top-left" size={40} />
+              <FrenchCornerFlourish position="top-right" size={40} />
+              <FrenchCornerFlourish position="bottom-left" size={40} />
+              <FrenchCornerFlourish position="bottom-right" size={40} />
 
-              {/* Top French Velvet Ribbon Badge */}
-              <div className="relative z-10 mb-4 inline-flex items-center gap-1.5 px-4 py-1 rounded-full french-velvet-ribbon text-paper-light border border-gold/50 shadow-md">
-                <span className="text-[11px] font-display uppercase tracking-[0.25em] font-bold text-gold-light">
+              {/* Top French Royal Slate Blue Ribbon Badge */}
+              <div className="relative z-10 mb-3 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#203D5B] via-[#2F547A] to-[#203D5B] text-sky-100 border border-sky-300/40 shadow-md">
+                <span className="text-[10px] font-display uppercase tracking-[0.25em] font-bold">
                   Cô Dâu • La Mariée
                 </span>
               </div>
 
-              {/* Bride Image Frame: French Gilded Picture Moulding */}
-              <div className="relative mb-6 z-10">
-                <div className="french-picture-frame w-52 h-70 sm:w-60 sm:h-80 rounded-t-full rounded-b-3xl">
-                  <div className="w-full h-full rounded-t-full rounded-b-2xl overflow-hidden bg-paper relative border border-gold/60">
+              {/* Bride Image Frame: Thu nhỏ lại làm nền cho ảnh chung */}
+              <div className="relative mb-5 z-10">
+                <div className="french-picture-frame w-40 h-54 sm:w-46 sm:h-62 rounded-t-full rounded-b-2xl p-2">
+                  <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden bg-paper relative border border-gold/60">
                     <img
                       src={couple.bride.image}
                       alt={`Cô dâu ${couple.bride.fullName}`}
@@ -207,29 +207,29 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
                   </div>
                 </div>
 
-                {/* Monogram Seal on Image Corner */}
-                <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-gradient-to-br from-[#96383F] via-burgundy to-burgundy-dark text-paper-light flex items-center justify-center border-2 border-gold-light shadow-xl">
-                  <span className="font-display text-base font-extrabold text-gold-light">M</span>
+                {/* Monogram Seal on Image Corner (Thu nhỏ tỉ lệ) */}
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-gradient-to-br from-[#203D5B] to-[#122437] text-white flex items-center justify-center border-2 border-gold-light shadow-lg">
+                  <span className="font-display text-sm font-extrabold text-gold-light">M</span>
                 </div>
               </div>
 
-              {/* Bride Info */}
-              <div className="relative z-10 w-full mt-2">
-                <span className="text-xs uppercase tracking-[0.2em] font-bold text-burgundy mb-1 block font-display">
+              {/* Bride Info (Gọn gàng, tinh tế) */}
+              <div className="relative z-10 w-full mt-1">
+                <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-burgundy mb-0.5 block font-display">
                   {couple.bride.title}
                 </span>
-                <h3 className="font-serif text-2xl sm:text-3xl text-charcoal font-bold tracking-tight mb-2">
+                <h3 className="font-serif text-xl sm:text-2xl text-charcoal font-bold tracking-tight mb-2">
                   {couple.bride.fullName}
                 </h3>
 
                 {/* Parents Info in French Cartouche */}
-                <div className="text-xs text-charcoal-muted mb-4 p-3 rounded-xl bg-paper/80 border border-gold/30 shadow-xs max-w-xs mx-auto">
+                <div className="text-[11px] text-charcoal-muted mb-3 p-2 rounded-lg bg-paper-light/90 border border-gold/30 shadow-xs max-w-[260px] mx-auto">
                   <span className="font-serif font-bold text-charcoal block">Thân phụ & Mẫu thân:</span>
                   <p className="mt-0.5 font-serif italic text-charcoal-muted">{couple.bride.parents}</p>
                 </div>
 
                 {/* Bio / Love Note */}
-                <p className="font-serif italic text-xs sm:text-sm text-charcoal/85 leading-relaxed px-2">
+                <p className="font-serif italic text-xs text-charcoal/85 leading-relaxed px-1 max-w-[260px] mx-auto line-clamp-3">
                   “{couple.bride.bio}”
                 </p>
               </div>

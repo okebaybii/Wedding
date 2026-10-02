@@ -50,12 +50,12 @@ function createWaxSealTexture(monogramText: string): THREE.CanvasTexture {
     const center = 256
     const radius = 230
 
-    // Burgundy wax base radial gradient
+    // Serene French Royal Slate Blue wax base radial gradient
     const grad = ctx.createRadialGradient(center - 40, center - 40, 20, center, center, radius)
-    grad.addColorStop(0, '#8E343A') // Lighter burgundy highlight
-    grad.addColorStop(0.5, '#72262B') // Classic burgundy wax
-    grad.addColorStop(0.85, '#561A1E') // Deep burgundy shade
-    grad.addColorStop(1, '#3D1013') // Dark wax perimeter
+    grad.addColorStop(0, '#3A6084') // Lighter serene royal blue highlight
+    grad.addColorStop(0.5, '#254465') // Classic royal French slate blue wax
+    grad.addColorStop(0.85, '#172C42') // Deep royal blue shade
+    grad.addColorStop(1, '#0F1E2E') // Dark wax perimeter
     ctx.fillStyle = grad
     ctx.beginPath()
     ctx.arc(center, center, radius, 0, Math.PI * 2)
@@ -139,7 +139,7 @@ function createWaxSealTexture(monogramText: string): THREE.CanvasTexture {
     ctx.font = 'bold 112px "Playfair Display", "Cinzel", "Times New Roman", serif'
 
     // Deep embossed shadow
-    ctx.fillStyle = '#2A0B0E'
+    ctx.fillStyle = '#0F1E2E'
     ctx.fillText(monogramText, center + 4, center + 5)
 
     // Gold foil shimmer gradient
@@ -353,7 +353,7 @@ function createCardTexture({
     // 5. Two-column Royal Family Heraldry
     const drawBadge = (bx: number, by: number, bw: number, bh: number, label: string) => {
       ctx.save()
-      ctx.fillStyle = '#78242A'
+      ctx.fillStyle = '#254465'
       ctx.strokeStyle = '#D4AF37'
       ctx.lineWidth = 1.2
       ctx.beginPath()
@@ -386,9 +386,9 @@ function createCardTexture({
     ctx.font = 'bold 34px "Playfair Display", serif'
     if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px'
     const groomGrad = ctx.createLinearGradient(280, 0, 560, 0)
-    groomGrad.addColorStop(0, '#78242A')
+    groomGrad.addColorStop(0, '#254465')
     groomGrad.addColorStop(0.5, '#B8860B')
-    groomGrad.addColorStop(1, '#78242A')
+    groomGrad.addColorStop(1, '#254465')
     ctx.fillStyle = groomGrad
     ctx.fillText(groomFullName || groomName, 420, 392)
 
@@ -423,9 +423,9 @@ function createCardTexture({
     ctx.font = 'bold 34px "Playfair Display", serif'
     if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px'
     const brideGrad = ctx.createLinearGradient(1040, 0, 1320, 0)
-    brideGrad.addColorStop(0, '#78242A')
+    brideGrad.addColorStop(0, '#254465')
     brideGrad.addColorStop(0.5, '#B8860B')
-    brideGrad.addColorStop(1, '#78242A')
+    brideGrad.addColorStop(1, '#254465')
     ctx.fillStyle = brideGrad
     ctx.fillText(brideFullName || brideName, 1180, 392)
 
@@ -469,7 +469,7 @@ function createCardTexture({
 
     ctx.font = 'bold 13px "Cinzel", serif'
     if ('letterSpacing' in ctx) ctx.letterSpacing = '3px'
-    ctx.fillStyle = '#78242A'
+    ctx.fillStyle = '#254465'
     ctx.fillText('HÔN LỄ ĐƯỢC TỔ CHỨC VÀO LÚC', w / 2, boxY + 20)
 
     ctx.font = 'bold 28px "Cinzel", "Playfair Display", serif'
@@ -485,7 +485,7 @@ function createCardTexture({
     // 8. Venue & Reception Location Information
     ctx.font = 'bold 24px "Cinzel", "Playfair Display", serif'
     if ('letterSpacing' in ctx) ctx.letterSpacing = '2px'
-    ctx.fillStyle = '#78242A'
+    ctx.fillStyle = '#254465'
     ctx.fillText(venueName ? venueName.toUpperCase() : 'TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI RIVERSIDE PALACE', w / 2, 645)
 
     ctx.font = '600 20px "Playfair Display", serif'
@@ -722,9 +722,9 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
     })
     const bokehTexture = createBokehTexture()
 
-    // Burgundy wax seal material (#72262B) with embossed monogram
+    // Royal French Slate Blue wax seal material (#254465) with embossed monogram
     const waxSealMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x72262b,
+      color: 0x254465,
       roughness: 0.32,
       metalness: 0.12,
       clearcoat: 0.65,
@@ -912,7 +912,7 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
     petalShape.bezierCurveTo(-0.11, 0.1, -0.09, -0.04, 0, -0.08)
 
     const petalGeo = new THREE.ShapeGeometry(petalShape)
-    const petalColors = [0x8e343a, 0xc58b7e, 0xd9828a, 0xe8b4b8, 0xa8424b]
+    const petalColors = [0xffffff, 0xf0f7fd, 0xdbeafe, 0xbae6fd, 0xe0f2fe]
 
     interface PetalData {
       mesh: THREE.Mesh

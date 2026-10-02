@@ -94,7 +94,7 @@ export const LuxuryWeddingInvitationCard: React.FC<LuxuryWeddingInvitationCardPr
   return (
     <div className="w-full max-w-3xl mx-auto mb-12 relative px-2 sm:px-0">
       {/* Outer Romantic French Chateau Rose & Gold Aura */}
-      <div className="absolute -inset-3 bg-gradient-to-r from-gold/30 via-champagne/40 to-burgundy/20 rounded-[38px] blur-2xl opacity-80 pointer-events-none" />
+      <div className="absolute -inset-3 bg-gradient-to-r from-gold/30 via-sky-200/40 to-burgundy/20 rounded-[38px] blur-2xl opacity-80 pointer-events-none" />
 
       {/* Main French Gilded Chateau Invitation Card */}
       <div className="relative french-card-bg french-triple-frame rounded-[32px] sm:rounded-[36px] p-6 sm:p-12 md:p-14 border-2 border-gold/70 shadow-2xl overflow-hidden text-charcoal">
@@ -125,7 +125,7 @@ export const LuxuryWeddingInvitationCard: React.FC<LuxuryWeddingInvitationCardPr
             </div>
 
             {/* 3D Wax Seal Medallion with Gilded Laurel Rim */}
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#96383F] via-burgundy to-[#3D0F13] border-2 border-gold p-1 shadow-2xl shadow-burgundy/40 flex items-center justify-center">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#2E5177] via-burgundy to-[#102236] border-2 border-gold p-1 shadow-2xl shadow-burgundy/40 flex items-center justify-center">
               <div className="w-full h-full rounded-full border border-gold/60 flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-t from-black/25 via-transparent to-white/20">
                 <span className="font-display font-extrabold text-xl sm:text-2xl text-gold-light gold-foil-text tracking-widest drop-shadow-sm">
                   {couple.monogram}
@@ -216,7 +216,7 @@ export const LuxuryWeddingInvitationCard: React.FC<LuxuryWeddingInvitationCardPr
         </div>
 
         {/* 3. KHỐI THAY THẾ THEO HÌNH: THỜI GIAN, QUYỂN LỊCH THÁNG 11/2026, CỤM ĐẾM NGƯỢC & ĐỊA ĐIỂM */}
-        <div id="calendar" className="scroll-mt-16 relative z-10 bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F5EFE3] border-2 border-gold/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-md text-center">
+        <div id="calendar" className="scroll-mt-16 relative z-10 bg-gradient-to-b from-[#FFFFFF] via-[#F4F8FC] to-[#E8F0F7] border-2 border-gold/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-md text-center">
           {/* Subtle Gilded Inner Border */}
           <div className="absolute inset-2 border border-dashed border-gold/30 rounded-xl sm:rounded-2xl pointer-events-none" />
 
@@ -280,7 +280,7 @@ export const LuxuryWeddingInvitationCard: React.FC<LuxuryWeddingInvitationCardPr
                     key={`day-${day}`}
                     className={`h-8 sm:h-10 rounded-xl flex flex-col items-center justify-center relative transition-all duration-300 ${
                       isWedding
-                        ? 'bg-gradient-to-tr from-burgundy via-[#96383F] to-burgundy text-paper-light font-bold shadow-lg shadow-burgundy/40 scale-105 sm:scale-110 z-10 border-2 border-gold ring-2 ring-gold/40 animate-pulse'
+                        ? 'bg-gradient-to-tr from-[#1E3A56] via-[#2F547A] to-[#1E3A56] text-white font-bold shadow-lg shadow-[#1E3A56]/40 scale-105 sm:scale-110 z-10 border-2 border-gold ring-2 ring-gold/40 animate-pulse'
                         : 'text-charcoal hover:bg-gold/15 font-serif text-xs sm:text-sm border border-transparent hover:border-gold/30'
                     }`}
                   >

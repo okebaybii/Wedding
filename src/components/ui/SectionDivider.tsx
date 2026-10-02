@@ -36,7 +36,7 @@ export const SectionDivider: React.FC<SectionDividerProps> = ({
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <circle cx="50" cy="20" r="3" fill="#72262B" stroke="currentColor" strokeWidth="1.2" />
+              <circle cx="50" cy="20" r="3" fill="#254465" stroke="currentColor" strokeWidth="1.2" />
             </svg>
           </div>
         )}
@@ -56,7 +56,7 @@ export const SectionDivider: React.FC<SectionDividerProps> = ({
               />
               <path
                 d="M16 11c-2.76 0-5 2.24-5 5 0 3.5 5 8 5 8s5-4.5 5-8c0-2.76-2.24-5-5-5z"
-                fill="#72262B"
+                fill="#254465"
               />
             </svg>
             <span className="w-1.5 h-1.5 rounded-full bg-gold-dark/60" />
@@ -115,7 +115,7 @@ export const SectionDivider: React.FC<SectionDividerProps> = ({
               xmlns="http://www.w3.org/2000/svg"
             >
               <circle cx="18" cy="14" r="9" stroke="currentColor" strokeWidth="2" />
-              <circle cx="30" cy="14" r="9" stroke="#72262B" strokeWidth="2" />
+              <circle cx="30" cy="14" r="9" stroke="#254465" strokeWidth="2" />
               <polygon points="18,3 19.5,6 16.5,6" fill="#D4AF37" />
             </svg>
           </div>

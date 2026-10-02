@@ -121,7 +121,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       id="hero"
       ref={heroContainerRef}
       aria-label="Khung cảnh cưới điện ảnh 3D toàn màn hình"
-      className="relative w-full h-screen min-h-[660px] md:min-h-[750px] max-h-[1400px] overflow-hidden flex flex-col justify-between select-none bg-black text-paper-light"
+      className="relative w-full h-screen min-h-[660px] md:min-h-[750px] max-h-[1400px] overflow-hidden flex flex-col justify-between select-none bg-[#0C1827] text-white"
     >
       {/* 1. CINEMATIC FULLSCREEN STAGE LAYER (VIDEO / 3D PHOTO) */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -159,16 +159,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         )}
 
-        {/* Filmic Vignette & Luxury Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/75 pointer-events-none" />
-        <div className="absolute inset-0 bg-radial-vignette opacity-80 pointer-events-none" />
+        {/* Serene French Dusty Blue & Filmic Wedding Overlays (Màu sắc trang nhã như ảnh mẫu) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0C1827]/95 via-[#162F4C]/45 to-[#1A3758]/80 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1C3A5C]/75 via-transparent to-[#0C1827]/90 pointer-events-none" />
 
-        {/* Ambient Gold Shimmer Lighting Aura */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-gold/15 via-champagne/10 to-transparent blur-3xl pointer-events-none" />
+        {/* Heavenly Chiffon Light Beam & Soft Ethereal Glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] sm:w-[950px] h-[750px] rounded-full bg-gradient-to-b from-white/20 via-sky-300/15 to-transparent blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-gradient-to-tr from-sky-400/20 via-[#4A729A]/15 to-transparent blur-3xl pointer-events-none" />
 
         {/* Royal Corner Ornaments */}
-        <div className="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-gold/40 pointer-events-none hidden sm:block" />
-        <div className="absolute top-6 right-6 w-12 h-12 border-t-2 border-r-2 border-gold/40 pointer-events-none hidden sm:block" />
+        <div className="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-sky-300/40 pointer-events-none hidden sm:block" />
+        <div className="absolute top-6 right-6 w-12 h-12 border-t-2 border-r-2 border-sky-300/40 pointer-events-none hidden sm:block" />
       </div>
 
       {/* 2. WEDDING FLORAL FLANKS: Vòm Hoa Cưới Lung Linh Lộng Lẫy Hai Bên */}
@@ -177,43 +178,43 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* 3. CENTER HERO BRANDING & MAJESTIC COUPLE NAMES */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 text-center my-auto pt-14 sm:pt-20 flex flex-col items-center">
         {/* Royal Crest Tagline */}
-        <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-black/55 backdrop-blur-md border border-gold/60 text-gold-light text-xs uppercase tracking-[0.35em] font-medium shadow-2xl mb-5">
-          <Sparkles className="w-3.5 h-3.5 text-gold" />
+        <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-[#162D47]/80 backdrop-blur-md border border-sky-300/50 text-sky-100 text-xs uppercase tracking-[0.35em] font-medium shadow-2xl mb-5">
+          <Sparkles className="w-3.5 h-3.5 text-sky-300" />
           <span>Save Our Date • Lễ Thành Hôn</span>
-          <Sparkles className="w-3.5 h-3.5 text-gold" />
+          <Sparkles className="w-3.5 h-3.5 text-sky-300" />
         </div>
 
         {/* Invitation Subtitle */}
-        <p className="font-serif italic text-gold-light/95 text-base sm:text-xl mb-3 tracking-wider font-light drop-shadow-lg">
+        <p className="font-serif italic text-sky-100/95 text-base sm:text-xl mb-3 tracking-wider font-light drop-shadow-md">
           Trân trọng báo tin hôn lễ của chúng mình
         </p>
 
         {/* Majestic Typography: Groom & Bride Names */}
-        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-paper-light drop-shadow-2xl leading-none">
-          <span className="inline-block hover:text-gold-light transition-colors duration-300">
+        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)] leading-none">
+          <span className="inline-block hover:text-sky-200 transition-colors duration-300">
             {couple.groom.shortName}
           </span>
-          <span className="inline-block mx-3 sm:mx-6 font-script text-gold font-normal text-5xl sm:text-7xl md:text-8xl lg:text-9xl align-middle drop-shadow-md">
+          <span className="inline-block mx-3 sm:mx-6 font-script text-gold-light font-normal text-5xl sm:text-7xl md:text-8xl lg:text-9xl align-middle drop-shadow-md">
             &
           </span>
-          <span className="inline-block hover:text-gold-light transition-colors duration-300">
+          <span className="inline-block hover:text-sky-200 transition-colors duration-300">
             {couple.bride.shortName}
           </span>
         </h1>
 
-        {/* Golden Hairline Divider */}
+        {/* Golden & Silver Hairline Divider */}
         <div className="flex items-center justify-center gap-3 my-5">
-          <span className="h-[1px] w-12 sm:w-24 bg-gradient-to-r from-transparent via-gold to-transparent" />
-          <Heart className="w-4 h-4 text-gold fill-gold" />
-          <span className="h-[1px] w-12 sm:w-24 bg-gradient-to-l from-transparent via-gold to-transparent" />
+          <span className="h-[1px] w-12 sm:w-24 bg-gradient-to-r from-transparent via-sky-300 to-transparent" />
+          <Heart className="w-4 h-4 text-sky-300 fill-sky-300" />
+          <span className="h-[1px] w-12 sm:w-24 bg-gradient-to-l from-transparent via-sky-300 to-transparent" />
         </div>
 
         {/* Wedding Date & Venue Glass Badge */}
-        <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-6 sm:px-8 py-2.5 rounded-full bg-black/60 backdrop-blur-md border border-gold/40 text-xs sm:text-sm font-display tracking-[0.25em] uppercase text-paper-light shadow-xl">
+        <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-6 sm:px-8 py-2.5 rounded-full bg-[#132840]/80 backdrop-blur-md border border-sky-300/40 text-xs sm:text-sm font-display tracking-[0.25em] uppercase text-sky-100 shadow-xl">
           <span className="font-light">Thứ Sáu</span>
-          <span className="text-gold">•</span>
-          <span className="font-bold text-gold-light">20 Tháng 11 Năm 2026</span>
-          <span className="text-gold">•</span>
+          <span className="text-sky-300">•</span>
+          <span className="font-bold text-white">20 Tháng 11 Năm 2026</span>
+          <span className="text-sky-300">•</span>
           <span className="font-light">Riverside Palace, TP. HCM</span>
         </div>
 
@@ -229,24 +230,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           <a
             href="#rsvp"
-            className="min-h-[46px] px-7 py-3 rounded-full bg-burgundy/90 hover:bg-burgundy text-paper-light border border-gold/60 font-semibold text-xs uppercase tracking-wider flex items-center gap-2 shadow-xl hover:scale-105 transition-all active:scale-95 cursor-pointer backdrop-blur-xs"
+            className="min-h-[46px] px-7 py-3 rounded-full bg-[#254465]/90 hover:bg-[#2E5177] text-white border border-sky-300/50 font-semibold text-xs uppercase tracking-wider flex items-center gap-2 shadow-xl hover:scale-105 transition-all active:scale-95 cursor-pointer backdrop-blur-xs"
           >
-            <Heart className="w-3.5 h-3.5 text-gold-light fill-gold-light" />
+            <Heart className="w-3.5 h-3.5 text-sky-200 fill-sky-200" />
             <span>Xác Nhận Tham Dự (RSVP)</span>
           </a>
         </div>
       </div>
 
       {/* 4. BOTTOM INTERACTIVE 3D / VIDEO REEL DOCK ("Click vào cái nào hiển thị cái đó") */}
-      <div className="relative z-20 w-full px-4 sm:px-8 pb-4 sm:pb-6 bg-gradient-to-t from-black via-black/85 to-transparent pt-8">
+      <div className="relative z-20 w-full px-4 sm:px-8 pb-4 sm:pb-6 bg-gradient-to-t from-[#0B1726] via-[#10243B]/90 to-transparent pt-8">
         <div className="max-w-6xl mx-auto">
           {/* Dock Header Notice */}
           <div className="flex items-center justify-between mb-3 text-xs">
-            <div className="flex items-center gap-2 text-gold-light font-medium uppercase tracking-widest text-[11px] sm:text-xs">
-              <Film className="w-4 h-4 text-gold" />
+            <div className="flex items-center gap-2 text-sky-200 font-medium uppercase tracking-widest text-[11px] sm:text-xs">
+              <Film className="w-4 h-4 text-sky-300" />
               <span>Khoảnh Khắc Cưới 3D & Phim Điện Ảnh (Chạm để xem):</span>
             </div>
-            <div className="text-[11px] text-paper-light/70 hidden sm:block font-serif italic">
+            <div className="text-[11px] text-sky-200/70 hidden sm:block font-serif italic">
               Thước phim {activeReelIndex + 1} / {reels.length}
             </div>
           </div>
@@ -262,8 +263,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   onClick={() => setActiveReelIndex(index)}
                   className={`group relative rounded-2xl overflow-hidden text-left transition-all duration-300 cursor-pointer flex flex-col p-1.5 sm:p-2 ${
                     isActive
-                      ? 'bg-gradient-to-b from-gold/35 via-gold/15 to-black/90 border-2 border-gold ring-2 ring-gold/40 shadow-xl shadow-gold/30 -translate-y-2'
-                      : 'bg-black/60 hover:bg-black/90 border border-gold/30 hover:border-gold/75 opacity-75 hover:opacity-100 hover:-translate-y-1'
+                      ? 'bg-gradient-to-b from-sky-400/35 via-sky-600/20 to-[#0F2034]/95 border-2 border-sky-300 ring-2 ring-sky-300/40 shadow-xl shadow-sky-500/25 -translate-y-2'
+                      : 'bg-[#13263C]/80 hover:bg-[#1A3350] border border-sky-500/30 hover:border-sky-300/70 opacity-80 hover:opacity-100 hover:-translate-y-1'
                   }`}
                 >
                   {/* Thumbnail Container */}
@@ -276,10 +277,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
                     {/* Chapter & Media Type Badge */}
-                    <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs border border-gold/40 text-[9px] sm:text-[10px] text-gold-light font-medium flex items-center gap-1">
+                    <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs border border-sky-300/40 text-[9px] sm:text-[10px] text-sky-100 font-medium flex items-center gap-1">
                       {reel.type === 'video' ? (
                         <>
-                          <Film className="w-2.5 h-2.5 text-gold" />
+                          <Film className="w-2.5 h-2.5 text-sky-300" />
                           <span>{reel.badge}</span>
                         </>
                       ) : (
@@ -292,8 +293,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
                     {/* Active State Pulse Indicator */}
                     {isActive && (
-                      <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-burgundy/95 border border-gold text-[9px] text-white font-bold tracking-wider flex items-center gap-1 shadow-md animate-pulse">
-                        <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping" />
+                      <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-[#254465]/95 border border-sky-300 text-[9px] text-white font-bold tracking-wider flex items-center gap-1 shadow-md animate-pulse">
+                        <span className="w-1.5 h-1.5 rounded-full bg-sky-300 animate-ping" />
                         <span>ĐANG CHIẾU</span>
                       </div>
                     )}
@@ -303,12 +304,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <div className="mt-1.5 px-1 pb-0.5">
                     <p
                       className={`text-xs font-serif font-bold truncate ${
-                        isActive ? 'text-gold-light' : 'text-paper-light group-hover:text-gold-light'
+                        isActive ? 'text-white' : 'text-sky-100 group-hover:text-white'
                       }`}
                     >
                       {reel.chapter}. {reel.title}
                     </p>
-                    <p className="text-[10px] text-paper-light/65 truncate font-light">
+                    <p className="text-[10px] text-sky-200/70 truncate font-light">
                       {reel.subtitle}
                     </p>
                   </div>
@@ -323,22 +324,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <button
                 type="button"
                 onClick={onScrollToStory}
-                className="inline-flex items-center gap-1.5 text-xs text-paper-light/75 hover:text-gold-light transition-colors cursor-pointer group py-1"
+                className="inline-flex items-center gap-1.5 text-xs text-sky-200/80 hover:text-white transition-colors cursor-pointer group py-1"
               >
                 <span className="font-sans uppercase tracking-[0.2em] text-[10px]">
                   Cuộn xuống để khám phá hôn lễ
                 </span>
-                <ChevronDown className="w-4 h-4 text-gold group-hover:translate-y-1 transition-transform animate-bounce" />
+                <ChevronDown className="w-4 h-4 text-sky-300 group-hover:translate-y-1 transition-transform animate-bounce" />
               </button>
             ) : (
               <a
                 href="#calendar"
-                className="inline-flex items-center gap-1.5 text-xs text-paper-light/75 hover:text-gold-light transition-colors cursor-pointer group py-1"
+                className="inline-flex items-center gap-1.5 text-xs text-sky-200/80 hover:text-white transition-colors cursor-pointer group py-1"
               >
                 <span className="font-sans uppercase tracking-[0.2em] text-[10px]">
                   Cuộn xuống để khám phá hôn lễ
                 </span>
-                <ChevronDown className="w-4 h-4 text-gold group-hover:translate-y-1 transition-transform animate-bounce" />
+                <ChevronDown className="w-4 h-4 text-sky-300 group-hover:translate-y-1 transition-transform animate-bounce" />
               </a>
             )}
           </div>

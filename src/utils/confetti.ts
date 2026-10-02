@@ -17,7 +17,7 @@ export function triggerWeddingConfetti(): void {
       ...defaults,
       ...opts,
       particleCount: Math.floor(count * particleRatio),
-      colors: ['#C8A86B', '#DFBF7A', '#72262B', '#EAD5CD', '#FAF6F0', '#1A3329'],
+      colors: ['#CCA968', '#E4CA88', '#254465', '#DCE8F5', '#FFFFFF', '#3B5F84'],
     })
   }
 

@@ -8,33 +8,34 @@ export default {
     extend: {
       colors: {
         paper: {
-          light: '#FDFBF7',
-          DEFAULT: '#FAF6F0',
-          dark: '#F0EAE1',
+          light: '#FFFFFF', // Pure porcelain white
+          DEFAULT: '#F2F6FA', // Serene dusty blue / French ivory
+          dark: '#E2EAF1', // Soft pale slate blue
         },
         gold: {
-          light: '#DFBF7A',
-          DEFAULT: '#C8A86B',
-          dark: '#A68545',
+          light: '#E4CA88',
+          DEFAULT: '#CCA968',
+          dark: '#A38140',
         },
         burgundy: {
-          light: '#8E343A',
-          DEFAULT: '#72262B',
-          dark: '#54191D',
+          // Re-mapped to Royal French Slate Blue & Deep Navy as requested from user's wedding photo
+          light: '#477098', // Gentle slate blue
+          DEFAULT: '#254465', // Royal French slate blue
+          dark: '#15293E', // Midnight velvet navy
         },
         emerald: {
-          light: '#284E3F',
-          DEFAULT: '#1A3329',
-          dark: '#0F211A',
+          light: '#3C6B88',
+          DEFAULT: '#234A62',
+          dark: '#142E40',
         },
         champagne: {
-          light: '#F3E5E0',
-          DEFAULT: '#EAD5CD',
-          dark: '#C58B7E',
+          light: '#EDF4F9',
+          DEFAULT: '#DCE7F0',
+          dark: '#B3C8DA',
         },
         charcoal: {
-          DEFAULT: '#2D2A26',
-          muted: '#635F59',
+          DEFAULT: '#1E293B', // Slate charcoal
+          muted: '#546A80', // Elegant slate blue-grey
         }
       },
       fontFamily: {

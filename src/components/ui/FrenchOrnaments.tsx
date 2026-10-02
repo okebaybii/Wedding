@@ -96,7 +96,7 @@ export const FrenchCornerFlourish: React.FC<FrenchCornerProps> = ({
 
         {/* Small Rococo Leaf Bud and Dot */}
         <circle cx="6" cy="6" r="3" fill="url(#frenchGoldGrad)" />
-        <circle cx="16" cy="16" r="2" fill="#72262B" stroke="url(#frenchGoldGrad)" strokeWidth="0.8" />
+        <circle cx="16" cy="16" r="2" fill="#254465" stroke="url(#frenchGoldGrad)" strokeWidth="0.8" />
         <path
           d="M18 18 C26 26 38 32 50 32 C60 32 64 26 58 22 C52 18 42 24 48 30"
           stroke="url(#frenchGoldGrad)"
@@ -144,12 +144,12 @@ export const FrenchCrestPediment: React.FC<{ className?: string; title?: string 
         {/* Center French Ribbon Knot & Scalloped Shell (Coquille Rococo) */}
         <path
           d="M90 6 C84 6 78 12 76 18 C74 24 78 28 84 28 C87 28 89 26 90 24 C91 26 93 28 96 28 C102 28 106 24 104 18 C102 12 96 6 90 6 Z"
-          fill="#FAF6F0"
+          fill="#F2F6FA"
           stroke="url(#crestGold)"
           strokeWidth="1.8"
         />
         {/* Central Crown Jewel */}
-        <circle cx="90" cy="18" r="3.5" fill="#72262B" stroke="url(#crestGold)" strokeWidth="1.2" />
+        <circle cx="90" cy="18" r="3.5" fill="#254465" stroke="url(#crestGold)" strokeWidth="1.2" />
 
         {/* Left Acanthus Flourish */}
         <path
@@ -221,7 +221,7 @@ export const FrenchFlourishDivider: React.FC<{ className?: string }> = ({ classN
           strokeWidth="1.5"
           strokeLinecap="round"
         />
-        <circle cx="32" cy="12" r="3.5" fill="#72262B" stroke="#DFBF7A" strokeWidth="1.5" />
+        <circle cx="32" cy="12" r="3.5" fill="#254465" stroke="#DFBF7A" strokeWidth="1.5" />
         <circle cx="32" cy="12" r="1.5" fill="#FBF5B7" />
         <circle cx="28" cy="12" r="1" fill="#C8A86B" />
         <circle cx="36" cy="12" r="1" fill="#C8A86B" />
