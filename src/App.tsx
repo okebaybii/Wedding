@@ -4,7 +4,6 @@ import {
   HeroSection,
   SaveTheDateSection,
   CoupleSection,
-  LoveStorySection,
   EventDetailsSection,
   GallerySection,
   RsvpSection,
@@ -20,7 +19,7 @@ import { AdminDashboard } from './components/admin/AdminDashboard.tsx'
 
 const MainAppContent: React.FC = () => {
   const { state } = useWeddingData()
-  const { couple, events, milestones, gallery } = state
+  const { couple, events, gallery } = state
 
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false)
   const [isAdminOpen, setIsAdminOpen] = useState(false)
@@ -106,29 +105,24 @@ const MainAppContent: React.FC = () => {
         {/* 3. Couple Section: Chú Rể | Bức Bích Họa Chung Đôi | Cô Dâu */}
         <CoupleSection couple={couple} />
 
-        <SectionDivider variant="infinity" />
-
-        {/* 4. Love Story Journey */}
-        <LoveStorySection milestones={milestones} />
-
         <SectionDivider variant="rings" />
 
-        {/* 5. Event Schedule & Maps (Sự Kiện) */}
+        {/* 4. Event Schedule & Maps (Sự Kiện) */}
         <EventDetailsSection events={events} />
 
         <SectionDivider variant="flourish" />
 
-        {/* 6. Wedding Photo Album (ĐƯA XUỐNG DƯỚI SỰ KIỆN theo yêu cầu người dùng) */}
+        {/* 5. Wedding Photo Album (ĐƯA XUỐNG DƯỚI SỰ KIỆN theo yêu cầu người dùng) */}
         <GallerySection photos={gallery} />
 
         <SectionDivider variant="leaves" />
 
-        {/* 7. RSVP Confirmation */}
+        {/* 6. RSVP Confirmation */}
         <RsvpSection />
 
         <SectionDivider variant="flourish" />
 
-        {/* 8. Guestbook Wishes */}
+        {/* 7. Guestbook Wishes */}
         <GuestbookSection />
       </main>
 

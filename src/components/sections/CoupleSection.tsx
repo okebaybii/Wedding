@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heart, Quote, Sparkles } from 'lucide-react'
+import { Heart, Sparkles } from 'lucide-react'
 import { CoupleInfo } from '../../types/wedding.ts'
 import { weddingCouple } from '../../data/weddingData.ts'
 import { ScrollReveal } from '../ui/ScrollReveal.tsx'
@@ -188,26 +188,6 @@ export const CoupleSection: React.FC<CoupleSectionProps> = ({ couple = weddingCo
             </article>
           </ScrollReveal>
         </div>
-
-        {/* Romantic Wedding Quote */}
-        <ScrollReveal direction="up" delay={200}>
-          <div className="mt-16 sm:mt-20 max-w-3xl mx-auto">
-            <div className="relative bg-gradient-to-r from-paper-light via-champagne/20 to-paper-light p-8 sm:p-12 rounded-3xl border border-gold/30 text-center shadow-sm">
-              <Quote className="w-8 h-8 text-gold-dark mx-auto mb-4 opacity-70" aria-hidden="true" />
-              <blockquote className="font-serif italic text-base sm:text-lg md:text-xl text-charcoal leading-relaxed">
-                {couple.quote}
-              </blockquote>
-              <div className="mt-4 flex items-center justify-center gap-2">
-                <span className="h-[1px] w-10 bg-gold/40" />
-                <Heart className="w-3.5 h-3.5 text-burgundy fill-burgundy" aria-hidden="true" />
-                <span className="h-[1px] w-10 bg-gold/40" />
-              </div>
-              <p className="mt-2 font-display text-xs tracking-widest uppercase text-gold-dark font-medium">
-                Minh Quân & Thảo My
-              </p>
-            </div>
-          </div>
-        </ScrollReveal>
       </div>
     </section>
   )
