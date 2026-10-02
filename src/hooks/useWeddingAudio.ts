@@ -141,10 +141,30 @@ class WeddingAudioManager {
   private delayNodeLeft: DelayNode | null = null
   private delayNodeRight: DelayNode | null = null
 
-  private isPlaying = false
-  private isMuted = false
-  private volume = 0.7
-  private trackTitle = 'Canon in D (Acoustic)'
+  private snapshot = {
+    isPlaying: false,
+    isMuted: false,
+    volume: 0.7,
+    trackTitle: 'Canon in D (Acoustic)',
+  }
+
+  private get isPlaying() {
+    return this.snapshot.isPlaying
+  }
+  private get isMuted() {
+    return this.snapshot.isMuted
+  }
+  private get volume() {
+    return this.snapshot.volume
+  }
+  public get trackTitle() {
+    return this.snapshot.trackTitle
+  }
+
+  private updateSnapshot(changes: Partial<typeof this.snapshot>) {
+    this.snapshot = { ...this.snapshot, ...changes }
+    this.notify()
+  }
 
   private timerId: number | null = null
   private currentBar = 0
@@ -277,13 +297,13 @@ class WeddingAudioManager {
     this.listeners.forEach((fn) => fn())
   }
 
-  public getState() {
-    return {
-      isPlaying: this.isPlaying,
-      isMuted: this.isMuted,
-      volume: this.volume,
-      trackTitle: this.trackTitle,
-    }
+  public getState = (): {
+    isPlaying: boolean
+    isMuted: boolean
+    volume: number
+    trackTitle: string
+  } => {
+    return this.snapshot
   }
 
   public async startMusic(): Promise<void> {
@@ -292,8 +312,7 @@ class WeddingAudioManager {
 
     if (this.isPlaying) return
 
-    this.isPlaying = true
-    this.notify()
+    this.updateSnapshot({ isPlaying: true })
 
     // Smooth fade in
     const now = this.audioCtx.currentTime
@@ -308,8 +327,7 @@ class WeddingAudioManager {
 
   public pauseMusic(): void {
     if (!this.isPlaying) return
-    this.isPlaying = false
-    this.notify()
+    this.updateSnapshot({ isPlaying: false })
 
     if (this.audioCtx && this.bgmGain) {
       const now = this.audioCtx.currentTime
@@ -333,24 +351,24 @@ class WeddingAudioManager {
   }
 
   public setVolume = (newVol: number): void => {
-    this.volume = Math.max(0, Math.min(1, newVol))
+    const vol = Math.max(0, Math.min(1, newVol))
     if (this.masterGain && this.audioCtx && !this.isMuted) {
       this.masterGain.gain.cancelScheduledValues(this.audioCtx.currentTime)
-      this.masterGain.gain.setValueAtTime(this.volume, this.audioCtx.currentTime)
+      this.masterGain.gain.setValueAtTime(vol, this.audioCtx.currentTime)
     }
-    this.notify()
+    this.updateSnapshot({ volume: vol })
   }
 
   public toggleMute = (): void => {
-    this.isMuted = !this.isMuted
+    const newMuted = !this.isMuted
     if (this.masterGain && this.audioCtx) {
       this.masterGain.gain.cancelScheduledValues(this.audioCtx.currentTime)
       this.masterGain.gain.setValueAtTime(
-        this.isMuted ? 0 : this.volume,
+        newMuted ? 0 : this.volume,
         this.audioCtx.currentTime
       )
     }
-    this.notify()
+    this.updateSnapshot({ isMuted: newMuted })
   }
 
   private startScheduler() {
