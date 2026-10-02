@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Gift, Menu, X, Heart, Sparkles, Mail, Sliders } from 'lucide-react'
+import { Gift, Heart, Sparkles, Sliders } from 'lucide-react'
 import {
   HeroSection,
   SaveTheDateSection,
@@ -24,43 +24,17 @@ const MainAppContent: React.FC = () => {
 
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false)
   const [isAdminOpen, setIsAdminOpen] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [hasEnteredSite, setHasEnteredSite] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [activeSection, setActiveSection] = useState('hero')
   const { isMuted } = useWeddingAudio()
 
-  const navLinks = [
-    { href: '#hero', id: 'hero', label: 'Trang Chủ' },
-    { href: '#calendar', id: 'calendar', label: 'Lịch Cưới' },
-    { href: '#couple', id: 'couple', label: 'Cặp Đôi' },
-    { href: '#story', id: 'story', label: 'Chuyện Tình' },
-    { href: '#events', id: 'events', label: 'Sự Kiện' },
-    { href: '#gallery', id: 'gallery', label: 'Album Ảnh' },
-    { href: '#rsvp', id: 'rsvp', label: 'Xác Nhận' },
-    { href: '#guestbook', id: 'guestbook', label: 'Lưu Bút' },
-  ]
-
-  // Track scroll progress and active section
+  // Track scroll progress for subtle golden indicator
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight
       if (totalHeight > 0) {
         const progress = (window.scrollY / totalHeight) * 100
         setScrollProgress(Math.min(100, Math.max(0, progress)))
-      }
-
-      // Check current section in view
-      const sections = ['guestbook', 'rsvp', 'gallery', 'events', 'story', 'couple', 'calendar', 'hero']
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId)
-        if (el) {
-          const rect = el.getBoundingClientRect()
-          if (rect.top <= 250) {
-            setActiveSection(sectionId)
-            break
-          }
-        }
       }
     }
 
@@ -91,7 +65,7 @@ const MainAppContent: React.FC = () => {
         />
       )}
 
-      {/* 2. Delicate Golden Scroll Progress Bar */}
+      {/* 2. Delicate Golden Scroll Progress Bar (Top Hairline) */}
       <div
         className="fixed top-0 left-0 right-0 h-[3px] bg-gold/20 z-50 pointer-events-none"
         aria-hidden="true"
@@ -102,137 +76,18 @@ const MainAppContent: React.FC = () => {
         />
       </div>
 
-      {/* Top Floating Luxury Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-paper-light/90 backdrop-blur-md border-b border-gold/30 transition-all duration-300">
-        <div className="max-w-6xl mx-auto px-4 h-16 sm:h-20 flex items-center justify-between">
-          {/* Monogram Brand */}
-          <a
-            href="#hero"
-            className="flex items-center gap-2.5 group min-h-[48px]"
-            aria-label="Về đầu trang"
-          >
-            <div className="w-10 h-10 rounded-full border border-gold flex items-center justify-center bg-paper group-hover:border-gold-dark transition-colors">
-              <span className="font-display font-bold text-xs text-burgundy gold-foil-text">
-                {couple.monogram}
-              </span>
-            </div>
-            <span className="font-serif font-bold text-base sm:text-lg text-charcoal hidden sm:inline tracking-tight">
-              {couple.groom.shortName} <span className="text-gold font-script text-xl">&</span> {couple.bride.shortName}
-            </span>
-          </a>
-
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6" aria-label="Điều hướng chính">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`text-xs uppercase tracking-widest font-medium transition-colors py-2 border-b-2 ${
-                  activeSection === link.id
-                    ? 'text-burgundy border-gold font-semibold'
-                    : 'text-charcoal hover:text-burgundy border-transparent hover:border-gold/60'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Right Action: Admin Access, Re-open 3D Envelope, Gift Box Trigger & Mobile Menu Toggle */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Admin Management Dashboard Button */}
-            <button
-              type="button"
-              onClick={() => setIsAdminOpen(true)}
-              className="min-h-[40px] px-3 sm:px-3.5 py-1.5 rounded-full bg-paper hover:bg-gold/20 text-charcoal hover:text-burgundy text-xs font-serif flex items-center gap-1.5 border border-gold/50 transition-all duration-200 cursor-pointer shadow-2xs"
-              title="Mở Bảng Quản Trị (Admin)"
-            >
-              <Sliders className="w-3.5 h-3.5 text-gold-dark" />
-              <span className="hidden sm:inline font-semibold">Quản Trị</span>
-            </button>
-
-            {/* Reopen 3D Envelope Gateway button */}
-            <button
-              type="button"
-              onClick={handleReopenGateway}
-              className="hidden lg:flex min-h-[40px] px-3.5 py-1.5 rounded-full bg-paper hover:bg-gold/15 text-charcoal hover:text-burgundy text-xs font-serif items-center gap-1.5 border border-gold/40 transition-all duration-200 cursor-pointer shadow-2xs"
-              title="Mở lại thiệp cưới 3D"
-            >
-              <Mail className="w-3.5 h-3.5 text-gold-dark" />
-              <span>Xem Lại Thiệp 3D</span>
-            </button>
-
-            {/* Gift Box Trigger */}
-            <button
-              type="button"
-              onClick={() => setIsGiftModalOpen(true)}
-              className="min-h-[44px] px-3.5 sm:px-4 py-2 rounded-full bg-gold/15 hover:bg-gold/25 text-charcoal text-xs font-semibold tracking-wider uppercase border border-gold flex items-center gap-2 transition-all active:scale-95 cursor-pointer shadow-xs"
-            >
-              <Gift className="w-4 h-4 text-gold-dark" />
-              <span>Mừng Cưới</span>
-            </button>
-
-            {/* Mobile Hamburger Toggle */}
-            <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Mở danh mục điều hướng"
-              className="md:hidden w-11 h-11 rounded-full bg-paper border border-gold/30 flex items-center justify-center text-charcoal hover:text-burgundy cursor-pointer"
-            >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Dropdown Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-paper-light border-b border-gold/30 px-6 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block min-h-[44px] py-2.5 text-sm font-medium border-b border-gold/15 flex items-center justify-between ${
-                  activeSection === link.id ? 'text-burgundy font-semibold' : 'text-charcoal hover:text-burgundy'
-                }`}
-              >
-                <span>{link.label}</span>
-                <span className="text-gold text-xs">→</span>
-              </a>
-            ))}
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsMobileMenuOpen(false)
-                setIsAdminOpen(true)
-              }}
-              className="w-full min-h-[44px] py-2.5 text-sm font-serif text-charcoal flex items-center justify-between border-t border-gold/20 pt-3"
-            >
-              <span className="flex items-center gap-2 font-semibold">
-                <Sliders className="w-4 h-4 text-gold-dark" />
-                <span>Bảng Quản Trị Admin (Cấu hình)</span>
-              </span>
-              <span className="text-gold text-xs">→</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsMobileMenuOpen(false)
-                handleReopenGateway()
-              }}
-              className="w-full min-h-[44px] py-2.5 text-sm font-serif text-burgundy flex items-center justify-between border-t border-gold/20 pt-2"
-            >
-              <span className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gold-dark" />
-                <span>Mở lại màn hình thiệp cưới 3D</span>
-              </span>
-              <Sparkles className="w-3.5 h-3.5 text-gold" />
-            </button>
-          </div>
-        )}
-      </header>
+      {/* Floating Quick Admin Trigger Button (Discreet top-right button when needed) */}
+      <div className="fixed top-4 right-4 z-40">
+        <button
+          type="button"
+          onClick={() => setIsAdminOpen(true)}
+          className="h-9 px-3 rounded-full bg-black/40 hover:bg-black/75 text-paper-light border border-gold/40 text-xs font-serif flex items-center gap-1.5 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-md opacity-70 hover:opacity-100"
+          title="Bảng Quản Trị (Admin)"
+        >
+          <Sliders className="w-3.5 h-3.5 text-gold-light" />
+          <span className="hidden sm:inline">Quản Trị</span>
+        </button>
+      </div>
 
       {/* Main Wedding Content Sections with Luxury Ornaments */}
       <main>
@@ -313,7 +168,7 @@ const MainAppContent: React.FC = () => {
               onClick={() => setIsAdminOpen(true)}
               className="text-gold-dark hover:text-burgundy flex items-center gap-1 font-serif underline underline-offset-4 cursor-pointer"
             >
-              <Sliders className="w-3.5 h-3.5 text-gold-dark" />
+              <Sliders className="w-3.5 h-3.5" />
               <span>Bảng Quản Trị Admin</span>
             </button>
           </div>
