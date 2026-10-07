@@ -12,7 +12,7 @@ type RecipientTab = 'groom' | 'bride'
 
 export const GiftBoxModal: React.FC<GiftBoxModalProps> = ({ isOpen, onClose }) => {
   const { state } = useWeddingData()
-  const bankAccounts = state.bankAccounts
+  const { bankAccounts, couple } = state
   const [activeTab, setActiveTab] = useState<RecipientTab>('groom')
   const [copiedField, setCopiedField] = useState<string | null>(null)
 
@@ -67,7 +67,7 @@ export const GiftBoxModal: React.FC<GiftBoxModalProps> = ({ isOpen, onClose }) =
     }
   }
 
-  const defaultTransferMemo = `Mung cuoi ${activeTab === 'groom' ? 'Minh Quan' : 'Thao My'}`
+  const defaultTransferMemo = `Mung cuoi ${activeTab === 'groom' ? (couple?.groom?.shortName || 'Minh Quan') : (couple?.bride?.shortName || 'Thao My')}`
 
   return (
     <div
@@ -123,7 +123,7 @@ export const GiftBoxModal: React.FC<GiftBoxModalProps> = ({ isOpen, onClose }) =
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-gold-light" />
-            <span>Mừng Chú Rể (Quân)</span>
+            <span>Mừng Chú Rể ({couple?.groom?.shortName || 'Quân'})</span>
           </button>
 
           <button
@@ -136,7 +136,7 @@ export const GiftBoxModal: React.FC<GiftBoxModalProps> = ({ isOpen, onClose }) =
             }`}
           >
             <Heart className="w-3.5 h-3.5 text-champagne" />
-            <span>Mừng Cô Dâu (My)</span>
+            <span>Mừng Cô Dâu ({couple?.bride?.shortName || 'My'})</span>
           </button>
         </div>
 
@@ -222,7 +222,7 @@ export const GiftBoxModal: React.FC<GiftBoxModalProps> = ({ isOpen, onClose }) =
               <button
                 type="button"
                 onClick={() => copyToClipboard(defaultTransferMemo, 'memo')}
-                className="min-h-[44px] px-3 py-1.5 rounded-lg bg-paper-light hover:bg-paper-dark border border-gold/30 text-charcoal text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="min-h-12 px-3 py-1.5 rounded-lg bg-paper-light hover:bg-paper-dark border border-gold/30 text-charcoal text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 {copiedField === 'memo' ? (
                   <>

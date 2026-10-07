@@ -6,6 +6,15 @@ export interface CalendarEventParams {
   durationHours?: number
 }
 
+function parseVietnamDate(dateStr: string): Date {
+  if (!dateStr) return new Date()
+  // If no timezone offset is specified (no Z, +, - after time), append Vietnam timezone (+07:00)
+  if (!dateStr.includes('Z') && !/[+-]\d{2}:?\d{2}$/.test(dateStr)) {
+    return new Date(`${dateStr}+07:00`)
+  }
+  return new Date(dateStr)
+}
+
 function formatDateToIcsString(date: Date): string {
   const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`)
   return `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}T${pad(
@@ -14,7 +23,7 @@ function formatDateToIcsString(date: Date): string {
 }
 
 export function getGoogleCalendarUrl(params: CalendarEventParams): string {
-  const start = new Date(params.startDate)
+  const start = parseVietnamDate(params.startDate)
   const duration = params.durationHours ?? 4
   const end = new Date(start.getTime() + duration * 60 * 60 * 1000)
 
@@ -32,7 +41,7 @@ export function getGoogleCalendarUrl(params: CalendarEventParams): string {
 }
 
 export function downloadIcsFile(params: CalendarEventParams): void {
-  const start = new Date(params.startDate)
+  const start = parseVietnamDate(params.startDate)
   const duration = params.durationHours ?? 4
   const end = new Date(start.getTime() + duration * 60 * 60 * 1000)
 
@@ -63,7 +72,17 @@ export function downloadIcsFile(params: CalendarEventParams): void {
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.setAttribute('download', 'le-cuoi-minh-quan-thao-my.ics')
+  const safeFilename = params.title
+    ? params.title
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') + '.ics'
+    : 'thiep-cuoi.ics'
+  link.setAttribute('download', safeFilename)
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

@@ -52,7 +52,7 @@ export const WeddingFloralFlanks: React.FC<WeddingFloralFlanksProps> = ({
   return (
     <div
       aria-hidden="true"
-      className={`absolute inset-0 pointer-events-none select-none overflow-hidden z-15 ${className}`}
+      className={`absolute inset-0 pointer-events-none select-none overflow-hidden z-[15] ${className}`}
     >
       {/* ========================================================
           TOP CEILING FLORAL GARLAND (VÒM HOA RỦ TỪ TRÊN XUỐNG)
@@ -111,7 +111,7 @@ export const WeddingFloralFlanks: React.FC<WeddingFloralFlanksProps> = ({
         </div>
 
         {/* 2. Top-left cascading white rose & eucalyptus arrangement */}
-        <div className="absolute -top-4 -left-6 w-52 sm:w-68 md:w-84 h-64 sm:h-80 opacity-95 filter drop-shadow-[0_12px_24px_rgba(20,38,56,0.6)] transform -rotate-3">
+        <div className="absolute -top-4 -left-6 w-52 sm:w-[17rem] md:w-[21rem] h-64 sm:h-80 opacity-95 filter drop-shadow-[0_12px_24px_rgba(20,38,56,0.6)] transform -rotate-3">
           <img
             src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=800&auto=format&fit=crop"
             alt="Chùm hoa cưới trắng rủ góc trên trái"
@@ -139,7 +139,7 @@ export const WeddingFloralFlanks: React.FC<WeddingFloralFlanksProps> = ({
           </div>
           {/* Elegant White Classical Pedestal Urn Silhouette */}
           <div className="mx-auto w-14 sm:w-20 h-28 sm:h-36 -mt-3 bg-gradient-to-r from-[#E2E8F0] via-[#FFFFFF] to-[#CBD5E1] rounded-t-xl rounded-b-3xl border border-white/80 shadow-2xl flex flex-col items-center justify-between py-2">
-            <div className="w-16 sm:w-22 h-2.5 bg-gradient-to-r from-[#CBD5E1] via-white to-[#CBD5E1] rounded-full shadow-inner" />
+            <div className="w-16 sm:w-[5.5rem] h-2.5 bg-gradient-to-r from-[#CBD5E1] via-white to-[#CBD5E1] rounded-full shadow-inner" />
             <div className="w-8 sm:w-11 h-14 bg-gradient-to-r from-[#CBD5E1] via-white to-[#94A3B8] rounded-full opacity-60" />
             <div className="w-12 sm:w-16 h-4 bg-gradient-to-r from-[#94A3B8] via-white to-[#CBD5E1] rounded-b-xl shadow-md" />
           </div>
@@ -234,7 +234,7 @@ export const WeddingFloralFlanks: React.FC<WeddingFloralFlanksProps> = ({
         </div>
 
         {/* 2. Top-right cascading white rose arrangement */}
-        <div className="absolute -top-4 -right-6 w-52 sm:w-68 md:w-84 h-64 sm:h-80 opacity-95 filter drop-shadow-[0_12px_24px_rgba(20,38,56,0.6)] transform rotate-3">
+        <div className="absolute -top-4 -right-6 w-52 sm:w-[17rem] md:w-[21rem] h-64 sm:h-80 opacity-95 filter drop-shadow-[0_12px_24px_rgba(20,38,56,0.6)] transform rotate-3">
           <img
             src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=800&auto=format&fit=crop"
             alt="Chùm hoa cưới trắng rủ góc trên phải"
@@ -262,7 +262,7 @@ export const WeddingFloralFlanks: React.FC<WeddingFloralFlanksProps> = ({
           </div>
           {/* Elegant White Classical Pedestal Urn Silhouette */}
           <div className="mx-auto w-14 sm:w-20 h-28 sm:h-36 -mt-3 bg-gradient-to-r from-[#CBD5E1] via-[#FFFFFF] to-[#E2E8F0] rounded-t-xl rounded-b-3xl border border-white/80 shadow-2xl flex flex-col items-center justify-between py-2">
-            <div className="w-16 sm:w-22 h-2.5 bg-gradient-to-r from-[#CBD5E1] via-white to-[#CBD5E1] rounded-full shadow-inner" />
+            <div className="w-16 sm:w-[5.5rem] h-2.5 bg-gradient-to-r from-[#CBD5E1] via-white to-[#CBD5E1] rounded-full shadow-inner" />
             <div className="w-8 sm:w-11 h-14 bg-gradient-to-r from-[#94A3B8] via-white to-[#CBD5E1] rounded-full opacity-60" />
             <div className="w-12 sm:w-16 h-4 bg-gradient-to-r from-[#CBD5E1] via-white to-[#94A3B8] rounded-b-xl shadow-md" />
           </div>

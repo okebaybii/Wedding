@@ -83,7 +83,7 @@ export const GalleryLightboxModal: React.FC<GalleryLightboxModalProps> = ({
           type="button"
           onClick={onClose}
           aria-label="Đóng xem ảnh"
-          className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-paper-light border border-gold/40 flex items-center justify-center transition-all cursor-pointer active:scale-95"
+          className="min-h-12 min-w-12 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-paper-light border border-gold/40 flex items-center justify-center transition-all cursor-pointer active:scale-95"
         >
           <X className="w-5 h-5 text-gold-light" />
         </button>
@@ -117,7 +117,7 @@ export const GalleryLightboxModal: React.FC<GalleryLightboxModalProps> = ({
         type="button"
         onClick={handlePrev}
         aria-label="Ảnh trước"
-        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/10 hover:bg-white/25 text-paper-light border border-gold/50 flex items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
+        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 min-h-12 min-w-12 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/25 text-paper-light border border-gold/50 flex items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
       >
         <ChevronLeft className="w-6 h-6 text-gold-light" />
       </button>
@@ -127,7 +127,7 @@ export const GalleryLightboxModal: React.FC<GalleryLightboxModalProps> = ({
         type="button"
         onClick={handleNext}
         aria-label="Ảnh kế tiếp"
-        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/10 hover:bg-white/25 text-paper-light border border-gold/50 flex items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
+        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 min-h-12 min-w-12 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-white/25 text-paper-light border border-gold/50 flex items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-lg"
       >
         <ChevronRight className="w-6 h-6 text-gold-light" />
       </button>

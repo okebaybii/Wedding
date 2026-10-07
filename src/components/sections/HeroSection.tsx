@@ -1,349 +1,81 @@
-import React, { useState, useRef, useEffect } from 'react'
-import {
-  Sparkles,
-  ChevronDown,
-  Film,
-  Image as ImageIcon,
-  Heart,
-  Calendar,
-} from 'lucide-react'
+import React from 'react'
+import { ChevronDown, Sparkles } from 'lucide-react'
 import { CoupleInfo } from '../../types/wedding.ts'
 import { weddingCouple } from '../../data/weddingData.ts'
 import { WeddingFloralFlanks } from '../ui/WeddingFloralFlanks.tsx'
-
-export interface HeroReelItem {
-  id: string
-  chapter: string
-  title: string
-  subtitle: string
-  type: 'video' | 'image'
-  mediaUrl: string
-  thumbnailUrl: string
-  badge: string
-  description?: string
-}
+import { useWeddingData } from '../../store/WeddingContext.tsx'
 
 interface HeroSectionProps {
   couple?: CoupleInfo
+  activePortrait?: number
+  onActivePortraitChange?: (index: number) => void
   onScrollToStory?: () => void
-  onReopenGateway?: () => void
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   couple = weddingCouple,
   onScrollToStory,
 }) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const heroContainerRef = useRef<HTMLDivElement>(null)
-
-  const [activeReelIndex, setActiveReelIndex] = useState(0)
-  const [isVideoLoading, setIsVideoLoading] = useState(false)
-
-  // Curated 4K cinematic wedding reels & master shots
-  const reels: HeroReelItem[] = [
-    {
-      id: 'reel-1',
-      chapter: '01',
-      title: 'Phim Cưới Điện Ảnh',
-      subtitle: 'Con Đường Hạnh Phúc',
-      type: 'video',
-      mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-newlywed-couple-walking-outdoors-holding-hands-41140-large.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop',
-      badge: 'Video 4K',
-      description: 'Sánh bước bên nhau vào lễ đường trọn vẹn.',
-    },
-    {
-      id: 'reel-2',
-      chapter: '02',
-      title: 'Trao Nhẫn Thiêng Liêng',
-      subtitle: 'Lời Thề Trăm Năm',
-      type: 'video',
-      mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-bride-and-groom-with-wedding-rings-41142-large.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop',
-      badge: 'Cinematic 3D',
-      description: 'Nhẫn cưới trao tay, minh chứng tình yêu vĩnh cửu.',
-    },
-    {
-      id: 'reel-3',
-      chapter: '03',
-      title: 'Khoảnh Khắc Ngọt Ngào',
-      subtitle: 'Nụ Cười Vu Quy',
-      type: 'video',
-      mediaUrl: 'https://assets.mixkit.co/videos/preview/mixkit-bride-and-groom-at-their-wedding-41139-large.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600&auto=format&fit=crop',
-      badge: 'Video 3D',
-      description: 'Nụ cười rạng ngời và ánh mắt đong đầy yêu thương.',
-    },
-    {
-      id: 'reel-4',
-      chapter: '04',
-      title: 'Bức Bích Họa Đôi Lứa',
-      subtitle: 'Minh Quân & Thảo My',
-      type: 'image',
-      mediaUrl: couple.jointImage || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop',
-      thumbnailUrl: couple.jointImage || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop',
-      badge: 'Chân Dung Đôi',
-      description: 'Bức chân dung cưới trang trọng gắn kết tình duyên.',
-    },
-    {
-      id: 'reel-5',
-      chapter: '05',
-      title: 'Hoàng Hôn Tình Yêu',
-      subtitle: 'Ngoại Cảnh Lãng Mạn',
-      type: 'image',
-      mediaUrl: (couple.heroBanners && couple.heroBanners[1]) || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1600&auto=format&fit=crop',
-      thumbnailUrl: (couple.heroBanners && couple.heroBanners[1]) || 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=600&auto=format&fit=crop',
-      badge: 'Master Shot',
-      description: 'Khung cảnh thiên nhiên hoàng hôn êm đềm.',
-    },
-  ]
-
-  const activeReel = reels[activeReelIndex] || reels[0]
-
-  // Synchronize video play/pause
-  useEffect(() => {
-    if (activeReel.type === 'video' && videoRef.current) {
-      setIsVideoLoading(true)
-      videoRef.current.currentTime = 0
-      videoRef.current
-        .play()
-        .then(() => {
-          setIsVideoLoading(false)
-        })
-        .catch(() => {
-          setIsVideoLoading(false)
-        })
-    }
-  }, [activeReelIndex, activeReel.type])
-
+  const { state } = useWeddingData()
+  const receptionEvent = state.events.find((e) => e.type === 'reception') || state.events[2]
+  const venueLocation = receptionEvent?.locationName
+    ? `${receptionEvent.locationName} · TP. Hồ Chí Minh`
+    : 'Riverside Palace · TP. Hồ Chí Minh'
   return (
     <section
       id="hero"
-      ref={heroContainerRef}
-      aria-label="Khung cảnh cưới điện ảnh 3D toàn màn hình"
-      className="relative w-full h-screen min-h-[660px] md:min-h-[750px] max-h-[1400px] overflow-hidden flex flex-col justify-between select-none bg-[#0C1827] text-white"
+      data-journey-chapter="hero"
+      aria-label="Cổng hoa lễ đường Serenity Château"
+      className="journey-chapter journey-hero relative min-h-[100svh] overflow-hidden text-white flex flex-col justify-between"
     >
-      {/* 1. CINEMATIC FULLSCREEN STAGE LAYER (VIDEO / 3D PHOTO) */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {activeReel.type === 'video' ? (
-          <div className="relative w-full h-full">
-            <video
-              ref={videoRef}
-              key={activeReel.mediaUrl}
-              src={activeReel.mediaUrl}
-              poster={activeReel.thumbnailUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              onPlaying={() => setIsVideoLoading(false)}
-              className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
-            />
-            {/* Poster fallback image while video prepares */}
-            {isVideoLoading && (
-              <img
-                src={activeReel.thumbnailUrl}
-                alt={activeReel.title}
-                className="absolute inset-0 w-full h-full object-cover object-center animate-fade-in"
-              />
-            )}
-          </div>
-        ) : (
-          <div className="relative w-full h-full">
-            <img
-              key={activeReel.mediaUrl}
-              src={activeReel.mediaUrl}
-              alt={activeReel.title}
-              className="w-full h-full object-cover object-center animate-ken-burns scale-105"
-            />
-          </div>
-        )}
-
-        {/* Serene French Dusty Blue & Filmic Wedding Overlays (Màu sắc trang nhã như ảnh mẫu) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0C1827]/95 via-[#162F4C]/45 to-[#1A3758]/80 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1C3A5C]/75 via-transparent to-[#0C1827]/90 pointer-events-none" />
-
-        {/* Heavenly Chiffon Light Beam & Soft Ethereal Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] sm:w-[950px] h-[750px] rounded-full bg-gradient-to-b from-white/20 via-sky-300/15 to-transparent blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-gradient-to-tr from-sky-400/20 via-[#4A729A]/15 to-transparent blur-3xl pointer-events-none" />
-
-        {/* Royal Corner Ornaments */}
-        <div className="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-sky-300/40 pointer-events-none hidden sm:block" />
-        <div className="absolute top-6 right-6 w-12 h-12 border-t-2 border-r-2 border-sky-300/40 pointer-events-none hidden sm:block" />
+      {/* 2D Fallback only used when WebGL fails */}
+      <div className="journey-fallback-only absolute inset-0 z-0">
+        <img
+          src={couple.jointImage}
+          alt="Chân dung cưới của cô dâu và chú rể"
+          className="h-full w-full object-cover"
+        />
+        <WeddingFloralFlanks />
       </div>
 
-      {/* 2. WEDDING FLORAL FLANKS: Vòm Hoa Cưới Lung Linh Lộng Lẫy Hai Bên */}
-      <WeddingFloralFlanks />
+      {/* Very light subtle ambient vignette */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#071421]/60 via-transparent to-[#071421]/60 pointer-events-none" />
 
-      {/* 3. CENTER HERO BRANDING & MAJESTIC COUPLE NAMES */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center my-auto pt-14 sm:pt-20 flex flex-col items-center">
-        {/* Royal Crest Tagline */}
-        <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-[#162D47]/80 backdrop-blur-md border border-sky-300/50 text-sky-100 text-xs uppercase tracking-[0.35em] font-medium shadow-2xl mb-5">
-          <Sparkles className="w-3.5 h-3.5 text-sky-300" />
-          <span>Save Our Date • Lễ Thành Hôn</span>
-          <Sparkles className="w-3.5 h-3.5 text-sky-300" />
-        </div>
-
-        {/* Invitation Subtitle */}
-        <p className="font-serif italic text-sky-100/95 text-base sm:text-xl mb-3 tracking-wider font-light drop-shadow-md">
-          Trân trọng báo tin hôn lễ của chúng mình
+      {/* Top Header */}
+      <div className="relative z-10 pt-16 sm:pt-20 text-center px-4">
+        <p className="journey-kicker text-gold-light tracking-[0.2em] uppercase text-xs sm:text-sm">
+          Trân trọng báo tin hôn lễ
         </p>
 
-        {/* Majestic Typography: Groom & Bride Names */}
-        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)] leading-none">
-          <span className="inline-block hover:text-sky-200 transition-colors duration-300">
-            {couple.groom.shortName}
-          </span>
-          <span className="inline-block mx-3 sm:mx-6 font-script text-gold-light font-normal text-5xl sm:text-7xl md:text-8xl lg:text-9xl align-middle drop-shadow-md">
-            &
-          </span>
-          <span className="inline-block hover:text-sky-200 transition-colors duration-300">
-            {couple.bride.shortName}
-          </span>
+        <h1 className="mt-4 font-serif text-[clamp(2.8rem,8vw,6.5rem)] font-medium leading-[0.88] tracking-tight text-white [text-shadow:0_6px_32px_rgba(4,18,31,0.85)]">
+          <span className="inline-block">{couple.groom.shortName}</span>
+          <span className="mx-3 inline-block font-script text-[0.75em] text-gold-light">&</span>
+          <span className="inline-block">{couple.bride.shortName}</span>
         </h1>
 
-        {/* Golden & Silver Hairline Divider */}
-        <div className="flex items-center justify-center gap-3 my-5">
-          <span className="h-[1px] w-12 sm:w-24 bg-gradient-to-r from-transparent via-sky-300 to-transparent" />
-          <Heart className="w-4 h-4 text-sky-300 fill-sky-300" />
-          <span className="h-[1px] w-12 sm:w-24 bg-gradient-to-l from-transparent via-sky-300 to-transparent" />
-        </div>
-
-        {/* Wedding Date & Venue Glass Badge */}
-        <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-6 sm:px-8 py-2.5 rounded-full bg-[#132840]/80 backdrop-blur-md border border-sky-300/40 text-xs sm:text-sm font-display tracking-[0.25em] uppercase text-sky-100 shadow-xl">
-          <span className="font-light">Thứ Sáu</span>
-          <span className="text-sky-300">•</span>
-          <span className="font-bold text-white">20 Tháng 11 Năm 2026</span>
-          <span className="text-sky-300">•</span>
-          <span className="font-light">Riverside Palace, TP. HCM</span>
-        </div>
-
-        {/* Quick Action CTAs */}
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <a
-            href="#invitation"
-            className="min-h-[46px] px-7 py-3 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-charcoal font-bold text-xs uppercase tracking-wider flex items-center gap-2.5 shadow-xl shadow-gold/30 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-gold-light"
-          >
-            <Calendar className="w-4 h-4 text-charcoal" />
-            <span>Xem Thiệp Mời & Lịch Cưới</span>
-          </a>
-
-          <a
-            href="#rsvp"
-            className="min-h-[46px] px-7 py-3 rounded-full bg-[#254465]/90 hover:bg-[#2E5177] text-white border border-sky-300/50 font-semibold text-xs uppercase tracking-wider flex items-center gap-2 shadow-xl hover:scale-105 transition-all active:scale-95 cursor-pointer backdrop-blur-xs"
-          >
-            <Heart className="w-3.5 h-3.5 text-sky-200 fill-sky-200" />
-            <span>Xác Nhận Tham Dự (RSVP)</span>
-          </a>
+        <div className="mt-4 flex items-center justify-center gap-3 text-xs sm:text-sm text-sky-100/90 font-serif">
+          <time dateTime={couple.weddingDate} className="tracking-widest font-semibold text-gold-light">
+            20 · 11 · 2026
+          </time>
+          <span className="h-3 w-px bg-gold-light/50" />
+          <span>{venueLocation}</span>
         </div>
       </div>
 
-      {/* 4. BOTTOM INTERACTIVE 3D / VIDEO REEL DOCK ("Click vào cái nào hiển thị cái đó") */}
-      <div className="relative z-20 w-full px-4 sm:px-8 pb-4 sm:pb-6 bg-gradient-to-t from-[#0B1726] via-[#10243B]/90 to-transparent pt-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Dock Header Notice */}
-          <div className="flex items-center justify-between mb-3 text-xs">
-            <div className="flex items-center gap-2 text-sky-200 font-medium uppercase tracking-widest text-[11px] sm:text-xs">
-              <Film className="w-4 h-4 text-sky-300" />
-              <span>Khoảnh Khắc Cưới 3D & Phim Điện Ảnh (Chạm để xem):</span>
-            </div>
-            <div className="text-[11px] text-sky-200/70 hidden sm:block font-serif italic">
-              Thước phim {activeReelIndex + 1} / {reels.length}
-            </div>
-          </div>
-
-          {/* Interactive Reel Cards Grid / Horizontal Deck */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-3.5 overflow-x-auto pb-1">
-            {reels.map((reel, index) => {
-              const isActive = index === activeReelIndex
-              return (
-                <button
-                  key={reel.id}
-                  type="button"
-                  onClick={() => setActiveReelIndex(index)}
-                  className={`group relative rounded-2xl overflow-hidden text-left transition-all duration-300 cursor-pointer flex flex-col p-1.5 sm:p-2 ${
-                    isActive
-                      ? 'bg-gradient-to-b from-sky-400/35 via-sky-600/20 to-[#0F2034]/95 border-2 border-sky-300 ring-2 ring-sky-300/40 shadow-xl shadow-sky-500/25 -translate-y-2'
-                      : 'bg-[#13263C]/80 hover:bg-[#1A3350] border border-sky-500/30 hover:border-sky-300/70 opacity-80 hover:opacity-100 hover:-translate-y-1'
-                  }`}
-                >
-                  {/* Thumbnail Container */}
-                  <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-black/40">
-                    <img
-                      src={reel.thumbnailUrl}
-                      alt={reel.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-
-                    {/* Chapter & Media Type Badge */}
-                    <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs border border-sky-300/40 text-[9px] sm:text-[10px] text-sky-100 font-medium flex items-center gap-1">
-                      {reel.type === 'video' ? (
-                        <>
-                          <Film className="w-2.5 h-2.5 text-sky-300" />
-                          <span>{reel.badge}</span>
-                        </>
-                      ) : (
-                        <>
-                          <ImageIcon className="w-2.5 h-2.5 text-champagne" />
-                          <span>{reel.badge}</span>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Active State Pulse Indicator */}
-                    {isActive && (
-                      <div className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-full bg-[#254465]/95 border border-sky-300 text-[9px] text-white font-bold tracking-wider flex items-center gap-1 shadow-md animate-pulse">
-                        <span className="w-1.5 h-1.5 rounded-full bg-sky-300 animate-ping" />
-                        <span>ĐANG CHIẾU</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Title & Subtitle */}
-                  <div className="mt-1.5 px-1 pb-0.5">
-                    <p
-                      className={`text-xs font-serif font-bold truncate ${
-                        isActive ? 'text-white' : 'text-sky-100 group-hover:text-white'
-                      }`}
-                    >
-                      {reel.chapter}. {reel.title}
-                    </p>
-                    <p className="text-[10px] text-sky-200/70 truncate font-light">
-                      {reel.subtitle}
-                    </p>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Bottom Scroll Cue */}
-          <div className="mt-4 flex items-center justify-center">
-            {onScrollToStory ? (
-              <button
-                type="button"
-                onClick={onScrollToStory}
-                className="inline-flex items-center gap-1.5 text-xs text-sky-200/80 hover:text-white transition-colors cursor-pointer group py-1"
-              >
-                <span className="font-sans uppercase tracking-[0.2em] text-[10px]">
-                  Cuộn xuống để khám phá hôn lễ
-                </span>
-                <ChevronDown className="w-4 h-4 text-sky-300 group-hover:translate-y-1 transition-transform animate-bounce" />
-              </button>
-            ) : (
-              <a
-                href="#calendar"
-                className="inline-flex items-center gap-1.5 text-xs text-sky-200/80 hover:text-white transition-colors cursor-pointer group py-1"
-              >
-                <span className="font-sans uppercase tracking-[0.2em] text-[10px]">
-                  Cuộn xuống để khám phá hôn lễ
-                </span>
-                <ChevronDown className="w-4 h-4 text-sky-300 group-hover:translate-y-1 transition-transform animate-bounce" />
-              </a>
-            )}
-          </div>
-        </div>
+      {/* Bottom CTA: Smoothly invites guest to scroll into the 3D chateau */}
+      <div className="relative z-20 pb-10 text-center px-4 flex flex-col items-center">
+        <button
+          type="button"
+          onClick={onScrollToStory}
+          className="group inline-flex min-h-[48px] items-center gap-2.5 rounded-full border border-gold/75 bg-[#0e243a]/80 px-7 py-3 font-serif text-xs sm:text-sm font-semibold tracking-wide text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-gold/25 hover:text-gold-light cursor-pointer"
+        >
+          <Sparkles className="h-4 w-4 text-gold-light" />
+          <span>Bước vào lễ đường 3D</span>
+          <ChevronDown className="h-4 w-4 text-gold-light animate-bounce" />
+        </button>
+        <span className="mt-2 text-[11px] text-sky-100/60 font-light">
+          Cuộn chuột hoặc lướt xuống để trải nghiệm
+        </span>
       </div>
     </section>
   )

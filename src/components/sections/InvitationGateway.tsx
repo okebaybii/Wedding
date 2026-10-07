@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Sparkles, ArrowRight } from 'lucide-react'
 import { Envelope3DScene } from '../canvas/Envelope3DScene.tsx'
 import { CoupleInfo } from '../../types/wedding.ts'
+import { useWeddingData } from '../../store/WeddingContext.tsx'
 
 export interface InvitationGatewayProps {
   couple: CoupleInfo
@@ -14,13 +15,25 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
   onEnterSite,
   isMuted = false,
 }) => {
+  const { state } = useWeddingData()
+  const receptionEvent = state.events.find((e) => e.type === 'reception') || state.events[2]
   const [isOpened, setIsOpened] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
+  const transitionTimerRef = useRef<number | null>(null)
+  const enterTimerRef = useRef<number | null>(null)
 
-  // Smooth curtain transition when proceeding into the main website
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current !== null) window.clearTimeout(transitionTimerRef.current)
+      if (enterTimerRef.current !== null) window.clearTimeout(enterTimerRef.current)
+    }
+  }, [])
+
+  // Zoom through the invitation surface into the continuous château scene.
   const handleProceedToSite = () => {
+    if (isExiting) return
     setIsExiting(true)
-    setTimeout(() => {
+    enterTimerRef.current = window.setTimeout(() => {
       onEnterSite()
     }, 900)
   }
@@ -31,7 +44,7 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
   const handleEnvelopeOpen = () => {
     if (isOpened) return
     setIsOpened(true)
-    setTimeout(() => {
+    transitionTimerRef.current = window.setTimeout(() => {
       handleProceedToSite()
     }, 1800)
   }
@@ -41,10 +54,10 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
       role="dialog"
       aria-modal="true"
       aria-label="Thiệp cưới 3D mở màn"
-      className={`fixed inset-0 z-50 flex flex-col justify-between items-center bg-gradient-to-b from-paper-light via-paper to-paper-dark transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] select-none overflow-hidden ${
+      className={`fixed inset-0 z-50 flex flex-col justify-between items-center bg-gradient-to-b from-paper-light via-paper to-paper-dark transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] select-none overflow-y-auto overflow-x-hidden ${
         isExiting
-          ? '-translate-y-full opacity-0 pointer-events-none scale-105 filter blur-xs'
-          : 'translate-y-0 opacity-100'
+          ? 'opacity-0 pointer-events-none scale-[1.42] filter blur-sm'
+          : 'translate-y-0 opacity-100 scale-100'
       }`}
     >
       {/* Ambient background glows & luxury filigree corners */}
@@ -77,7 +90,7 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
         <button
           type="button"
           onClick={handleProceedToSite}
-          className="text-xs text-charcoal-muted hover:text-burgundy flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-paper/80 hover:bg-paper border border-gold/30 hover:border-gold transition-all duration-300 cursor-pointer backdrop-blur-xs"
+          className="min-h-12 text-xs text-charcoal-muted hover:text-burgundy flex items-center gap-1.5 px-4 py-2 rounded-full bg-paper/80 hover:bg-paper border border-gold/30 hover:border-gold transition-all duration-300 cursor-pointer backdrop-blur-xs"
         >
           <span>Vào trang ngay</span>
           <ArrowRight className="w-3.5 h-3.5 text-gold-dark" />
@@ -92,12 +105,12 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
             Trân trọng kính gửi thiệp cưới đến Quý Khách
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-semibold tracking-tight">
-            Minh Quân <span className="text-gold font-script text-4xl sm:text-5xl">&</span> Thảo My
+            {couple.groom.shortName} <span className="text-gold font-script text-4xl sm:text-5xl">&</span> {couple.bride.shortName}
           </h1>
           <p className="text-xs uppercase tracking-[0.25em] text-gold-dark font-medium mt-1.5 flex items-center justify-center gap-2">
             <span>20 . 11 . 2026</span>
             <span>•</span>
-            <span>Riverside Palace</span>
+            <span>{receptionEvent?.locationName || 'Riverside Palace'}</span>
           </p>
         </div>
 
@@ -115,11 +128,11 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
             groomParents={couple.groom.parents}
             brideParents={couple.bride.parents}
             weddingDate="THỨ SÁU, NGÀY 20 THÁNG 11 NĂM 2026"
-            weddingTime="18:00 Tối"
+            weddingTime="17:30 (ĐÓN KHÁCH) — 18:30 (KHAI TIỆC)"
             lunarDate="(Nhằm ngày 12 tháng 10 năm Bính Ngọ)"
-            venueName="Trung Tâm Hội Nghị Tiệc Cưới Riverside Palace"
+            venueName={receptionEvent?.locationName || 'Trung Tâm Hội Nghị Tiệc Cưới Riverside Palace'}
             venueHall="Sảnh Grand Ballroom (Tầng 2)"
-            venueAddress="360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh"
+            venueAddress={receptionEvent?.address || '360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh'}
           />
         </div>
       </main>
@@ -136,7 +149,7 @@ export const InvitationGateway: React.FC<InvitationGatewayProps> = ({
             <button
               type="button"
               onClick={handleProceedToSite}
-              className="text-xs text-charcoal-muted hover:text-burgundy flex items-center gap-1 transition-colors cursor-pointer py-1"
+              className="min-h-12 px-4 text-xs text-charcoal-muted hover:text-burgundy flex items-center gap-1 transition-colors cursor-pointer"
             >
               <span>Vào trang ngay</span>
               <ArrowRight className="w-3.5 h-3.5 text-gold-dark" />

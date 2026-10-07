@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Gift, Heart, Sparkles } from 'lucide-react'
 import {
   HeroSection,
@@ -11,9 +11,10 @@ import {
   GiftBoxModal,
   InvitationGateway,
 } from './components/sections/index.ts'
-import { SectionDivider } from './components/ui/SectionDivider.tsx'
 import { AudioPlayer } from './components/ui/AudioPlayer.tsx'
+import { WeddingJourneyScene } from './components/canvas/WeddingJourneyScene.tsx'
 import { useWeddingAudio } from './hooks/useWeddingAudio.ts'
+import { useWeddingJourney } from './hooks/useWeddingJourney.ts'
 import { WeddingDataProvider, useWeddingData } from './store/WeddingContext.tsx'
 import { AdminDashboard } from './components/admin/AdminDashboard.tsx'
 
@@ -24,8 +25,21 @@ const MainAppContent: React.FC = () => {
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false)
   const [isAdminOpen, setIsAdminOpen] = useState(false)
   const [hasEnteredSite, setHasEnteredSite] = useState(false)
+  const [activeHeroPortrait, setActiveHeroPortrait] = useState(0)
   const [scrollProgress, setScrollProgress] = useState(0)
   const { isMuted } = useWeddingAudio()
+  const journeyRef = useWeddingJourney(hasEnteredSite && !isAdminOpen)
+  const heroPortraits = useMemo(
+    () => Array.from(
+      new Set([couple.jointImage, ...(couple.heroBanners ?? [])].filter(Boolean)),
+    ).slice(0, 4),
+    [couple.heroBanners, couple.jointImage],
+  )
+  const heroImage = heroPortraits[activeHeroPortrait] ?? couple.jointImage
+
+  useEffect(() => {
+    if (activeHeroPortrait >= heroPortraits.length) setActiveHeroPortrait(0)
+  }, [activeHeroPortrait, heroPortraits.length])
 
   // Detect /admin in pathname or #admin in hash to open Admin Dashboard
   useEffect(() => {
@@ -93,14 +107,8 @@ const MainAppContent: React.FC = () => {
     }
   }
 
-  const handleReopenGateway = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-    setHasEnteredSite(false)
-  }
-
   return (
-    <div className="min-h-screen bg-paper text-charcoal font-sans selection:bg-gold-light/40 relative">
-      {/* 1. Fullscreen 3D Interactive Invitation Gateway (Tự động chuyển vào sau 1.8s khi chạm mở) */}
+    <div className="min-h-screen bg-[#0b1a2a] text-charcoal font-sans selection:bg-gold-light/40 relative">
       {!hasEnteredSite && (
         <InvitationGateway
           couple={couple}
@@ -109,83 +117,66 @@ const MainAppContent: React.FC = () => {
         />
       )}
 
-      {/* 2. Delicate Golden Scroll Progress Bar (Top Hairline) */}
+      {hasEnteredSite && (
+        <WeddingJourneyScene
+          couple={couple}
+          events={events}
+          gallery={gallery}
+          heroImage={heroImage}
+          journeyRef={journeyRef}
+          paused={isAdminOpen}
+        />
+      )}
+
       <div
-        className="fixed top-0 left-0 right-0 h-[3px] bg-gold/20 z-50 pointer-events-none"
+        className="fixed top-0 left-0 right-0 h-[3px] bg-white/10 z-50 pointer-events-none"
         aria-hidden="true"
       >
         <div
-          className="h-full bg-gradient-to-r from-gold-dark via-gold-light to-gold transition-all duration-150 ease-out shadow-xs shadow-gold/50"
+          className="h-full bg-gradient-to-r from-[#789aba] via-gold-light to-gold transition-all duration-150 ease-out shadow-[0_0_12px_rgba(228,202,136,0.7)]"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
-      {/* Main Wedding Content Sections with Luxury Ornaments */}
-      <main>
-        {/* 1. Hero: Fullscreen Cinematic 3D/Video Reel Stage ("click vào cái nào hiển thị cái đó") */}
+      <main className="journey-content relative z-10">
         <HeroSection
           couple={couple}
+          activePortrait={activeHeroPortrait}
+          onActivePortraitChange={setActiveHeroPortrait}
           onScrollToStory={handleScrollToStory}
         />
-
-        {/* 2. Save The Date: Visual Wedding Calendar & Countdown (Cụm đếm ngược nằm bên dưới như ảnh 5.png) */}
         <SaveTheDateSection couple={couple} />
-
-        <SectionDivider variant="arch" />
-
-        {/* 3. Couple Section: Chú Rể | Bức Bích Họa Chung Đôi | Cô Dâu */}
         <CoupleSection couple={couple} />
-
-        <SectionDivider variant="rings" />
-
-        {/* 4. Event Schedule & Maps (Sự Kiện) */}
         <EventDetailsSection events={events} />
-
-        <SectionDivider variant="flourish" />
-
-        {/* 5. Wedding Photo Album (ĐƯA XUỐNG DƯỚI SỰ KIỆN theo yêu cầu người dùng) */}
         <GallerySection photos={gallery} />
-
-        <SectionDivider variant="leaves" />
-
-        {/* 6. RSVP Confirmation */}
         <RsvpSection />
-
-        <SectionDivider variant="flourish" />
-
-        {/* 7. Guestbook Wishes */}
         <GuestbookSection />
       </main>
 
-      {/* Luxury Footer */}
-      <footer className="bg-paper-light border-t border-gold/30 py-16 px-4 text-center relative overflow-hidden">
-        <div className="max-w-2xl mx-auto flex flex-col items-center">
-          {/* Monogram Seal */}
-          <div className="w-16 h-16 rounded-full border-2 border-gold flex items-center justify-center bg-paper mb-4 shadow-sm">
-            <span className="font-display font-bold text-lg text-burgundy gold-foil-text">
-              {couple.monogram}
-            </span>
-          </div>
-
-          <h3 className="font-serif text-2xl sm:text-3xl text-charcoal font-bold tracking-tight mb-2">
-            {couple.groom.shortName} & {couple.bride.shortName}
+      <footer
+        data-journey-chapter="finale"
+        className="journey-chapter relative z-10 overflow-hidden min-h-[100svh] flex flex-col justify-end px-4 pb-12 sm:pb-16 text-center text-white"
+      >
+        <div className="relative z-10 max-w-xl mx-auto flex flex-col items-center">
+          <h3 className="font-serif text-3xl sm:text-5xl text-white font-medium tracking-tight mb-2 [text-shadow:0_4px_24px_rgba(4,18,31,0.85)]">
+            {couple.groom.shortName} <span className="font-script text-gold-light text-2xl sm:text-4xl">&</span> {couple.bride.shortName}
           </h3>
 
-          <p className="font-serif italic text-burgundy text-sm sm:text-base mb-6">
+          <p className="font-serif italic text-sky-100 text-sm sm:text-base mb-4 [text-shadow:0_2px_12px_rgba(4,18,31,0.85)]">
             “Cảm ơn bạn đã là một phần đặc biệt trong ngày trọng đại của chúng mình!”
           </p>
 
-          <div className="flex items-center gap-2 mb-8">
+          <div className="flex items-center gap-2 mb-4">
             <span className="h-[1px] w-12 bg-gold/40" />
-            <Heart className="w-4 h-4 text-burgundy fill-burgundy" />
+            <Heart className="w-4 h-4 text-gold-light fill-gold-light" />
             <span className="h-[1px] w-12 bg-gold/40" />
           </div>
 
-          <p className="text-xs text-charcoal-muted font-light">
-            20 . 11 . 2026 • Riverside Palace • TP. Hồ Chí Minh
+          <p className="text-xs text-sky-100/75 font-light">
+            20 · 11 · 2026 • {events.find((e) => e.type === 'reception')?.locationName || 'Riverside Palace'} • TP. Hồ Chí Minh
           </p>
 
-          <div className="mt-6 pt-4 border-t border-gold/20 flex flex-wrap items-center justify-center gap-4 text-xs text-charcoal-muted">
+          <div className="mt-5 pt-4 border-t border-gold/20 flex flex-wrap items-center justify-center gap-3 text-[11px] text-sky-100/60">
             <span>Thiệp Cưới Điện Tử Cao Cấp D--Webdding © 2026</span>
             <span>•</span>
             <a
@@ -194,7 +185,7 @@ const MainAppContent: React.FC = () => {
                 e.preventDefault()
                 setIsAdminOpen(true)
               }}
-              className="text-gold-dark/80 hover:text-burgundy font-serif underline underline-offset-4 cursor-pointer"
+              className="text-gold-light hover:text-white font-serif underline underline-offset-4 cursor-pointer"
             >
               <span>Quản Trị (/admin)</span>
             </a>
@@ -202,22 +193,23 @@ const MainAppContent: React.FC = () => {
         </div>
       </footer>
 
-      {/* Floating Gift Box Button (Bottom Right) */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <button
-          type="button"
-          onClick={() => setIsGiftModalOpen(true)}
-          aria-label="Mở hộp mừng cưới"
-          className="min-h-[50px] px-5 py-3 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-charcoal font-sans text-xs sm:text-sm font-bold tracking-wider uppercase flex items-center gap-2.5 shadow-xl shadow-gold/30 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer border border-gold-light"
-        >
-          <Gift className="w-4 h-4 text-charcoal animate-bounce" />
-          <span>Mừng Cưới</span>
-          <Sparkles className="w-3.5 h-3.5 text-paper-light" />
-        </button>
-      </div>
-
-      {/* Floating Audio Player (Bottom Left) */}
-      <AudioPlayer position="bottom-left" />
+      {hasEnteredSite && (
+        <>
+          <div className="fixed bottom-6 right-6 z-40 [perspective:700px]">
+            <button
+              type="button"
+              onClick={() => setIsGiftModalOpen(true)}
+              aria-label="Mở hộp mừng cưới"
+              className="journey-gift-button min-h-[50px] px-5 py-3 text-charcoal font-sans text-xs sm:text-sm font-bold tracking-wider flex items-center gap-2.5 cursor-pointer"
+            >
+              <Gift className="w-4 h-4 text-charcoal" />
+              <span>Mừng cưới</span>
+              <Sparkles className="w-3.5 h-3.5 text-white" />
+            </button>
+          </div>
+          <AudioPlayer position="bottom-left" />
+        </>
+      )}
 
       {/* Gift Box Modal */}
       <GiftBoxModal

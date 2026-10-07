@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import {
   CoupleInfo,
   WeddingEvent,
-  Milestone,
   GalleryPhoto,
   RsvpEntry,
   GuestWish,
@@ -113,12 +112,29 @@ export const WeddingDataProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const saved = localStorage.getItem(STORAGE_KEY)
       if (saved) {
         const parsed = JSON.parse(saved)
+        // Auto-migrate legacy 18:00 defaults to synchronized 17:30 (Đón khách) • 18:30 (Khai tiệc)
+        const migratedEvents = (parsed.events || defaultState.events).map((ev: WeddingEvent) => {
+          if (ev.id === 'reception' && (ev.time === '18:00 Tối' || ev.time === '18:00')) {
+            return {
+              ...ev,
+              time: '17:30 (Đón khách) • 18:30 (Khai tiệc)',
+              notes: 'Đón khách lúc 17:30 - Khai tiệc lúc 18:30 với chương trình âm nhạc và tiệc tối lãng mạn.',
+            }
+          }
+          return ev
+        })
+
         return {
           ...defaultState,
           ...parsed,
+          events: migratedEvents,
           couple: {
             ...defaultState.couple,
             ...(parsed.couple || {}),
+            weddingDate:
+              parsed.couple?.weddingDate === '2026-11-20T18:00:00'
+                ? '2026-11-20T17:30:00'
+                : parsed.couple?.weddingDate || defaultState.couple.weddingDate,
             jointImage: parsed.couple?.jointImage || defaultState.couple.jointImage,
             heroBanners:
               parsed.couple?.heroBanners && parsed.couple.heroBanners.length > 0

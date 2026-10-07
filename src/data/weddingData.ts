@@ -27,7 +27,7 @@ export const weddingCouple: CoupleInfo = {
     'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1400&auto=format&fit=crop',
   ],
   monogram: 'Q & M',
-  weddingDate: '2026-11-20T18:00:00',
+  weddingDate: '2026-11-20T17:30:00',
   quote: '“Tình yêu đích thực không phải là tìm kiếm một người hoàn hảo, mà là cùng nhau học cách yêu thương những điều chưa hoàn hảo một cách trọn vẹn nhất.”'
 }
 
@@ -188,7 +188,7 @@ export const weddingEvents: WeddingEvent[] = [
     id: 'reception',
     title: 'Tiệc Cưới & Dạ Yến (Reception)',
     type: 'reception',
-    time: '18:00 Tối',
+    time: '17:30 (Đón khách) • 18:30 (Khai tiệc)',
     date: 'Thứ Sáu, 20 / 11 / 2026',
     locationName: 'Trung Tâm Tiệc Cưới Riverside Palace',
     address: '360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh',

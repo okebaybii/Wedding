@@ -160,7 +160,6 @@ function createWaxSealTexture(monogramText: string): THREE.CanvasTexture {
 
     // Bottom seal text "WEDDING"
     ctx.font = '600 24px "Cinzel", serif'
-    ctx.letterSpacing = '6px'
     ctx.fillStyle = '#DFBF7A'
     ctx.fillText('INVITATION', center, center + 120)
 
@@ -209,7 +208,6 @@ function createWaxSealBumpMap(monogramText: string): THREE.CanvasTexture {
 
     // Subtext
     ctx.font = '600 24px "Cinzel", serif'
-    ctx.letterSpacing = '6px'
     ctx.fillStyle = '#CCCCCC'
     ctx.fillText('INVITATION', center, center + 120)
     ctx.restore()
@@ -217,6 +215,17 @@ function createWaxSealBumpMap(monogramText: string): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas)
   return texture
+}
+
+type ContextWithLetterSpacing = CanvasRenderingContext2D & {
+  letterSpacing?: string
+}
+
+function setLetterSpacing(ctx: CanvasRenderingContext2D, spacing: string) {
+  const context = ctx as ContextWithLetterSpacing
+  if ('letterSpacing' in context) {
+    context.letterSpacing = spacing
+  }
 }
 
 // Generates luxury Vietnamese royal wedding invitation card texture
@@ -341,12 +350,12 @@ function createCardTexture({
 
     // 4. Header: "THIỆP MỜI THÀNH HÔN"
     ctx.font = 'bold 24px "Cinzel", "Playfair Display", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '8px'
+    setLetterSpacing(ctx, '8px')
     ctx.fillStyle = '#967431'
     ctx.fillText('THIỆP MỜI THÀNH HÔN', w / 2, 186)
 
     ctx.font = 'italic 400 19px "Cormorant Garamond", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    setLetterSpacing(ctx, '0.5px')
     ctx.fillStyle = '#5A554E'
     ctx.fillText('Trân trọng kính mời Quý Khách tới dự tiệc rượu mừng Lễ Thành Hôn cùng hai gia đình', w / 2, 224)
 
@@ -361,7 +370,7 @@ function createCardTexture({
       ctx.fill()
       ctx.stroke()
       ctx.font = 'bold 12px "Cinzel", sans-serif'
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '2px'
+      setLetterSpacing(ctx, '2px')
       ctx.fillStyle = '#FCE7B8'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
@@ -374,7 +383,7 @@ function createCardTexture({
 
     const groomParentsParts = groomParents ? groomParents.split('&').map((s) => s.trim()) : ['Ông: Nguyễn Văn Nam', 'Bà: Trần Thị Lan']
     ctx.font = '400 18px "Cormorant Garamond", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    setLetterSpacing(ctx, '0.5px')
     ctx.fillStyle = '#38332E'
     ctx.fillText(groomParentsParts[0] || 'Ông: Nguyễn Văn Nam', 420, 305)
     ctx.fillText(groomParentsParts[1] ? (groomParentsParts[1].startsWith('Bà') ? groomParentsParts[1] : `Bà: ${groomParentsParts[1]}`) : 'Bà: Trần Thị Lan', 420, 332)
@@ -384,7 +393,7 @@ function createCardTexture({
     ctx.fillText('Trưởng nam:', 420, 366)
 
     ctx.font = 'bold 34px "Playfair Display", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px'
+    setLetterSpacing(ctx, '1.5px')
     const groomGrad = ctx.createLinearGradient(280, 0, 560, 0)
     groomGrad.addColorStop(0, '#254465')
     groomGrad.addColorStop(0.5, '#B8860B')
@@ -411,7 +420,7 @@ function createCardTexture({
 
     const brideParentsParts = brideParents ? brideParents.split('&').map((s) => s.trim()) : ['Ông: Lê Minh Tuấn', 'Bà: Phạm Hồng Nga']
     ctx.font = '400 18px "Cormorant Garamond", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    setLetterSpacing(ctx, '0.5px')
     ctx.fillStyle = '#38332E'
     ctx.fillText(brideParentsParts[0] || 'Ông: Lê Minh Tuấn', 1180, 305)
     ctx.fillText(brideParentsParts[1] ? (brideParentsParts[1].startsWith('Bà') ? brideParentsParts[1] : `Bà: ${brideParentsParts[1]}`) : 'Bà: Phạm Hồng Nga', 1180, 332)
@@ -421,7 +430,7 @@ function createCardTexture({
     ctx.fillText('Út nữ:', 1180, 366)
 
     ctx.font = 'bold 34px "Playfair Display", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px'
+    setLetterSpacing(ctx, '1.5px')
     const brideGrad = ctx.createLinearGradient(1040, 0, 1320, 0)
     brideGrad.addColorStop(0, '#254465')
     brideGrad.addColorStop(0.5, '#B8860B')
@@ -468,38 +477,38 @@ function createCardTexture({
     ctx.stroke()
 
     ctx.font = 'bold 13px "Cinzel", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '3px'
+    setLetterSpacing(ctx, '3px')
     ctx.fillStyle = '#254465'
     ctx.fillText('HÔN LỄ ĐƯỢC TỔ CHỨC VÀO LÚC', w / 2, boxY + 20)
 
     ctx.font = 'bold 28px "Cinzel", "Playfair Display", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '3px'
+    setLetterSpacing(ctx, '3px')
     ctx.fillStyle = '#1C1917'
     ctx.fillText(`${weddingTime ? weddingTime.toUpperCase() : '18:00 TỐI'}  •  ${weddingDate ? weddingDate.toUpperCase() : 'THỨ SÁU, NGÀY 20 THÁNG 11 NĂM 2026'}`, w / 2, boxY + 48)
 
     ctx.font = 'italic 18px "Cormorant Garamond", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '1px'
+    setLetterSpacing(ctx, '1px')
     ctx.fillStyle = '#7A6230'
     ctx.fillText(lunarDate || '(Nhằm ngày 12 tháng 10 năm Bính Ngọ)', w / 2, boxY + 92)
 
     // 8. Venue & Reception Location Information
     ctx.font = 'bold 24px "Cinzel", "Playfair Display", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '2px'
+    setLetterSpacing(ctx, '2px')
     ctx.fillStyle = '#254465'
     ctx.fillText(venueName ? venueName.toUpperCase() : 'TRUNG TÂM HỘI NGHỊ TIỆC CƯỚI RIVERSIDE PALACE', w / 2, 645)
 
     ctx.font = '600 20px "Playfair Display", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '1px'
+    setLetterSpacing(ctx, '1px')
     ctx.fillStyle = '#9E782F'
     ctx.fillText(venueHall || 'Sảnh Grand Ballroom (Tầng 2)', w / 2, 684)
 
     ctx.font = '500 17px "Plus Jakarta Sans", sans-serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    setLetterSpacing(ctx, '0.5px')
     ctx.fillStyle = '#3F3B36'
     ctx.fillText(venueAddress || '360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh', w / 2, 718)
 
     ctx.font = 'italic 17px "Cormorant Garamond", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '1px'
+    setLetterSpacing(ctx, '1px')
     ctx.fillStyle = '#6E675D'
     ctx.fillText('Đón khách lúc: 17:30   •   Khai tiệc lúc: 18:30', w / 2, 752)
 
@@ -512,12 +521,12 @@ function createCardTexture({
     ctx.stroke()
 
     ctx.font = 'italic 19px "Cormorant Garamond", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px'
+    setLetterSpacing(ctx, '0.5px')
     ctx.fillStyle = '#524C44'
     ctx.fillText('“Sự hiện diện của Quý Khách là niềm vinh hạnh lớn lao cho hai gia đình chúng tôi”', w / 2, 814)
 
     ctx.font = 'bold 15px "Cinzel", serif'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '3px'
+    setLetterSpacing(ctx, '3px')
     ctx.fillStyle = '#9E782F'
     ctx.fillText('RẤT HÂN HẠNH ĐƯỢC ĐÓN TIẾP!', w / 2, 854)
 
@@ -1023,6 +1032,10 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
 
     const onPointerMove = (e: PointerEvent) => {
       updatePointerPos(e.clientX, e.clientY)
+      if (reducedMotion) {
+        targetTilt.x = 0
+        targetTilt.y = 0
+      }
 
       // Check hover on interactive objects
       raycaster.setFromCamera(pointer, camera)
@@ -1046,8 +1059,19 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       }
     }
 
+    const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let reducedMotion = reducedMotionMedia.matches
+    const updateMotionPreference = () => {
+      reducedMotion = reducedMotionMedia.matches
+      if (reducedMotion) {
+        targetTilt.x = 0
+        targetTilt.y = 0
+      }
+    }
+
     // Mobile Gyroscope support
     const onDeviceOrientation = (e: DeviceOrientationEvent) => {
+      if (reducedMotion) return
       if (e.gamma !== null && e.beta !== null) {
         // Clamp angles gracefully
         const clampedGamma = Math.max(-30, Math.min(30, e.gamma))
@@ -1059,12 +1083,7 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
 
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     canvas.addEventListener('pointerdown', onPointerDown)
-    const onCanvasClick = () => {
-      if (openProgressRef.current < 0.05) {
-        handleOpenTrigger()
-      }
-    }
-    canvas.addEventListener('click', onCanvasClick)
+    reducedMotionMedia.addEventListener('change', updateMotionPreference)
     if (window.DeviceOrientationEvent) {
       window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true })
     }
@@ -1097,7 +1116,7 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate)
       const delta = Math.min(clock.getDelta(), 0.1)
-      const elapsedTime = clock.getElapsedTime()
+      const elapsedTime = clock.elapsedTime
 
       // Target state sync
       const shouldBeOpened = isOpenedRef.current
@@ -1113,8 +1132,8 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       currentTilt.x += (targetTilt.x - currentTilt.x) * (delta * 5.0)
       currentTilt.y += (targetTilt.y - currentTilt.y) * (delta * 5.0)
 
-      const floatY = Math.sin(elapsedTime * 1.5) * 0.06
-      const floatRotZ = Math.sin(elapsedTime * 1.1) * 0.015
+      const floatY = reducedMotion ? 0 : Math.sin(elapsedTime * 1.5) * 0.06
+      const floatRotZ = reducedMotion ? 0 : Math.sin(elapsedTime * 1.1) * 0.015
 
       envelopeGroup.position.y = floatY
       envelopeGroup.rotation.x = currentTilt.x
@@ -1186,36 +1205,38 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       camera.lookAt(0, THREE.MathUtils.lerp(0.0, 0.65, camT), 0)
 
       // C. 3D Floating Particles Animation
-      // Rose petals drifting with sinusoidal turbulence
-      for (let i = 0; i < petals.length; i++) {
-        const pt = petals[i]
-        pt.mesh.position.y += pt.vy * delta
-        pt.mesh.position.x += Math.sin(elapsedTime * 0.8 + pt.seedX) * 0.004
-        pt.mesh.position.z += Math.cos(elapsedTime * 0.6 + pt.seedZ) * 0.003
+      if (!reducedMotion) {
+        // Rose petals drifting with sinusoidal turbulence
+        for (let i = 0; i < petals.length; i++) {
+          const pt = petals[i]
+          pt.mesh.position.y += pt.vy * delta
+          pt.mesh.position.x += Math.sin(elapsedTime * 0.8 + pt.seedX) * 0.004
+          pt.mesh.position.z += Math.cos(elapsedTime * 0.6 + pt.seedZ) * 0.003
 
-        pt.mesh.rotation.x += pt.drx * delta
-        pt.mesh.rotation.y += pt.dry * delta
-        pt.mesh.rotation.z += pt.drz * delta
+          pt.mesh.rotation.x += pt.drx * delta
+          pt.mesh.rotation.y += pt.dry * delta
+          pt.mesh.rotation.z += pt.drz * delta
 
-        // Seamless bounding wrap
-        if (pt.mesh.position.y < -3.6) {
-          pt.mesh.position.y = 3.6
-          pt.mesh.position.x = (Math.random() - 0.5) * 7.5
-          pt.mesh.position.z = (Math.random() - 0.5) * 4.0
+          // Seamless bounding wrap
+          if (pt.mesh.position.y < -3.6) {
+            pt.mesh.position.y = 3.6
+            pt.mesh.position.x = (Math.random() - 0.5) * 7.5
+            pt.mesh.position.z = (Math.random() - 0.5) * 4.0
+          }
         }
-      }
 
-      // Golden bokeh particles hover & pulse
-      for (let i = 0; i < bokehList.length; i++) {
-        const bk = bokehList[i]
-        bk.sprite.position.y += bk.vy * delta
-        const pulse = Math.sin(elapsedTime * 2.2 + bk.pulsePhase)
-        const scale = bk.baseScale * (1 + pulse * 0.25)
-        bk.sprite.scale.set(scale, scale, 1)
+        // Golden bokeh particles hover & pulse
+        for (let i = 0; i < bokehList.length; i++) {
+          const bk = bokehList[i]
+          bk.sprite.position.y += bk.vy * delta
+          const pulse = Math.sin(elapsedTime * 2.2 + bk.pulsePhase)
+          const scale = bk.baseScale * (1 + pulse * 0.25)
+          bk.sprite.scale.set(scale, scale, 1)
 
-        if (bk.sprite.position.y > 3.6) {
-          bk.sprite.position.y = -3.6
-          bk.sprite.position.x = (Math.random() - 0.5) * 7.0
+          if (bk.sprite.position.y > 3.6) {
+            bk.sprite.position.y = -3.6
+            bk.sprite.position.x = (Math.random() - 0.5) * 7.0
+          }
         }
       }
 
@@ -1230,7 +1251,7 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       resizeObserver.disconnect()
       window.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerdown', onPointerDown)
-      canvas.removeEventListener('click', onCanvasClick)
+      reducedMotionMedia.removeEventListener('change', updateMotionPreference)
       if (window.DeviceOrientationEvent) {
         window.removeEventListener('deviceorientation', onDeviceOrientation)
       }
@@ -1287,7 +1308,7 @@ export const Envelope3DScene: React.FC<Envelope3DSceneProps> = ({
       {/* 3D WebGL Canvas */}
       <canvas
         ref={canvasRef}
-        className="w-full h-full block touch-none cursor-pointer outline-none"
+        className="w-full h-full block touch-pan-y cursor-pointer outline-none"
         aria-label="Interactive 3D Wedding Envelope"
       />
 

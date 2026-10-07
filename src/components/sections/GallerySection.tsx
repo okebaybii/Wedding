@@ -1,13 +1,11 @@
 import React, { useState, useMemo } from 'react'
-import { Image as ImageIcon, ZoomIn, Sparkles, Heart } from 'lucide-react'
+import { ZoomIn, Sparkles, Image as ImageIcon } from 'lucide-react'
 import { GalleryPhoto, GalleryCategory } from '../../types/wedding.ts'
 import { initialGalleryPhotos } from '../../data/weddingData.ts'
-import { ScrollReveal } from '../ui/ScrollReveal.tsx'
+import { useWeddingData } from '../../store/WeddingContext.tsx'
 import { GalleryLightboxModal } from '../ui/GalleryLightboxModal.tsx'
-import {
-  FrenchCrestPediment,
-  FrenchFlourishDivider,
-} from '../ui/FrenchOrnaments.tsx'
+import { JourneyDetailModal } from '../ui/JourneyDetailModal.tsx'
+import { JourneyTriggerButton } from '../ui/JourneyTriggerButton.tsx'
 
 interface GallerySectionProps {
   photos?: GalleryPhoto[]
@@ -16,6 +14,9 @@ interface GallerySectionProps {
 export const GallerySection: React.FC<GallerySectionProps> = ({
   photos = initialGalleryPhotos,
 }) => {
+  const { state } = useWeddingData()
+  const couple = state.couple
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeCategory, setActiveCategory] = useState<GalleryCategory>('all')
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [activePhotoIndex, setActivePhotoIndex] = useState(0)
@@ -37,50 +38,45 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
     setLightboxOpen(true)
   }
 
-  const getAspectClass = (aspect?: GalleryPhoto['aspectRatio']) => {
-    switch (aspect) {
-      case 'tall':
-        return 'aspect-[3/4]'
-      case 'wide':
-        return 'aspect-[16/10]'
-      case 'square':
-      default:
-        return 'aspect-square'
-    }
-  }
-
   return (
     <section
       id="gallery"
+      data-journey-chapter="gallery"
       aria-label="Album ảnh cưới"
-      className="relative py-20 sm:py-28 px-4 bg-paper-light overflow-hidden"
+      className="journey-chapter relative min-h-[100svh] flex flex-col justify-end pb-12 sm:pb-16 overflow-hidden"
     >
-      {/* Decorative background glows */}
-      <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-burgundy/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Screen Reader Semantic Data */}
+      <div className="sr-only">
+        <h2>Phòng triển lãm ký ức</h2>
+        <p>Gồm {photos.length} hình ảnh kỷ niệm của {couple.groom.shortName} và {couple.bride.shortName}.</p>
+      </div>
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section Header with French Pediment */}
-        <ScrollReveal direction="up" delay={0}>
-          <div className="text-center mb-12 sm:mb-16">
-            <FrenchCrestPediment className="mb-2" />
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold/20 via-paper to-gold/20 border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-bold mb-3 shadow-xs font-display">
-              <ImageIcon className="w-3.5 h-3.5" />
-              <span>Galerie de Mariage • Album Ảnh</span>
-            </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-bold tracking-tight">
-              Album Ảnh Cưới
-            </h2>
-            <p className="mt-2 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-serif italic">
-              Lưu giữ từng ánh mắt nụ cười và dấu mốc tình yêu vĩnh cửu của chúng mình
-            </p>
-            <FrenchFlourishDivider className="max-w-xs mx-auto" />
-          </div>
-        </ScrollReveal>
+      {/* Floating Trigger Button: 3D gallery corridor remains 100% visible */}
+      <div className="relative z-20 flex justify-center px-4">
+        <JourneyTriggerButton
+          label="Mở Album Ảnh Cưới Đầy Đủ"
+          icon={<ImageIcon className="h-4 w-4 text-gold-light" />}
+          badge={`${photos.length} ảnh`}
+          onClick={() => setIsModalOpen(true)}
+        />
+      </div>
 
-        {/* Category Filter Pills */}
-        <ScrollReveal direction="up" delay={100}>
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 sm:mb-12">
+      {/* Gallery Modal displayed only upon click */}
+      <JourneyDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Phòng Triển Lãm Ký Ức"
+        subtitle="Những khung hình còn mãi"
+        icon={<Sparkles className="h-5 w-5 text-gold-light" />}
+        maxWidth="5xl"
+      >
+        <div className="space-y-6">
+          <p className="text-center font-serif text-sm italic text-sky-100/80">
+            Từng ánh mắt, nụ cười và dấu mốc yêu thương được trưng bày như những tác phẩm nghệ thuật.
+          </p>
+
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
             {categories.map((cat) => {
               const isActive = activeCategory === cat.key
               const count = cat.key === 'all'
@@ -92,86 +88,59 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                   key={cat.key}
                   type="button"
                   onClick={() => setActiveCategory(cat.key)}
-                  className={`min-h-[42px] px-5 py-2 rounded-full text-xs sm:text-sm font-serif font-medium tracking-wide transition-all duration-300 flex items-center gap-2 cursor-pointer border ${
+                  className={`min-h-[40px] px-4 py-1.5 rounded-full text-xs font-serif font-medium tracking-wide transition-all duration-200 flex items-center gap-2 cursor-pointer border ${
                     isActive
-                      ? 'bg-burgundy text-paper-light border-gold shadow-md shadow-burgundy/25 scale-105'
-                      : 'bg-paper text-charcoal hover:bg-paper-dark/70 border-gold/30 hover:border-gold/60'
+                      ? 'bg-gold text-charcoal font-bold border-gold shadow-md'
+                      : 'bg-[#12283e]/80 text-sky-100 hover:bg-[#1a3858] border-gold/40'
                   }`}
                 >
                   <span>{cat.label}</span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                      isActive ? 'bg-gold text-charcoal font-bold' : 'bg-gold/15 text-gold-dark'
-                    }`}
-                  >
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    isActive ? 'bg-charcoal text-gold-light' : 'bg-gold/20 text-gold-light'
+                  }`}>
                     {count}
                   </span>
                 </button>
               )
             })}
           </div>
-        </ScrollReveal>
 
-        {/* Photo Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
-          {filteredPhotos.map((photo, index) => (
-            <ScrollReveal
-              key={photo.id}
-              direction="up"
-              delay={(index % 4) * 100}
-              className="group relative cursor-pointer"
-            >
-              <div
+          {/* Photo Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+            {filteredPhotos.map((photo, index) => (
+              <button
+                key={photo.id}
+                type="button"
                 onClick={() => openLightbox(index)}
-                className={`relative w-full ${getAspectClass(
-                  photo.aspectRatio
-                )} rounded-2xl overflow-hidden bg-paper border-2 border-gold/45 shadow-md group-hover:shadow-2xl group-hover:border-gold group-hover:scale-[1.02] transition-all duration-500 p-1 bg-gradient-to-tr from-gold/30 via-paper to-gold/30`}
+                aria-label={`Mở ảnh ${photo.title}`}
+                className="group relative aspect-[3/4] w-full overflow-hidden rounded-xl border border-gold/45 bg-[#152e48] shadow-md transition-all duration-300 hover:border-gold hover:scale-[1.03] cursor-zoom-in text-left"
               >
-                {/* Image */}
                 <img
                   src={photo.url}
                   alt={photo.title}
                   loading="lazy"
-                  className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
 
-                {/* Dark Vignette Overlay on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-paper-light" />
-
-                {/* Zoom Icon Button Badge on Top Right */}
-                <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-charcoal/60 backdrop-blur-md border border-gold/40 text-paper-light flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
-                  <ZoomIn className="w-4 h-4 text-gold-light" />
-                </div>
-
-                {/* Bottom Caption on Hover */}
-                <div className="absolute bottom-3 inset-x-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-paper-light">
-                  <div className="flex items-center gap-1.5 text-[11px] text-gold-light uppercase tracking-wider font-semibold mb-0.5">
-                    <Sparkles className="w-3 h-3 text-gold" />
-                    <span>{photo.title}</span>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex flex-col justify-end p-2.5">
+                  <p className="text-[11px] font-serif font-semibold text-gold-light truncate">
+                    {photo.title}
+                  </p>
                   {photo.caption && (
-                    <p className="text-[11px] text-paper-light/85 line-clamp-1 italic font-light">
+                    <p className="text-[10px] text-sky-100/75 truncate italic">
                       {photo.caption}
                     </p>
                   )}
                 </div>
 
-                {/* Subtle Inner Gold Foil Border */}
-                <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gold/20 pointer-events-none group-hover:ring-gold/60 transition-all" />
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-
-        {/* Empty state if category has no photos */}
-        {filteredPhotos.length === 0 && (
-          <div className="text-center py-16 bg-paper/60 rounded-3xl border border-gold/20">
-            <Heart className="w-8 h-8 text-gold-dark mx-auto mb-2 opacity-50" />
-            <p className="font-serif text-charcoal text-base">Chưa có ảnh nào trong mục này</p>
-            <p className="text-xs text-charcoal-muted mt-1">Vui lòng chọn danh mục khác hoặc tải thêm ảnh từ trang quản trị Admin</p>
+                <div className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-gold-light opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ZoomIn className="h-3.5 w-3.5" />
+                </div>
+              </button>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      </JourneyDetailModal>
 
       {/* Lightbox Modal */}
       <GalleryLightboxModal

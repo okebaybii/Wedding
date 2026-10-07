@@ -1,25 +1,23 @@
 import React, { useState } from 'react'
 import { MessageSquareHeart, Send, Sparkles, User, Users, Quote, Check } from 'lucide-react'
 import { triggerWeddingConfetti } from '../../utils/confetti.ts'
-import { ScrollReveal } from '../ui/ScrollReveal.tsx'
 import { useWeddingData } from '../../store/WeddingContext.tsx'
-import {
-  FrenchCornerFlourish,
-  FrenchCrestPediment,
-  FrenchFlourishDivider,
-} from '../ui/FrenchOrnaments.tsx'
-
-const quickWishes = [
-  'Chúc hai bạn trăm năm tình viên mãn, đầu bạc răng long! 💍',
-  'Chúc Minh Quân & Thảo My mãi ngọt ngào, hạnh phúc bền lâu!',
-  'Một hành trình mới thật nhiều tiếng cười và thành công rực rỡ!',
-  'Chúc cặp đôi vàng sớm có hoàng tử nhỏ và công chúa đáng yêu!',
-]
+import { JourneyDetailModal } from '../ui/JourneyDetailModal.tsx'
+import { JourneyTriggerButton } from '../ui/JourneyTriggerButton.tsx'
 
 export const GuestbookSection: React.FC = () => {
   const { state, addWish } = useWeddingData()
   const wishes = state.wishes
+  const groomName = state.couple?.groom?.shortName || 'Minh Quân'
+  const brideName = state.couple?.bride?.shortName || 'Thảo My'
+  const quickWishesList = [
+    'Chúc hai bạn trăm năm tình viên mãn, đầu bạc răng long! 💍',
+    `Chúc ${groomName} & ${brideName} mãi ngọt ngào, hạnh phúc bền lâu!`,
+    'Một hành trình mới thật nhiều tiếng cười và thành công rực rỡ!',
+    'Chúc cặp đôi vàng sớm có hoàng tử nhỏ và công chúa đáng yêu!',
+  ]
 
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [senderName, setSenderName] = useState('')
   const [relationship, setRelationship] = useState('Bạn bè')
   const [message, setMessage] = useState('')
@@ -61,202 +59,198 @@ export const GuestbookSection: React.FC = () => {
   return (
     <section
       id="guestbook"
+      data-journey-chapter="guestbook"
       aria-label="Sổ lưu bút chúc phúc"
-      className="relative py-20 sm:py-28 px-4 bg-paper overflow-hidden"
+      className="journey-chapter relative min-h-[100svh] flex flex-col justify-end pb-12 sm:pb-16 overflow-hidden"
     >
-      <div className="max-w-5xl mx-auto relative z-10">
-        {/* Section Header with French Pediment */}
-        <ScrollReveal direction="up" delay={0}>
-          <div className="text-center mb-16 sm:mb-20">
-            <FrenchCrestPediment className="mb-2" />
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-gold/20 via-paper-light to-gold/20 border border-gold/50 text-gold-dark text-xs uppercase tracking-[0.25em] font-bold mb-3 shadow-xs font-display">
-              <MessageSquareHeart className="w-3.5 h-3.5 text-burgundy" aria-hidden="true" />
-              <span>Livre d'Or • Sổ Lưu Bút Chúc Phúc</span>
-            </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-bold tracking-tight">
-              Gửi Lời Chúc Mừng
-            </h2>
-            <p className="mt-2 text-charcoal-muted text-sm sm:text-base max-w-lg mx-auto font-serif italic">
-              Những lời chúc tốt lành và tình cảm của quý vị là hành trang đẹp nhất cho khởi đầu mới của chúng mình
-            </p>
-            <FrenchFlourishDivider className="max-w-xs mx-auto" />
-          </div>
-        </ScrollReveal>
+      {/* Screen Reader Semantic Data */}
+      <div className="sr-only">
+        <h2>Sổ lưu bút chúc phúc</h2>
+        <p>Đã có {wishes.length} lời chúc từ quan khách.</p>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left / Top: Interactive Post Wish Form (French Salon Style) */}
-          <div className="lg:col-span-5">
-            <ScrollReveal direction="right" delay={150}>
-              <div className="french-card-bg french-triple-frame border-2 border-gold/60 rounded-[32px] p-6 sm:p-8 shadow-xl relative overflow-hidden">
-                {/* French Damask Pattern Watermark */}
-                <div className="absolute inset-0 french-damask-pattern opacity-25 pointer-events-none" />
+      {/* Floating Trigger Button: leaves 3D romantic arch & floating wish notes completely visible */}
+      <div className="relative z-20 flex justify-center px-4">
+        <JourneyTriggerButton
+          label="Gửi Lời Chúc Phúc & Đọc Sổ Lưu Bút"
+          icon={<MessageSquareHeart className="h-4 w-4 text-gold-light" />}
+          badge={wishes.length}
+          onClick={() => setIsModalOpen(true)}
+        />
+      </div>
 
-                {/* French Corner Flourishes */}
-                <FrenchCornerFlourish position="top-left" size={44} />
-                <FrenchCornerFlourish position="top-right" size={44} />
+      {/* Guestbook Modal displayed only upon click */}
+      <JourneyDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Sổ Lưu Bút Chúc Phúc"
+        subtitle="Livre d'or · Cuốn sổ của yêu thương"
+        icon={<Sparkles className="h-5 w-5 text-gold-light" />}
+        maxWidth="5xl"
+      >
+        <div className="space-y-6">
+          <p className="text-center font-serif text-sm italic text-sky-100/80">
+            Mỗi lời nhắn là một trang ký ức chúng mình sẽ trân trọng trong hành trình mới.
+          </p>
 
-                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-gold-dark via-gold-light to-gold-dark" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Form Column (5 cols) */}
+            <div className="lg:col-span-5 rounded-2xl border border-gold/45 bg-[#12283e]/90 p-5 shadow-xl">
+              <h3 className="font-serif text-lg text-white font-bold mb-1 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-gold-light" />
+                <span>Gửi lời chúc của bạn</span>
+              </h3>
+              <p className="text-[11px] text-sky-100/70 mb-4">
+                Lời chúc sẽ được lưu giữ mãi mãi trong cuốn sổ kỷ niệm ngày cưới
+              </p>
 
-                <h3 className="font-serif text-xl sm:text-2xl text-charcoal font-bold tracking-tight mb-2 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-gold-dark" />
-                  <span>Gửi lời chúc của bạn</span>
-                </h3>
-                <p className="text-xs text-charcoal-muted mb-6">
-                  Lời chúc sẽ được lưu giữ mãi mãi trong cuốn sổ kỷ niệm ngày cưới
-                </p>
+              {successNotice && (
+                <div className="mb-4 p-3 rounded-xl bg-emerald/20 border border-emerald/50 text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in duration-200">
+                  <Check className="w-4 h-4 shrink-0" />
+                  <span>Cảm ơn bạn! Lời chúc đã được gửi thành công.</span>
+                </div>
+              )}
 
-                {successNotice && (
-                  <div className="mb-5 p-3.5 rounded-xl bg-emerald/15 border border-emerald/40 text-emerald text-xs sm:text-sm flex items-center gap-2 animate-in fade-in duration-200">
-                    <Check className="w-4 h-4 shrink-0" />
-                    <span>Cảm ơn bạn! Lời chúc đã được đăng thành công.</span>
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label htmlFor="wish-name" className="block text-xs uppercase tracking-wider font-semibold text-charcoal mb-1.5">
-                      Tên của bạn <span className="text-burgundy">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-charcoal-muted">
-                        <User className="w-4 h-4 text-gold-dark" aria-hidden="true" />
-                      </div>
-                      <input
-                        id="wish-name"
-                        type="text"
-                        value={senderName}
-                        onChange={(e) => setSenderName(e.target.value)}
-                        placeholder="Ví dụ: Hoàng Long, Chị Thu Hà..."
-                        className="w-full min-h-[48px] pl-10 pr-4 py-2.5 bg-paper rounded-xl border border-gold/30 hover:border-gold/60 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-gold/50"
-                      />
+              <form onSubmit={handleSubmit} className="space-y-3.5">
+                <div>
+                  <label htmlFor="wish-name" className="block text-[11px] uppercase tracking-wider font-semibold text-gold-light mb-1">
+                    Tên của bạn <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-sky-100/60">
+                      <User className="w-3.5 h-3.5 text-gold-light" />
                     </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="wish-rel" className="block text-xs uppercase tracking-wider font-semibold text-charcoal mb-1.5">
-                      Mối quan hệ
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-charcoal-muted">
-                        <Users className="w-4 h-4 text-gold-dark" aria-hidden="true" />
-                      </div>
-                      <select
-                        id="wish-rel"
-                        value={relationship}
-                        onChange={(e) => setRelationship(e.target.value)}
-                        className="w-full min-h-[48px] pl-10 pr-4 py-2.5 bg-paper rounded-xl border border-gold/30 hover:border-gold/60 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-gold/50"
-                      >
-                        <option value="Bạn bè">Bạn bè</option>
-                        <option value="Bạn thân Chú Rể">Bạn thân Chú Rể</option>
-                        <option value="Bạn thân Cô Dâu">Bạn thân Cô Dâu</option>
-                        <option value="Đồng nghiệp">Đồng nghiệp</option>
-                        <option value="Họ hàng nội ngoại">Họ hàng nội ngoại</option>
-                        <option value="Anh chị em">Anh chị em</option>
-                        <option value="Khách quý">Khách quý</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Quick suggestions */}
-                  <div>
-                    <span className="block text-[11px] uppercase tracking-wider font-medium text-gold-dark mb-1.5">
-                      Gợi ý câu chúc nhanh:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {quickWishes.map((q, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => handleApplyQuickWish(q)}
-                          className="text-[11px] px-2.5 py-1 rounded-full bg-paper hover:bg-gold/20 text-charcoal border border-gold/25 transition-colors text-left"
-                        >
-                          {q.slice(0, 32)}...
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="wish-message" className="block text-xs uppercase tracking-wider font-semibold text-charcoal mb-1.5">
-                      Lời chúc mừng của bạn <span className="text-burgundy">*</span>
-                    </label>
-                    <textarea
-                      id="wish-message"
-                      rows={4}
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Gửi gắm những lời chúc ý nghĩa nhất tới đôi tân lang tân nương..."
-                      className="w-full p-3.5 bg-paper rounded-xl border border-gold/30 hover:border-gold/60 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-gold/50 resize-none"
+                    <input
+                      id="wish-name"
+                      type="text"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      placeholder="Ví dụ: Hoàng Long, Chị Thu Hà..."
+                      className="w-full min-h-[42px] pl-9 pr-3 py-2 bg-[#0c1e30] rounded-xl border border-gold/30 text-xs text-white placeholder:text-sky-100/40 focus:outline-none focus:ring-2 focus:ring-gold/50"
                     />
                   </div>
-
-                  {errorMessage && (
-                    <p className="text-xs text-burgundy font-medium">{errorMessage}</p>
-                  )}
-
-                  <button
-                    type="submit"
-                    className="w-full min-h-[48px] px-5 py-3 rounded-xl bg-burgundy hover:bg-burgundy-light text-paper-light font-medium text-sm tracking-wide flex items-center justify-center gap-2 shadow-md shadow-burgundy/20 transition-all active:scale-[0.99] border border-gold/30 cursor-pointer"
-                  >
-                    <Send className="w-4 h-4 text-gold-light" />
-                    <span>Gửi Lời Chúc Phúc</span>
-                  </button>
-                </form>
-              </div>
-            </ScrollReveal>
-          </div>
-
-          {/* Right: Wishes List Stream (7 cols on lg) */}
-          <div className="lg:col-span-7">
-            <ScrollReveal direction="left" delay={250}>
-              <div className="space-y-4 max-h-[640px] overflow-y-auto pr-1">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs uppercase tracking-wider font-bold text-gold-dark">
-                    Lời chúc gần đây ({wishes.length})
-                  </span>
-                  <span className="text-[11px] text-charcoal-muted">Mới nhất xếp trên</span>
                 </div>
 
-                {wishes.map((item) => (
-                  <article
-                    key={item.id}
-                    className="french-card-bg border-2 border-gold/40 rounded-2xl p-5 shadow-sm hover:border-gold hover:shadow-md transition-all duration-300 relative group overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-gold/40 rounded-tr-xl pointer-events-none opacity-60" />
-                    <div className="flex items-start justify-between gap-3 mb-2.5">
-                      <div className="flex items-center gap-3">
-                        {/* Monogram / Avatar circle */}
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-champagne via-paper to-gold-light/40 border border-gold/40 flex items-center justify-center text-charcoal font-display font-bold text-sm shadow-xs">
-                          {item.senderName.slice(0, 1).toUpperCase()}
-                        </div>
-                        <div>
-                          <h4 className="font-serif font-bold text-base text-charcoal">
-                            {item.senderName}
-                          </h4>
-                          <span className="inline-block text-[11px] px-2 py-0.5 rounded-full bg-paper text-emerald font-medium border border-emerald/20">
-                            {item.relationship}
-                          </span>
-                        </div>
-                      </div>
-
-                      <span className="text-[11px] text-charcoal-muted whitespace-nowrap">
-                        {item.createdAt}
-                      </span>
+                <div>
+                  <label htmlFor="wish-rel" className="block text-[11px] uppercase tracking-wider font-semibold text-gold-light mb-1">
+                    Mối quan hệ
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-sky-100/60">
+                      <Users className="w-3.5 h-3.5 text-gold-light" />
                     </div>
+                    <select
+                      id="wish-rel"
+                      value={relationship}
+                      onChange={(e) => setRelationship(e.target.value)}
+                      className="w-full min-h-[42px] pl-9 pr-3 py-2 bg-[#0c1e30] rounded-xl border border-gold/30 text-xs text-white focus:outline-none focus:ring-2 focus:ring-gold/50 cursor-pointer"
+                    >
+                      <option value="Bạn bè">Bạn bè</option>
+                      <option value="Bạn thân Chú Rể">Bạn thân Chú Rể</option>
+                      <option value="Bạn thân Cô Dâu">Bạn thân Cô Dâu</option>
+                      <option value="Đồng nghiệp">Đồng nghiệp</option>
+                      <option value="Họ hàng nội ngoại">Họ hàng nội ngoại</option>
+                      <option value="Anh chị em">Anh chị em</option>
+                      <option value="Khách quý">Khách quý</option>
+                    </select>
+                  </div>
+                </div>
 
-                    <div className="relative pl-6 pt-1">
-                      <Quote className="w-4 h-4 text-gold-dark/40 absolute top-1 left-0" aria-hidden="true" />
-                      <p className="font-sans text-sm text-charcoal leading-relaxed">
-                        {item.message}
-                      </p>
-                    </div>
-                  </article>
-                ))}
+                {/* Quick suggestions */}
+                <div>
+                  <span className="block text-[10px] uppercase tracking-wider font-medium text-gold-light mb-1">
+                    Gợi ý câu chúc nhanh:
+                  </span>
+                  <div className="flex flex-wrap gap-1">
+                    {quickWishesList.map((q, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleApplyQuickWish(q)}
+                        className="text-[10px] px-2 py-0.5 rounded-full bg-[#0c1e30] hover:bg-gold/20 text-sky-100 border border-gold/25 transition-colors text-left cursor-pointer truncate max-w-full"
+                      >
+                        {q.slice(0, 30)}...
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="wish-message" className="block text-[11px] uppercase tracking-wider font-semibold text-gold-light mb-1">
+                    Lời chúc mừng của bạn <span className="text-red-400">*</span>
+                  </label>
+                  <textarea
+                    id="wish-message"
+                    rows={3}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Gửi gắm những lời chúc ý nghĩa nhất tới đôi tân lang tân nương..."
+                    className="w-full p-3 bg-[#0c1e30] rounded-xl border border-gold/30 text-xs text-white placeholder:text-sky-100/40 focus:outline-none focus:ring-2 focus:ring-gold/50 resize-none"
+                  />
+                </div>
+
+                {errorMessage && (
+                  <p className="text-xs text-red-400">{errorMessage}</p>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-gold-dark via-gold to-gold-dark hover:from-gold hover:to-gold-light text-charcoal font-serif font-bold text-xs tracking-wide flex items-center justify-center gap-2 shadow-md shadow-gold/20 transition-all active:scale-[0.99] border border-gold cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5 text-charcoal" />
+                  <span>Gửi Lời Chúc Phúc</span>
+                </button>
+              </form>
+            </div>
+
+            {/* Wishes Feed Column (7 cols) */}
+            <div className="lg:col-span-7 space-y-3 max-h-[520px] overflow-y-auto pr-1 custom-scrollbar">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-gold-light uppercase tracking-wider">
+                  Lời chúc gần đây ({wishes.length})
+                </span>
+                <span className="text-[11px] text-sky-100/60">Mới nhất xếp trên</span>
               </div>
-            </ScrollReveal>
+
+              {wishes.map((item) => (
+                <article
+                  key={item.id}
+                  className="rounded-xl border border-gold/35 bg-[#12283e]/85 p-4 shadow-md hover:border-gold/60 transition-all"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center text-gold-light font-bold text-xs">
+                        {item.senderName.slice(0, 1).toUpperCase()}
+                      </div>
+                      <div>
+                        <h4 className="font-serif font-bold text-sm text-white">
+                          {item.senderName}
+                        </h4>
+                        <span className="inline-block text-[10px] px-1.5 py-0.2 rounded-full bg-[#0c1e30] text-gold-light border border-gold/20">
+                          {item.relationship}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="text-[10px] text-sky-100/50">
+                      {item.createdAt}
+                    </span>
+                  </div>
+
+                  <div className="relative pl-5 pt-1">
+                    <Quote className="w-3.5 h-3.5 text-gold-light/40 absolute top-1 left-0" aria-hidden="true" />
+                    <p className="text-xs text-sky-100/90 leading-relaxed font-sans">
+                      {item.message}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </JourneyDetailModal>
     </section>
   )
 }
+
+export default GuestbookSection
